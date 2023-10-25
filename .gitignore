@@ -543,4 +543,8 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
+postgres_data/*
+influxdb_data/*
+IntelliHome-Backend/Data/InfluxDBToken.txt
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,webstorm,react

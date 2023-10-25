@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Data.Models.Shared;
+
+namespace Data.Models.VEU
+{
+    public class SolarPanelSystem : SmartDevice
+    {
+        public List<SolarPanel> SolarPanels { get; set; }
+        public Decimal Area => SolarPanels.Sum(solarPanel => solarPanel.Area);
+        public Decimal Efficiency => SolarPanels.Sum(solarPanel => solarPanel.Efficiency);
+    }
+}
