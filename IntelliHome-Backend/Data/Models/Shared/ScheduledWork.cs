@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data.Models.Shared
 {
-    public abstract class ScheduledWork : IBaseEntity
+    public class ScheduledWork : IBaseEntity
     {
         public Guid Id { get; set; }
         public String Name { get; set; }

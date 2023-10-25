@@ -8,7 +8,7 @@ using Data.Models.Users;
 
 namespace Data.Models.Shared
 {
-    public abstract class SmartDevice : IBaseEntity
+    public class SmartDevice : IBaseEntity
     {
         public Guid Id { get; set; }
         public String Name { get; set; }

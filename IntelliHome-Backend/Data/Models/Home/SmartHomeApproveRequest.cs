@@ -16,6 +16,6 @@ namespace Data.Models.Home
         public User User { get; set; }
         public Boolean IsApproved { get; set; }
         public String Reason { get; set; }
-        public Instant CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

@@ -26,5 +26,10 @@ namespace Data.Models.Home
         public List<SmartDevice> SmartDevices { get; set; }
         public User Owner { get; set; }
 
+        public SmartHome()
+        {
+            SmartDevices = new List<SmartDevice>();
+        }
+
     }
 }

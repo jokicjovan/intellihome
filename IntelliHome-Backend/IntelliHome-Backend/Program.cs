@@ -1,3 +1,5 @@
+using Data.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<PostgreSqlDbContext>();
+
+//add db context
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
 
