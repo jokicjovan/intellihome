@@ -1,4 +1,8 @@
 using Data.Context;
+using IntelliHome_Backend.Repositories;
+using IntelliHome_Backend.Repositories.Interfaces;
+using IntelliHome_Backend.Services;
+using IntelliHome_Backend.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PostgreSqlDbContext>();
+//builder.Services.AddSingleton<PostgreSqlDbContext>();
+
+//Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+//Services
+builder.Services.AddScoped<IUserService, UserService>();
 
 //add db context
 //export port 5238
@@ -25,7 +36,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
