@@ -547,5 +547,6 @@ postgres_data/*
 influxdb_data/*
 IntelliHome-Backend/Data/InfluxDBToken.txt
 IntelliHome-Backend/Data/Migrations
+.idea/*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,webstorm,react
