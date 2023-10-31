@@ -12,9 +12,7 @@ services:
       - "5432:5432"
     working_dir: /var/lib/postgresql/data
     volumes:
-      - type: bind
-        source: postgres_data
-        target: /var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     tty: true
 
   influxdb:
@@ -25,9 +23,7 @@ services:
       - "8086:8086"
     working_dir: /var/lib/influxdb
     volumes:
-      - type: bind
-        source: influxdb_data
-        target: /etc/influxdb/influxdb
+      - influxdb_data:/etc/influxdb/influxdb
     tty: true
 
   # react_frontend:
@@ -65,3 +61,4 @@ services:
 volumes:
   postgres_data:
   influxdb_data:
+
