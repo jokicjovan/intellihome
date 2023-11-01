@@ -9,7 +9,7 @@ namespace Data.Models.SPU
 {
     public class Lamp : SmartDevice
     {
-        public Decimal CurrentBrightness { get; set; }
-        public Decimal BrightnessLimit { get; set; } 
+        public Double CurrentBrightness { get; set; }
+        public Double BrightnessLimit { get; set; } 
     }
 }

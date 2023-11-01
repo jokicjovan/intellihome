@@ -13,5 +13,18 @@ namespace Data.Models.Home
         public String Name { get; set; }
         public String Country { get; set; }
         public String ZipCode { get; set; }
+
+        public City(Guid id, string name, string country, string zipCode)
+        {
+            Id = id;
+            Name = name;
+            Country = country;
+            ZipCode = zipCode;
+        }
+
+        public City()
+        {
+
+        }
     }
 }

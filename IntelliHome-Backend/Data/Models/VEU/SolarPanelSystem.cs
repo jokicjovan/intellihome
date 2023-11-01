@@ -10,8 +10,8 @@ namespace Data.Models.VEU
     public class SolarPanelSystem : SmartDevice
     {
         public List<SolarPanel> SolarPanels { get; set; }
-        public Decimal Area => SolarPanels.Sum(solarPanel => solarPanel.Area);
-        public Decimal Efficiency => SolarPanels.Sum(solarPanel => solarPanel.Efficiency);
+        public Double Area => SolarPanels.Sum(solarPanel => solarPanel.Area);
+        public Double Efficiency => SolarPanels.Sum(solarPanel => solarPanel.Efficiency);
 
         public SolarPanelSystem()
         {

@@ -10,7 +10,7 @@ namespace Data.Models.PKA
     public class AirConditionerWork : ScheduledWork
     {
         public AirConditionerMode Mode { get; set; }
-        public Decimal Temperature { get; set; }
+        public Double Temperature { get; set; }
 
     }
 }

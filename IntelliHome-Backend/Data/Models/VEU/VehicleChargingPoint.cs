@@ -11,8 +11,8 @@ namespace Data.Models.VEU
     {
         public Guid Id { get; set; }
         public Boolean IsFree { get; set; }
-        public Decimal VehicleBatteryCapacity { get; set; }
-        public Decimal VehicleBatteryCurrentCapacity { get; set; }
+        public Double VehicleBatteryCapacity { get; set; }
+        public Double VehicleBatteryCurrentCapacity { get; set; }
         public Int16 VehicleBatteryCapacityLimit { get; set; }
 
         public VehicleChargingPoint()

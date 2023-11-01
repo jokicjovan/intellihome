@@ -9,9 +9,9 @@ namespace Data.Models.PKA
 {
     public class AirConditioner : SmartDevice
     {
-        public Decimal MinTemperature { get; set; }
-        public Decimal MaxTemperature { get; set; }
-        public Decimal CurrentTemperature { get; set; }
+        public Double MinTemperature { get; set; }
+        public Double MaxTemperature { get; set; }
+        public Double CurrentTemperature { get; set; }
         public List<AirConditionerMode> Modes { get; set; }
         public AirConditionerMode CurrentMode { get; set; }
     }

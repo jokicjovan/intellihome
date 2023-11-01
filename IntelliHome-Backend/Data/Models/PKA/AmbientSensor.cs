@@ -9,7 +9,7 @@ namespace Data.Models.PKA
 {
     public class AmbientSensor : SmartDevice
     {
-        public Decimal Temperature { get; set; }
-        public Decimal Humidity { get; set; }
+        public Double Temperature { get; set; }
+        public Double Humidity { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace Data.Models.Shared
         public SmartDeviceCategory Category { get; set; }
         public Boolean IsConnected { get; set; }
         public Boolean IsOn { get; set; }
-        public Decimal PowerPerHour { get; set; }
+        public Double PowerPerHour { get; set; }
         public SmartHome SmartHome { get; set; }
         public List<User> AllowedUsers { get; set; }
 

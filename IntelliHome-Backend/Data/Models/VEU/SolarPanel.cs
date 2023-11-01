@@ -10,8 +10,8 @@ namespace Data.Models.VEU
     public class SolarPanel : IBaseEntity
     {
         public Guid Id { get; set; }
-        public Decimal Area { get; set; }
-        public Decimal Efficiency { get; set; }
+        public Double Area { get; set; }
+        public Double Efficiency { get; set; }
 
         public SolarPanel()
         {

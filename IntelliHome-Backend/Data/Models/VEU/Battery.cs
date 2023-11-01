@@ -10,8 +10,8 @@ namespace Data.Models.VEU
     public class Battery : IBaseEntity
     {
         public Guid Id { get; set; }
-        public Decimal Capacity { get; set; }
-        public Decimal CurrentCapacity { get; set; }
+        public Double Capacity { get; set; }
+        public Double CurrentCapacity { get; set; }
 
         public Battery() { }
     }

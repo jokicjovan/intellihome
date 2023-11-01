@@ -1,13 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Data.Models.Home;
 using Data.Models.PKA;
-using Data.Models.Shared;
 using Data.Models.SPU;
 using Data.Models.Users;
 using Data.Models.VEU;
@@ -52,23 +46,33 @@ namespace Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>()
-                .HasIndex(c => new { c.Email })
-                .IsUnique(true);
-
-            modelBuilder.Entity<Admin>()
-                .HasIndex(c => new { c.Username })
-                .IsUnique(true);
-
-            modelBuilder.Entity<User>()
-                .HasIndex(c => new { c.Email })
-                .IsUnique(true);
-
-            modelBuilder.Entity<User>()
-                .HasIndex(c => new { c.Username })
-                .IsUnique(true);
-
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Admin>()
+                .HasIndex(c => new { c.Email })
+                .IsUnique(true);
+
+            modelBuilder.Entity<Admin>()
+                .HasIndex(c => new { c.Username })
+                .IsUnique(true);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(c => new { c.Email })
+                .IsUnique(true);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(c => new { c.Username })
+            .IsUnique(true);
+
+            // Dummy data
+            City city = new City(Guid.NewGuid(), "Novi Sad", "Serbia", "21000");
+            modelBuilder.Entity<City>().HasData(city);
+
+            User user = new User(Guid.NewGuid(), "User1", "User1", "user1@example.com", "user1", BCrypt.Net.BCrypt.HashPassword("user1"), null);
+            modelBuilder.Entity<User>().HasData(user);
+            
+            //SmartHome smartHome = new SmartHome(Guid.NewGuid(), "Lepa kuca", "Mise Dimitrijevica 124", city, "50", SmartHomeType.HOUSE, 2, null, 45.244320, 19.831070, true, user);
+            //modelBuilder.Entity<SmartHome>().HasData(smartHome);
         }
     }
 }

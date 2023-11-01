@@ -11,8 +11,8 @@ namespace Data.Models.VEU
     public class BatterySystem : SmartDevice
     {
         public List<Battery> Batteries { get; set; }
-        public Decimal Capacity => Batteries.Sum(battery => battery.Capacity);
-        public Decimal CurrentCapacity => Batteries.Sum(battery => battery.CurrentCapacity);
+        public Double Capacity => Batteries.Sum(battery => battery.Capacity);
+        public Double CurrentCapacity => Batteries.Sum(battery => battery.CurrentCapacity);
 
         public BatterySystem()
         {
