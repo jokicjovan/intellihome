@@ -12,5 +12,10 @@ namespace Data.Models.VEU
         public List<SolarPanel> SolarPanels { get; set; }
         public Decimal Area => SolarPanels.Sum(solarPanel => solarPanel.Area);
         public Decimal Efficiency => SolarPanels.Sum(solarPanel => solarPanel.Efficiency);
+
+        public SolarPanelSystem()
+        {
+            SolarPanels = new List<SolarPanel>();
+        }
     }
 }

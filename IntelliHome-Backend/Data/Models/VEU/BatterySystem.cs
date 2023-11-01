@@ -13,5 +13,10 @@ namespace Data.Models.VEU
         public List<Battery> Batteries { get; set; }
         public Decimal Capacity => Batteries.Sum(battery => battery.Capacity);
         public Decimal CurrentCapacity => Batteries.Sum(battery => battery.CurrentCapacity);
+
+        public BatterySystem()
+        {
+            Batteries = new List<Battery>();
+        }
     }
 }

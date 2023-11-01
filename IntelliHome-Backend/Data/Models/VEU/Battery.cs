@@ -12,5 +12,7 @@ namespace Data.Models.VEU
         public Guid Id { get; set; }
         public Decimal Capacity { get; set; }
         public Decimal CurrentCapacity { get; set; }
+
+        public Battery() { }
     }
 }

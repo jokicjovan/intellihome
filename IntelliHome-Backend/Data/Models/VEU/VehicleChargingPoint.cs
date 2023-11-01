@@ -14,5 +14,9 @@ namespace Data.Models.VEU
         public Decimal VehicleBatteryCapacity { get; set; }
         public Decimal VehicleBatteryCurrentCapacity { get; set; }
         public Int16 VehicleBatteryCapacityLimit { get; set; }
+
+        public VehicleChargingPoint()
+        {
+        }
     }
 }

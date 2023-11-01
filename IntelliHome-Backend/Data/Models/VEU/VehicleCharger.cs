@@ -12,5 +12,10 @@ namespace Data.Models.VEU
         public Decimal Power { get; set; }
         List<VehicleChargingPoint> ChargingPoints { get; set; }
         public Int32 FreeChargingPoints => ChargingPoints.Count(x => x.IsFree == true);
+
+        public VehicleCharger()
+        {
+            ChargingPoints = new List<VehicleChargingPoint>();
+        }
     }
 }

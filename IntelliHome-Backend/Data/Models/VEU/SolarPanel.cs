@@ -12,5 +12,10 @@ namespace Data.Models.VEU
         public Guid Id { get; set; }
         public Decimal Area { get; set; }
         public Decimal Efficiency { get; set; }
+
+        public SolarPanel()
+        {
+
+        }
     }
 }

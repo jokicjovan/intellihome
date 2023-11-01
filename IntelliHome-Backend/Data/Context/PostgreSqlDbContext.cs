@@ -52,7 +52,23 @@ namespace Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>()
+                .HasIndex(c => new { c.Email })
+                .IsUnique(true);
 
+            modelBuilder.Entity<Admin>()
+                .HasIndex(c => new { c.Username })
+                .IsUnique(true);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(c => new { c.Email })
+                .IsUnique(true);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(c => new { c.Username })
+                .IsUnique(true);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
