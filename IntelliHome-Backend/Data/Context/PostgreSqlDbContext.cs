@@ -63,16 +63,6 @@ namespace Data.Context
             modelBuilder.Entity<User>()
                 .HasIndex(c => new { c.Username })
             .IsUnique(true);
-
-            // Dummy data
-            City city = new City(Guid.NewGuid(), "Novi Sad", "Serbia", "21000");
-            modelBuilder.Entity<City>().HasData(city);
-
-            User user = new User(Guid.NewGuid(), "User1", "User1", "user1@example.com", "user1", BCrypt.Net.BCrypt.HashPassword("user1"), null);
-            modelBuilder.Entity<User>().HasData(user);
-            
-            //SmartHome smartHome = new SmartHome(Guid.NewGuid(), "Lepa kuca", "Mise Dimitrijevica 124", city, "50", SmartHomeType.HOUSE, 2, null, 45.244320, 19.831070, true, user);
-            //modelBuilder.Entity<SmartHome>().HasData(smartHome);
         }
     }
 }
