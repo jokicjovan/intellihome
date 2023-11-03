@@ -35,9 +35,4 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\PKA\Services\Interfaces\" />
-    <Folder Include="Features\PKA\Services\" />
-  </ItemGroup>
-
 </Project>

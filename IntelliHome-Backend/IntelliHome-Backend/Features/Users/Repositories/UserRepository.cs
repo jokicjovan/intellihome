@@ -8,7 +8,5 @@ namespace IntelliHome_Backend.Features.Users.Repositories
     public class UserRepository : CrudRepository<User>, IUserRepository
     {
         public UserRepository(PostgreSqlDbContext context) : base(context) { }
-
-
     }
 }

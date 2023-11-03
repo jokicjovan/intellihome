@@ -1,4 +1,8 @@
 using Data.Context;
+using IntelliHome_Backend.Features.PKA.Repositories;
+using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
+using IntelliHome_Backend.Features.PKA.Services;
+using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Users.Repositories;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Users.Services;
@@ -13,16 +17,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//DB context
 builder.Services.AddDbContext<PostgreSqlDbContext>();
-//builder.Services.AddSingleton<PostgreSqlDbContext>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
+builder.Services.AddScoped<IAmbientSensorRepository, AmbientSensorRepository>();
+builder.Services.AddScoped<IWashingMachineRepository, WashingMachineRepository>();
 
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
+builder.Services.AddScoped<IAmbientSensorService, AmbientSensorService>();
+builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();
 
-//add db context
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
 
