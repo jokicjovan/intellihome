@@ -1,4 +1,6 @@
-﻿using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
+﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.PKA.Repositories;
+using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.PKA.Services
@@ -10,6 +12,11 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository)
         {
             _ambientSensorRepository = ambientSensorRepository;
+        }
+
+        public Task<AmbientSensor> CreateAmbientSensor(AmbientSensor ambientSensor)
+        {
+            return _ambientSensorRepository.Create(ambientSensor);
         }
     }
 }

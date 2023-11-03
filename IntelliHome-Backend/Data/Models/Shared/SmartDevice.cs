@@ -12,7 +12,7 @@ namespace Data.Models.Shared
     {
         public Guid Id { get; set; }
         public String Name { get; set; }
-        public String Image { get; set; }
+        public String? Image { get; set; }
         public SmartDeviceCategory Category { get; set; }
         public Boolean IsConnected { get; set; }
         public Boolean IsOn { get; set; }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 using Data.Models.Home;
 using Data.Models.Shared;
-using Newtonsoft.Json;
 
 namespace Data.Models.Users
 {

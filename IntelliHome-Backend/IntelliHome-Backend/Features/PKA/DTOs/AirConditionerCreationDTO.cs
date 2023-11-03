@@ -1,4 +1,6 @@
-﻿using IntelliHome_Backend.Features.Shared.DTOs;
+﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Shared.DTOs;
+using System.Text.Json.Serialization;
 
 namespace IntelliHome_Backend.Features.PKA.DTOs
 {
@@ -6,16 +8,10 @@ namespace IntelliHome_Backend.Features.PKA.DTOs
     {
         public double MinTemperature { get; set; }
         public double MaxTemperature { get; set; }
-        public double CurrentTemperature { get; set; }
+        public List<AirConditionerMode> Modes { get; set; }
 
-        public AirConditionerCreationDTO(string name, string image, double minTemperature, double maxTemperature, double currentTemperature, double powerPerHour)
-        {
-            Name = name;
-            Image = image;
-            MinTemperature = minTemperature;
-            MaxTemperature = maxTemperature;
-            CurrentTemperature = currentTemperature;
-            PowerPerHour = powerPerHour;
+        public AirConditionerCreationDTO() {
+            Modes = new List<AirConditionerMode>();
         }
     }
 }

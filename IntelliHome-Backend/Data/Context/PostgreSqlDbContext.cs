@@ -49,20 +49,20 @@ namespace Data.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Admin>()
-                .HasIndex(c => new { c.Email })
+                .HasIndex(e => new { e.Email })
                 .IsUnique(true);
 
             modelBuilder.Entity<Admin>()
-                .HasIndex(c => new { c.Username })
+                .HasIndex(e => new { e.Username })
                 .IsUnique(true);
 
             modelBuilder.Entity<User>()
-                .HasIndex(c => new { c.Email })
+                .HasIndex(e => new { e.Email })
                 .IsUnique(true);
 
             modelBuilder.Entity<User>()
-                .HasIndex(c => new { c.Username })
-            .IsUnique(true);
+                .HasIndex(e => new { e.Username })
+                .IsUnique(true);
         }
     }
 }
