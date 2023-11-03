@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Net;
-using IntelliHome_Backend.Exceptions;
+using IntelliHome_Backend.Features.Shared.Exceptions;
 
-namespace IntelliHome_Backend.Infrastructure
+namespace IntelliHome_Backend.Features.Shared.Infrastructure
 {
     public static class Utils
     {

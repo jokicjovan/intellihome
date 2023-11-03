@@ -1,4 +1,4 @@
-﻿namespace IntelliHome_Backend.Exceptions
+﻿namespace IntelliHome_Backend.Features.Shared.Exceptions
 {
     public class ResourceNotFoundException : Exception
     {

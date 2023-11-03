@@ -1,8 +1,8 @@
 using Data.Context;
-using IntelliHome_Backend.Repositories;
-using IntelliHome_Backend.Repositories.Interfaces;
-using IntelliHome_Backend.Services;
-using IntelliHome_Backend.Services.Interfaces;
+using IntelliHome_Backend.Features.Users.Repositories;
+using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using IntelliHome_Backend.Services.User;
+using IntelliHome_Backend.Services.User.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

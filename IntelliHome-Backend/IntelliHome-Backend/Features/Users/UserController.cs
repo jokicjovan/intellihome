@@ -1,5 +1,5 @@
 ﻿using Data.Models.Users;
-using IntelliHome_Backend.Services.Interfaces;
+using IntelliHome_Backend.Services.Users.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome_Backend.Controllers

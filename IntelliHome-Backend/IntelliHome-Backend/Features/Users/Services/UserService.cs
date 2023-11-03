@@ -1,8 +1,8 @@
-﻿using Data.Models.Users;
-using IntelliHome_Backend.Repositories.Interfaces;
-using IntelliHome_Backend.Services.Interfaces;
+﻿using IntelliHome_Backend.Repositories.Interfaces;
+using Data.Models.Users;
+using IntelliHome_Backend.Features.Users.Interfaces;
 
-namespace IntelliHome_Backend.Services
+namespace IntelliHome_Backend.Features.Users
 {
     public class UserService : IUserService
     {
