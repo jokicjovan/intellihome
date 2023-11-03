@@ -1,8 +1,8 @@
 ﻿using Data.Models.Users;
-using IntelliHome_Backend.Services.Users.Interfaces;
+using IntelliHome_Backend.Features.Users.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Controllers
+namespace IntelliHome_Backend.Features.Users
 {
     [ApiController]
     [Route("api/[controller]/[action]")]

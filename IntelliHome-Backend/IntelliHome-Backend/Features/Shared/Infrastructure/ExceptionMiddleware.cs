@@ -1,7 +1,7 @@
 ﻿using Data.Models.Utils;
 using System.Net;
 
-namespace IntelliHome_Backend.Infrastructure
+namespace IntelliHome_Backend.Features.Shared.Infrastructure
 {
     public class ExceptionMiddleware
     {

@@ -1,8 +1,8 @@
 ﻿using Data.Models.Shared;
-using IntelliHome_Backend.Repositories.Interfaces;
+using IntelliHome_Backend.Features.Shared.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace IntelliHome_Backend.Repositories
+namespace IntelliHome_Backend.Features.Shared.Repositories
 {
     public class CrudRepository<T> : ICrudRepository<T> where T : class, IBaseEntity
     {

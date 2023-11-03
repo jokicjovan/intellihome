@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Controllers.Devices
+namespace IntelliHome_Backend.Features.SPU
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
