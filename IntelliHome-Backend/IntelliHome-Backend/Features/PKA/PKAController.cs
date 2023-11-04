@@ -2,6 +2,7 @@
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome_Backend.Features.PKA
@@ -37,12 +38,13 @@ namespace IntelliHome_Backend.Features.PKA
             airConditioner.MinTemperature = dto.MinTemperature;
             airConditioner.MaxTemperature = dto.MaxTemperature;
             airConditioner.Modes = dto.Modes;
+            airConditioner.CurrentMode = airConditioner.Modes[0];
             airConditioner = await _airConditionerService.CreateAirConditioner(airConditioner);
             return Ok(airConditioner);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAmbientSensor([FromQuery] Guid smartHomeId, [FromBody] AmbientSensorCreationDTO dto)
+        public async Task<ActionResult> CreateAmbientSensor([FromQuery] Guid smartHomeId, [FromBody] SmartDeviceDTO dto)
         {
             AmbientSensor ambientSensor = new AmbientSensor();
             ambientSensor.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
