@@ -63,6 +63,27 @@ namespace Data.Context
             modelBuilder.Entity<User>()
                 .HasIndex(e => new { e.Username })
                 .IsUnique(true);
+
+            modelBuilder.Entity<AirConditioner>().ToTable("AirConditioners");
+            modelBuilder.Entity<AmbientSensor>().ToTable("AmbientSensors");
+            modelBuilder.Entity<WashingMachine>().ToTable("WashingMachines");
+            modelBuilder.Entity<Lamp>().ToTable("Lamps");
+            modelBuilder.Entity<Sprinkler>().ToTable("Sprinklers");
+            modelBuilder.Entity<VehicleGate>().ToTable("VehicleGates");
+            modelBuilder.Entity<BatterySystem>().ToTable("BatterySystems");
+            modelBuilder.Entity<SolarPanelSystem>().ToTable("SolarPanelSystems");
+            modelBuilder.Entity<VehicleCharger>().ToTable("VehicleChargers");
+
+            modelBuilder.Entity<WashingMachineMode>().ToTable("WashingMachineModes");
+            modelBuilder.Entity<WashingMachine>()
+                .HasMany(wm => wm.Modes)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "WashingMachineWashingMachineMode",
+                    j => j.HasOne<WashingMachineMode>().WithMany(),
+                    j => j.HasOne<WashingMachine>().WithMany()
+                );
+
         }
     }
 }

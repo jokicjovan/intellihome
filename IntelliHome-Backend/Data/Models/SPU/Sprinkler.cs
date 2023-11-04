@@ -7,8 +7,7 @@ using Data.Models.Shared;
 
 namespace Data.Models.SPU
 {
-    public class Sprinkler : IBaseEntity
+    public class Sprinkler : SmartDevice
     {
-        public Guid Id { get; set; }
     }
 }
