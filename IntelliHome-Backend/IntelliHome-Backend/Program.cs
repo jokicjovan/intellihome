@@ -16,6 +16,10 @@ using IntelliHome_Backend.Features.Users.Repositories;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Users.Services;
 using IntelliHome_Backend.Features.Users.Services.Interfaces;
+using IntelliHome_Backend.Features.VEU.Repositories;
+using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
+using IntelliHome_Backend.Features.VEU.Services;
+using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +43,12 @@ builder.Services.AddScoped<IWashingMachineModeRepository, WashingMachineModeRepo
 builder.Services.AddScoped<ILampRepository, LampRepository>();
 builder.Services.AddScoped<ISprinklerRepository, SprinklerRepository>();
 builder.Services.AddScoped<IVehicleGateRepository, VehicleGateRepository>();
+builder.Services.AddScoped<IBatteryRepository, BatteryRepository>();
+builder.Services.AddScoped<IBatterySystemRepository, BatterySystemRepository>();
+builder.Services.AddScoped<ISolarPanelRepository, SolarPanelRepository>();
+builder.Services.AddScoped<ISolarPanelSystemRepository, SolarPanelSystemRepository>();
+builder.Services.AddScoped<IVehicleChargerRepository, VehicleChargerRepository>();
+builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPointRepository>();
 
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -50,6 +60,9 @@ builder.Services.AddScoped<IWashingMachineModeService, WashingMachineModeService
 builder.Services.AddScoped<ILampService, LampService>();
 builder.Services.AddScoped<ISprinklerService, SprinklerService>();
 builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
+builder.Services.AddScoped<IBatteryService, BatteryService>();
+builder.Services.AddScoped<ISolarPanelService, SolarPanelService>();
+builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
