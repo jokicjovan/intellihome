@@ -10,6 +10,7 @@ namespace Data.Models.SPU
 {
     public class SprinklerWork : ScheduledWork
     {
+        public Double PowerPerHour { get; set; }
     }
     
 }

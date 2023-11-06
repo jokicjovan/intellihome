@@ -1,6 +1,7 @@
-TRUNCATE "Admins", "AirConditionerWorks", "Batteries", "Cities", "SmartDevice", "SmartDeviceUser",
-    "SmartHomeApproveRequests", "SmartHomes", "SolarPanels", "Sprinklers", "SprinklerWorks", "Users",
-    "VehicleChargingPoints", "VehicleGates", "WashingMachineModes" ;
+TRUNCATE "Admins", "AirConditioners", "AirConditionerWorks", "AmbientSensors", "Batteries", "BatterySystems", "Cities", "Lamps", 
+    "SmartDevice", "SmartDeviceUser", "SmartHomeApproveRequests", "SmartHomes", "SolarPanels", "SolarPanelSystems", "Sprinklers", 
+    "SprinklerWorks", "Users", "VehicleChargers", "VehicleChargingPoints", "VehicleGates", "WashingMachineModes", "WashingMachines", 
+    "WashingMachineWashingMachineMode";
 
 -- Cities
 INSERT INTO "Cities" ("Id", "Name", "Country", "ZipCode")

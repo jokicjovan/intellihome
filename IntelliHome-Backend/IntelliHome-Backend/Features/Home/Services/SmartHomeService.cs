@@ -14,9 +14,9 @@ namespace IntelliHome_Backend.Features.Home.Services
             _smartHomeRepository = smartHomeRepository;
         }
 
-        public async Task<SmartHome> GetSmartHome(Guid id)
+        public async Task<SmartHome> GetSmartHome(Guid Id)
         {
-            SmartHome smartHome = await _smartHomeRepository.Read(id);
+            SmartHome smartHome = await _smartHomeRepository.Read(Id);
             if (smartHome == null)
             {
                 throw new ResourceNotFoundException("Smart house with provided Id not found!");

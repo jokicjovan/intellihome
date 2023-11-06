@@ -1,7 +1,7 @@
 ﻿
 using Data.Models.Shared;
 using Data.Models.Users;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Data.Models.Home
 {

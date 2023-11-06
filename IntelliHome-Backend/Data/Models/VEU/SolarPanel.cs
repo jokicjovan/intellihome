@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 using Data.Models.Shared;
 
 namespace Data.Models.VEU
@@ -12,6 +8,8 @@ namespace Data.Models.VEU
         public Guid Id { get; set; }
         public Double Area { get; set; }
         public Double Efficiency { get; set; }
+        [JsonIgnore]
+        public SolarPanelSystem solarPanelSystem { get; set; }
 
         public SolarPanel()
         {
