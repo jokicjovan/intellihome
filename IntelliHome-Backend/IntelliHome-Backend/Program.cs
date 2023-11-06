@@ -36,6 +36,7 @@ builder.Services.AddDbContext<PostgreSqlDbContext>();
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
 builder.Services.AddScoped<IAmbientSensorRepository, AmbientSensorRepository>();
 builder.Services.AddScoped<IWashingMachineRepository, WashingMachineRepository>();
