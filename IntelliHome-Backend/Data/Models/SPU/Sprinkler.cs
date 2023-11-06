@@ -9,5 +9,6 @@ namespace Data.Models.SPU
 {
     public class Sprinkler : SmartDevice
     {
+        public Double PowerPerHour { get; set; }
     }
 }

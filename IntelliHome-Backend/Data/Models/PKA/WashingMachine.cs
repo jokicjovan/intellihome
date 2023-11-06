@@ -12,6 +12,7 @@ namespace Data.Models.PKA
         public List<WashingMachineMode> Modes { get; set; }
         public WashingMachineMode? CurrentMode { get; set; }
         public DateTime StartTime { get; set; }
+        public Double PowerPerHour { get; set; }
 
         public WashingMachine()
         {

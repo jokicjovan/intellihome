@@ -14,7 +14,8 @@ namespace Data.Models.PKA
         public Double CurrentTemperature { get; set; }
         public List<AirConditionerMode> Modes { get; set; }
         public List<AirConditionerWork>? ScheduledWorks { get; set; }
-        public AirConditionerMode CurrentMode { get; set; }
+        public AirConditionerMode? CurrentMode { get; set; }
+        public Double PowerPerHour { get; set; }
 
         public AirConditioner()
         {

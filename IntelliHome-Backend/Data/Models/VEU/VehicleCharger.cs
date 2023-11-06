@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data.Models.Shared;
+﻿using Data.Models.Shared;
 
 namespace Data.Models.VEU
 {
@@ -11,7 +6,7 @@ namespace Data.Models.VEU
     {
         public Double Power { get; set; }
         public List<VehicleChargingPoint> ChargingPoints { get; set; }
-        public Int32 FreeChargingPoints => ChargingPoints.Count(x => x.IsFree == true);
+        public Int32 NumberOfFreeChargingPoints => ChargingPoints.Count(x => x.IsFree == true);
 
         public VehicleCharger()
         {

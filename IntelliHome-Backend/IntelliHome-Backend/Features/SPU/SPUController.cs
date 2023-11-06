@@ -39,7 +39,7 @@ namespace IntelliHome_Backend.Features.SPU
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateSprinkler([FromQuery] Guid smartHomeId, [FromBody] SmartDeviceDTO dto)
+        public async Task<ActionResult> CreateSprinkler([FromQuery] Guid smartHomeId, [FromBody] SprinklerCreationDTO dto)
         {
             Sprinkler sprinkler = new Sprinkler();
             sprinkler.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);

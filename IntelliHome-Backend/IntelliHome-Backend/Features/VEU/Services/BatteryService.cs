@@ -1,5 +1,4 @@
-﻿using Data.Models.Home;
-using Data.Models.VEU;
+﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
@@ -21,14 +20,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
         {
             return _batterySystemRepository.Create(batterySystem);
         }
-
-        public async Task<Battery> AddBatteryToSystem(Guid batterySystemId, Battery battery)
-        {
-            BatterySystem batterySystem = await GetBatterySystem(batterySystemId);
-            battery.BatterySystem = batterySystem;
-            return await _batteryRepository.Create(battery);
-        }
-
+        
         public async Task<BatterySystem> GetBatterySystem(Guid Id)
         {
             BatterySystem batterySystem = await _batterySystemRepository.Read(Id);
@@ -37,6 +29,11 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 throw new ResourceNotFoundException("Battery system with provided Id not found!");
             }
             return batterySystem;
+        }
+
+        public Task<Battery> CreateBattery(Battery battery)
+        {
+            return _batteryRepository.Create(battery);
         }
     }
 }
