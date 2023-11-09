@@ -20,6 +20,8 @@ using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using MQTTnet;
+using IntelliHome_Backend.Features.Communications.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,7 @@ builder.Services.AddDbContext<PostgreSqlDbContext>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISmartDeviceRepository, SmartDeviceRepository>();
 builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
 builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
 builder.Services.AddScoped<IAmbientSensorRepository, AmbientSensorRepository>();
@@ -52,6 +55,7 @@ builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPoint
 
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISmartDeviceService, SmartDeviceService>();
 builder.Services.AddScoped<ISmartHomeService, SmartHomeService>();
 builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
 builder.Services.AddScoped<IAmbientSensorService, AmbientSensorService>();
@@ -63,6 +67,14 @@ builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
 builder.Services.AddScoped<IBatteryService, BatteryService>();
 builder.Services.AddScoped<ISolarPanelService, SolarPanelService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
+
+builder.Services.AddHostedService<HeartbeatService>();
+builder.Services.AddSingleton(provider =>
+{
+    var factory = new MqttFactory();
+    var mqttClient = factory.CreateMqttClient();
+    return mqttClient;
+});
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
