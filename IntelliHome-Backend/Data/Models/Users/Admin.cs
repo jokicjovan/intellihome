@@ -7,7 +7,7 @@ using Data.Models.Shared;
 
 namespace Data.Models.Users
 {
-    public class Admin : BaseUser
+    public class Admin : User
     {
         public Boolean IsSuperAdmin { get; set; }
     }
