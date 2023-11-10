@@ -1,21 +1,26 @@
 ﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
-using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 
 namespace IntelliHome_Backend.Features.PKA.Services
 {
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
+        private readonly IHeartbeatService _heartbeatService;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository, IHeartbeatService heartbeatService)
         {
             _airConditionerRepository = airConditionerRepository;
+            _heartbeatService = heartbeatService;
         }
 
-        public Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
-            return _airConditionerRepository.Create(airConditioner);
+        public async Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
+            airConditioner = await _airConditionerRepository.Create(airConditioner);
+            _heartbeatService.ToggleDeviceSimulator(airConditioner, true);
+            _heartbeatService.SetupHeartBeatTrackerAsync();
+            return airConditioner;
         }
     }
 }

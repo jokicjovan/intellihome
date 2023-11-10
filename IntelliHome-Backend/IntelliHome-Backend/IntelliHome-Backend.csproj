@@ -36,8 +36,4 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Communications\Services\Interfaces\" />
-  </ItemGroup>
-
 </Project>

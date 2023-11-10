@@ -22,6 +22,8 @@ using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using MQTTnet;
 using IntelliHome_Backend.Features.Communications.Services;
+using IntelliHome_Backend.Features.Communications.HostedServices;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,8 +69,9 @@ builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
 builder.Services.AddScoped<IBatteryService, BatteryService>();
 builder.Services.AddScoped<ISolarPanelService, SolarPanelService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
+builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
 
-builder.Services.AddHostedService<HeartbeatService>();
+builder.Services.AddHostedService<HeartbeatHostedService>();
 builder.Services.AddSingleton(provider =>
 {
     var factory = new MqttFactory();
