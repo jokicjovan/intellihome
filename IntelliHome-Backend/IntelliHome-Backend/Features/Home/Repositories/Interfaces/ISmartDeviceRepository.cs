@@ -5,6 +5,7 @@ namespace IntelliHome_Backend.Features.Home.Repositories.Interfaces
 {
     public interface ISmartDeviceRepository : ICrudRepository<SmartDevice>
     {
-        IEnumerable<SmartDevice> FindAllSmartDevices();
+        IEnumerable<SmartDevice> FindAllWIthHome();
+        IEnumerable<SmartDevice> UpdateAll(List<SmartDevice> smartDevices);
     }
 }

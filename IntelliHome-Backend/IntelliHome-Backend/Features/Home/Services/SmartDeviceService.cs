@@ -13,9 +13,24 @@ namespace IntelliHome_Backend.Features.Home.Services
             _smartDeviceRepository = smartDeviceRepository;
         }
 
+        public Task<SmartDevice> GetSmartDevice(Guid smartDeviceId)
+        {
+            return _smartDeviceRepository.Read(smartDeviceId);
+        }
+
+        public Task<SmartDevice> UpdateSmartDevices(SmartDevice smartDevice)
+        {
+            return _smartDeviceRepository.Update(smartDevice);
+        }
+    
         public IEnumerable<SmartDevice> GetAllSmartDevices()
         {
-            return _smartDeviceRepository.FindAllSmartDevices();
+            return _smartDeviceRepository.FindAllWIthHome();
+        }
+
+        public IEnumerable<SmartDevice> UpdateAllSmartDevices(List<SmartDevice> smartDevices) 
+        {
+            return _smartDeviceRepository.UpdateAll(smartDevices);
         }
     }
 }

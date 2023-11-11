@@ -16,14 +16,14 @@ namespace IntelliHome_Backend.Features.Communications.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task ToggleDeviceSimulator(SmartDevice smartDevice, bool turnOn = true)
+        public async Task<bool> ToggleDeviceSimulator(SmartDevice smartDevice, bool turnOn = true)
         {
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     string baseUrl = "http://127.0.0.1:8000/";
-                    string endpoint = turnOn ? "start-simulation" : "stop-simulation";
+                    string endpoint = turnOn ? "add-device" : "remove-device";
                     string apiUrl = baseUrl + endpoint;
 
                     var content = new StringContent(string.Empty);
@@ -31,35 +31,21 @@ namespace IntelliHome_Backend.Features.Communications.Services
 
                     if (response.IsSuccessStatusCode)
                     {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        Console.WriteLine("API Response:");
-                        Console.WriteLine(responseBody);
+                        return true;
                     }
                     else
                     {
-                        Console.WriteLine($"API Request failed with status code: {response.StatusCode}");
+                        return false;
                     }
                 }
                 catch (HttpRequestException ex)
                 {
-                    Console.WriteLine($"API Request failed: {ex.Message}");
+                    return false;
                 }
             };
         }
 
-        public async Task SetupSimulatorsFromDatabase(bool turnOn = true)
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
-
-                IEnumerable<SmartDevice> smartDevices = smartDeviceService.GetAllSmartDevices();
-                var tasks = smartDevices.Select(smartDevice => ToggleDeviceSimulator(smartDevice, turnOn));
-                await Task.WhenAll(tasks);
-            }
-        }
-
-        public async Task SetupHeartBeatTrackerAsync()
+        public async Task SetupLastWillHandler(Guid smartDeviceId)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -69,12 +55,38 @@ namespace IntelliHome_Backend.Features.Communications.Services
                 .Build();
                 await mqttClient.ConnectAsync(options);
 
-                await mqttClient.SubscribeAsync(new MqttTopicFilter { Topic = $"Heartbeat" });
-                mqttClient.ApplicationMessageReceivedAsync += e =>
+                await mqttClient.SubscribeAsync(new MqttTopicFilter { Topic = $"{smartDeviceId}/will" });
+                mqttClient.ApplicationMessageReceivedAsync += async e =>
                 {
-                    Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
-                    return Task.CompletedTask;
+                    using (var scope = _serviceProvider.CreateScope()) 
+                    {
+                        ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
+                        Guid deviceId = Guid.Parse(e.ApplicationMessage.Topic.Split("/")[0]);
+                        SmartDevice smartDevice = await smartDeviceService.GetSmartDevice(smartDeviceId);
+                        smartDevice.IsConnected = false;
+                        await smartDeviceService.UpdateSmartDevices(smartDevice);
+                    }
                 };
+            }
+        }
+
+        public async Task SetupSimulatorsFromDatabase(bool turnOn = true)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
+
+                List<SmartDevice> smartDevices = smartDeviceService.GetAllSmartDevices().ToList();
+                foreach (SmartDevice smartDevice in smartDevices)
+                {
+                    bool success = await ToggleDeviceSimulator(smartDevice, turnOn);
+                    smartDevice.IsConnected = success;
+                    if (success)
+                    {
+                        SetupLastWillHandler(smartDevice.Id);
+                    }
+                }
+                smartDeviceService.UpdateAllSmartDevices(smartDevices);
             }
         }
     }

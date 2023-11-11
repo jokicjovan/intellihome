@@ -15,9 +15,8 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
-                var setupSimulatorsTask = Task.Run(async () => await heartbeatService.SetupSimulatorsFromDatabase());
-                var setupHeartbeatTrackerTask = Task.Run(async () => await heartbeatService.SetupHeartBeatTrackerAsync());
-                return Task.WhenAll(setupSimulatorsTask, setupHeartbeatTrackerTask);
+                Task.Run(() => heartbeatService.SetupSimulatorsFromDatabase());
+                return Task.CompletedTask;
             }
         }
 

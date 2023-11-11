@@ -18,8 +18,8 @@ namespace IntelliHome_Backend.Features.PKA.Services
 
         public async Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
             airConditioner = await _airConditionerRepository.Create(airConditioner);
-            _heartbeatService.ToggleDeviceSimulator(airConditioner, true);
-            _heartbeatService.SetupHeartBeatTrackerAsync();
+            await _heartbeatService.ToggleDeviceSimulator(airConditioner, true);
+            await _heartbeatService.SetupLastWillHandler(airConditioner.Id);
             return airConditioner;
         }
     }

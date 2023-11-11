@@ -1,9 +1,40 @@
 import asyncio
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 import paho.mqtt.client as mqtt
 
+
+class Device:
+    def __init__(self, device_id):
+        self.device_id = device_id
+        self.event = asyncio.Event()
+        self.client = mqtt.Client(client_id=device_id, clean_session=True)
+        self.client.will_set(f"{device_id}/will", payload=f"Device {device_id} offline", qos=1, retain=False)
+        self.client.connect("localhost", 1883, keepalive=300)
+        self.client.loop_start()
+
+    async def send_data(self):
+        while True:
+            await asyncio.sleep(5)
+
+
+class DevicesManager:
+    def __init__(self):
+        self.devices = {}
+
+    def add_device(self, device_id):
+        device = Device(device_id)
+        self.devices[device_id] = device
+        asyncio.create_task(device.send_data())
+
+    def remove_device(self, device_id):
+        self.devices.get(device_id)
+        device = self.devices.pop(device_id, None)
+        if device:
+            device.client.disconnect()
+
+
 app = FastAPI()
-mqtt_connections = {}
+devices_manager = DevicesManager()
 
 
 @app.on_event("startup")
@@ -11,37 +42,13 @@ async def startup_event():
     pass
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    for connection_key, client in mqtt_connections.items():
-        client.disconnect()
+@app.post("/add-device/{device_id}")
+async def add_device(device_id: str):
+    devices_manager.add_device(device_id)
+    return {"message": f"Device added: {device_id}"}
 
 
-async def send_heartbeat(connection_key: str):
-    client = mqtt_connections.get(connection_key)
-    if client is None:
-        return
-
-    while True:
-        await asyncio.sleep(5)
-        client.publish("Heartbeat", f"{connection_key}")
-
-
-@app.post("/start-simulation/{smart_home_id}")
-async def start_simulation(smart_home_id: str, background_tasks: BackgroundTasks):
-    client = mqtt.Client()
-    client.connect("localhost", 1883)
-    mqtt_connections[smart_home_id] = client
-    background_tasks.add_task(send_heartbeat, smart_home_id)
-    return {"message": f"Simulation started for connection {smart_home_id}"}
-
-
-@app.post("/stop-simulation/{connection_key}")
-async def stop_simulation(connection_key: str):
-    client = mqtt_connections.get(connection_key)
-    if client is not None:
-        client.disconnect()
-        del mqtt_connections[connection_key]
-        return {"message": f"Simulation stopped for connection {connection_key}"}
-    else:
-        return {"message": f"Connection {connection_key} not found"}
+@app.post("/remove-device/{device_id}")
+async def remove_device(device_id: str):
+    devices_manager.remove_device(device_id)
+    return {"message": f"Device removed: {device_id}"}

@@ -10,9 +10,16 @@ namespace IntelliHome_Backend.Features.Home.Repositories
     {
         public SmartDeviceRepository(PostgreSqlDbContext context) : base(context) { }
 
-        public IEnumerable<SmartDevice> FindAllSmartDevices()
+        public IEnumerable<SmartDevice> FindAllWIthHome()
         {
             return _entities.Include(p => p.SmartHome);
+        }
+
+        public IEnumerable<SmartDevice> UpdateAll(List<SmartDevice> smartDevices) 
+        {
+            _entities.UpdateRange(smartDevices);
+            _context.SaveChanges();
+            return _entities;
         }
     }
 }
