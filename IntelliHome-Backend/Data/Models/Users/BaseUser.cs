@@ -15,6 +15,8 @@ namespace Data.Models.Users
         public String Email { get; set; }
         public String Username { get; set; }
         public String Password { get; set; }
+        public Boolean IsActivated { get; set; }
         public String? Image { get; set; }
+
     }
 }

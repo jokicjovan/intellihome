@@ -14,14 +14,14 @@ namespace Data.Models.Users
         public List<SmartDevice> AllowedSmartDevices { get; set; }
 
 
-        public User(Guid id, string firstName, string lastName, string email, string username, string password, string? image)
+        public User( string firstName, string lastName, string email, string username, string password, bool isActivated, string? image)
         {
-            Id = id;
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Username = username;
             Password = password;
+            IsActivated = isActivated;
             Image = image;
             SmartHomes = new List<SmartHome>();
             AllowedSmartDevices = new List<SmartDevice>();

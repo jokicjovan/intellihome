@@ -7,6 +7,7 @@ using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Security;
 using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.SPU.Repositories;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
@@ -24,6 +25,7 @@ using MQTTnet;
 using IntelliHome_Backend.Features.Communications.Services;
 using IntelliHome_Backend.Features.Communications.HostedServices;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,9 +38,11 @@ builder.Services.AddSwaggerGen();
 
 //DB context
 builder.Services.AddDbContext<PostgreSqlDbContext>();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IConfirmationRepository, ConfirmationRepository>();
 builder.Services.AddScoped<ISmartDeviceRepository, SmartDeviceRepository>();
 builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
 builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
@@ -57,6 +61,7 @@ builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPoint
 
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IConfirmationService, ConfirmationService>();
 builder.Services.AddScoped<ISmartDeviceService, SmartDeviceService>();
 builder.Services.AddScoped<ISmartHomeService, SmartHomeService>();
 builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
@@ -81,8 +86,36 @@ builder.Services.AddSingleton(provider =>
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:8000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
+builder.Services.AddTransient<CustomCookieAuthenticationEvents>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+       .AddCookie(options =>
+       {
+           options.Cookie.SameSite = SameSiteMode.None;
+           options.Cookie.Name = "auth";
+           options.SlidingExpiration = true;
+           options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+           options.Cookie.MaxAge = options.ExpireTimeSpan;
+           options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+           options.EventsType = typeof(CustomCookieAuthenticationEvents);
+       });
+
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -91,8 +124,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowReactApp");
+
+
 app.UseMiddleware<ExceptionMiddleware>(true);
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
