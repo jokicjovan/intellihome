@@ -68,7 +68,7 @@ namespace IntelliHome_Backend.Features.Users.Services
 
             var dynamicTemplateData = new
             {
-                url = "http://localhost:5173/activateAccount?code=" + code,
+                url = "http://localhost:8000/activateAccount?code=" + code,
                 user_name = user.FirstName,
                 code = code
                 

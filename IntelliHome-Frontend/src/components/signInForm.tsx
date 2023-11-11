@@ -60,7 +60,7 @@ const SignInForm = () => {
         </div>
         <Button type="submit" sx={{backgroundColor:"#FBC40E", width:"400px",fontSize:"22px",fontWeight:"600",paddingY:"10px",margin:"15px auto",borderRadius:"15px", ':hover':{backgroundColor:"#EDB90D"}}}>Sign In</Button>
         <Typography align="center" sx={{fontSize:"18px",fontWeight:"600"}}>Don't have an account?</Typography>
-        <Link  onClick={()=>{}}  to="/signup" align="center" sx={{fontSize:"20px",color:"#343F71",fontWeight:"600"}}>Sign up</Link>
+        <Link  onClick={()=>{navigate("/signup")}}  align="center" sx={{fontSize:"20px",color:"#343F71",fontWeight:"600", ":hover":{cursor:"pointer"}}}>Sign up</Link>
     </Box>
 }
 
