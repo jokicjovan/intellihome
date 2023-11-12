@@ -5,6 +5,7 @@ using Data.Models.PKA;
 using Data.Models.SPU;
 using Data.Models.Users;
 using Data.Models.VEU;
+using System.Diagnostics.Contracts;
 
 namespace Data.Context
 {
@@ -18,6 +19,7 @@ namespace Data.Context
         public DbSet<AirConditioner> AirConditioners { get; set; }
         public DbSet<AirConditionerWork> AirConditionerWorks { get; set; }
         public DbSet<AmbientSensor> AmbientSensors { get; set; }
+        public DbSet<Confirmation> Confirmations { get; set; }
         public DbSet<WashingMachine> WashingMachines { get; set; }
         public DbSet<WashingMachineMode> WashingMachineModes { get; set; }
         public DbSet<Lamp> Lamps { get; set; }
@@ -64,6 +66,12 @@ namespace Data.Context
                 .HasIndex(e => new { e.Username })
                 .IsUnique(true);
 
+            modelBuilder.Entity<BaseUser>()
+            .ToTable("Users")
+            .HasDiscriminator<string>("Discriminator")
+            .HasValue<User>("User")
+            .HasValue<Admin>("Admin");
+
             modelBuilder.Entity<AirConditioner>().ToTable("AirConditioners");
             modelBuilder.Entity<AmbientSensor>().ToTable("AmbientSensors");
             modelBuilder.Entity<WashingMachine>().ToTable("WashingMachines");
@@ -73,6 +81,7 @@ namespace Data.Context
             modelBuilder.Entity<BatterySystem>().ToTable("BatterySystems");
             modelBuilder.Entity<SolarPanelSystem>().ToTable("SolarPanelSystems");
             modelBuilder.Entity<VehicleCharger>().ToTable("VehicleChargers");
+            modelBuilder.Entity<Confirmation>().ToTable("Confirmations");
 
             modelBuilder.Entity<WashingMachineMode>().ToTable("WashingMachineModes");
             modelBuilder.Entity<WashingMachine>()
@@ -83,7 +92,8 @@ namespace Data.Context
                     j => j.HasOne<WashingMachineMode>().WithMany(),
                     j => j.HasOne<WashingMachine>().WithMany()
                 );
-
+            modelBuilder.Entity<Admin>().HasData(
+    new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true));
         }
     }
 }

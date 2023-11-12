@@ -4,6 +4,7 @@ namespace IntelliHome_Backend.Features.Users.Services.Interfaces
 {
     public interface IUserService
     {
-        public Task<User> CreateUser(User user);
+        Task<User> Authenticate(string email, string password);
+        public Task<User> CreateUser(User user,IFormFile image);
     }
 }
