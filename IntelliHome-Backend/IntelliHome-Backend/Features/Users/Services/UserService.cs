@@ -21,7 +21,7 @@ namespace IntelliHome_Backend.Features.Users.Services
             _confirmationService = confirmationService;
         }
 
-        public async Task<User> CreateUser(User newUser)
+        public async Task<User> CreateUser(User newUser,IFormFile image)
         {
             List<ValidationResult> validationResults = new List<ValidationResult>();
             bool isValid = Validator.TryValidateObject(newUser, new ValidationContext(newUser, null, null), validationResults, true);
@@ -62,6 +62,13 @@ namespace IntelliHome_Backend.Features.Users.Services
                     throw new InvalidInputException("User with that telephone already exists!");
                 }
             }
+            string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            string SavePath = Path.Combine("static/profilePictures", ImageName);
+            using (var stream = new FileStream(SavePath, FileMode.Create))
+            {
+                image.CopyTo(stream);
+            }
+            newUser.Image = SavePath;
             newUser.Password=BCrypt.Net.BCrypt.HashPassword(newUser.Password);
             newUser.IsActivated = false;
             User user = await _userRepository.Create(newUser);

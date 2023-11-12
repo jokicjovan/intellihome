@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="static\profilPictures\" />
+  </ItemGroup>
+
 </Project>
