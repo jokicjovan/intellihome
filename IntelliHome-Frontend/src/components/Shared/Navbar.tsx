@@ -5,7 +5,7 @@ import {Group, Home} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 
 const Navbar = () => {
-    const { role , _ } = useContext(AuthContext);
+    const { role} = useContext(AuthContext);
     const navigate=useNavigate();
     const buttonStyle={width:"100%",color:"#FBC40EFF", justifyContent:"flex-start", paddingLeft:"15px", fontSize:"35px",textTransform:"None"}
     const typoStyle={color:"white", fontSize:"30px"}

@@ -1,4 +1,4 @@
-import {Box, CircularProgress, Container, CssBaseline, Icon, Link, Typography} from "@mui/material";
+import {Box, CircularProgress, Container, CssBaseline, Link, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {CheckCircle, Error} from "@mui/icons-material";
@@ -10,7 +10,7 @@ import {environment} from "../security/Environment";
 const SuccessfulActivation=()=>{
 
     const navigate = useNavigate()
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [isLoading,setIsLoading]= useState(true);
     const [isValid,setIsValid]= useState(false);
 

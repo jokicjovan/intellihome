@@ -8,7 +8,7 @@ const SignContainter = ({component:Component}) => {
     }} >
         <CssBaseline/>
         <Box sx={{width:"100%",height: "55.625rem",display:"flex",flexDirection:"row", backgroundColor: "#DBDDEB", boxShadow:"0px 15px 30px 15px rgba(0, 0, 0, 0.25)",borderRadius:"52px",overflow:"hidden"}}>
-            <img src="src/assets/backgroundSign.png" style={{width:"50%",height:"100%",objectFit:"cover"}}/>
+            <img src="src/assets/backgroundSign.png" style={{width:"50%",height:"100%",objectFit:"cover"}} alt={"Cover image"}/>
 
             <Component/>
         </Box>
