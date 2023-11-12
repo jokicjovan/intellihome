@@ -1,4 +1,3 @@
-
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
@@ -17,22 +16,24 @@ import SuccessfulActivation from "./pages/successfulActivation";
 import Navbar from "./components/Shared/Navbar";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
+import CreateSmartDevice from "./components/SmartDevices/CreateSmartDevice.tsx";
 
 axios.defaults.withCredentials = true
 
 const theme = createTheme({
     palette: {
         primary: {
-            main: "#0f0b0a",
+            main: "#FBC40E",
         },
         secondary: {
-            main: "#fdefc7",
+            main: "#343F71",
             contrastText: 'white'
         },
     },
 });
 
 const router = createBrowserRouter([
+    {path:"/CreateSmartDevice", element: <UnauthenticatedRoute><CreateSmartDevice deviceType={"AirConditioner"}/></UnauthenticatedRoute>},
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
     {path:"/successfullActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
@@ -45,11 +46,11 @@ const queryClient = new QueryClient()
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme} >
-            <AuthProvider>
-                <RouterProvider router={router}/>
-            </AuthProvider>
-        </ThemeProvider>
+            <ThemeProvider theme={theme} >
+                <AuthProvider>
+                    <RouterProvider router={router}/>
+                </AuthProvider>
+            </ThemeProvider>
         </QueryClientProvider>
     </React.StrictMode>
 )
