@@ -10,9 +10,13 @@ namespace IntelliHome_Backend.Features.Users.Repositories
     {
         public UserRepository(PostgreSqlDbContext context) : base(context) { }
 
-        public async Task<User> Read(String username)
+        public async Task<User> FindByEmail(String email)
         {
-            return await _entities.FirstOrDefaultAsync(u => u.Username == username);
+            return await _entities.FirstOrDefaultAsync(e => e.Email.Equals(email));
+        }
+        public async Task<User> FindByUsername(String username)
+        {
+            return await _entities.FirstOrDefaultAsync(e => e.Username.Equals(username));
         }
     }
 }

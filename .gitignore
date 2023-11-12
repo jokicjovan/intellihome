@@ -545,6 +545,8 @@ FodyWeavers.xsd
 
 postgres_data/*
 influxdb_data/*
+DeviceSimulator/.idea/*
+Mosquitto/data/*
 IntelliHome-Backend/Data/InfluxDBToken.txt
 IntelliHome-Backend/Data/Migrations
 .idea/*

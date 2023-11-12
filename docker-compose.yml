@@ -12,7 +12,7 @@ services:
       - "5432:5432"
     working_dir: /var/lib/postgresql/data
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - Postgres:/var/lib/postgresql/data
     tty: true
 
   influxdb:
@@ -23,8 +23,34 @@ services:
       - "8086:8086"
     working_dir: /var/lib/influxdb
     volumes:
-      - influxdb_data:/etc/influxdb/influxdb
+      - Influxdb:/etc/influxdb/influxdb
     tty: true
+
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    environment:
+      - MQTT_CONFIG=/mosquitto/config/mosquitto.conf
+    volumes:
+      - ./Mosquitto/config:/mosquitto/config
+      - ./Mosquitto/data:/mosquitto/data
+      - ./Mosquitto/log:/mosquitto/log
+    networks:
+      - mqtt
+    tty: true
+
+  # device_simulator:
+  #   image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
+  #   container_name: device_simulator
+  #   restart: always
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./DeviceSimulator:/app
+  #   tty: true
 
   # react_frontend:
   #   image: node:alpine
@@ -57,8 +83,11 @@ services:
   #     - postgres
 
 
-
 volumes:
-  postgres_data:
-  influxdb_data:
+  Postgres:
+  Influxdb:
+  Mosquitto:
+  DeviceSimulator:
 
+networks:
+  mqtt:
