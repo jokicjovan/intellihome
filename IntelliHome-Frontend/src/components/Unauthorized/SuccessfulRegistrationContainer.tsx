@@ -1,8 +1,6 @@
-import {Box, Button, InputLabel, Link, TextField, Typography} from "@mui/material";
-import React, {useState} from "react";
+import {Box, Link, Typography} from "@mui/material";
+import React from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
-import {environment} from "../../security/Environment";
 
 
 const SuccessfulRegistrationContainer = () => {

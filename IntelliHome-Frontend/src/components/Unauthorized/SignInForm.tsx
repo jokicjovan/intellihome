@@ -1,5 +1,5 @@
 import {Box, Button, InputLabel, Link, TextField, Typography} from "@mui/material";
-import React, {useState} from "react";
+import React, {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {environment} from "../../security/Environment";
@@ -27,7 +27,7 @@ const SignInForm = () => {
     const navigate = useNavigate()
 
 
-    function submitHandler(event: any) {
+    function submitHandler(event: FormEvent<HTMLDivElement>) {
         event.preventDefault()
         axios.post(environment + `/api/User/login`, {
             username: username,

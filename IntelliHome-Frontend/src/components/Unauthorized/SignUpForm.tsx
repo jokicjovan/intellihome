@@ -1,7 +1,7 @@
 import {Box, Button, Link, TextField, Typography} from "@mui/material";
-import {CheckCircle, Close, CloudUpload, Error} from "@mui/icons-material";
+import {CheckCircle, Close} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
-import {useMutation, useQueryClient} from "react-query";
+import {useMutation} from "react-query";
 import axios from "axios";
 import {environment} from "../../security/Environment";
 import {useState} from "react";
@@ -10,7 +10,6 @@ import SuccessfulRegistrationContainer from "./SuccessfulRegistrationContainer";
 
 const SignUpForm = () => {
     const navigate = useNavigate()
-    const queryClient = useQueryClient()
     const [successfulRegistration,setSuccessfulRegistration] = useState(false);
     const [fileData,setFileData] = useState(null);
     const styled = {
