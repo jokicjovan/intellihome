@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="static\smartHomes\" />
     <Folder Include="static\profilPictures\" />
   </ItemGroup>
 

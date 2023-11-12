@@ -1,5 +1,6 @@
 ﻿using Data.Models.Home;
 using IntelliHome_Backend.Features.Home.DTOs;
+using IntelliHome_Backend.Features.Shared.DTOs;
 
 namespace IntelliHome_Backend.Features.Home.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task<SmartHome> GetSmartHome(Guid Id);
         Task<GetSmartHomeDTO> GetSmartHomeDTO(Guid Id);
         Task<GetSmartHomeDTO> CreateSmartHome(SmartHomeCreationDTO dto, String username);
-        Task<List<GetSmartHomeDTO>> GetSmartHomesForUser(string username);
+        Task<SmartHomePaginatedDTO> GetSmartHomesForUser(string username, PageParametersDTO pageParameters);
         Task ApproveSmartHome(Guid id);
         Task DeleteSmartHome(Guid id);
     }

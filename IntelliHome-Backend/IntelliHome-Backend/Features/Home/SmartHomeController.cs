@@ -3,8 +3,11 @@ using Data.Models.PKA;
 using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Security.Claims;
+using IntelliHome_Backend.Features.Shared.DTOs;
 
 namespace IntelliHome_Backend.Features.Home
 {
@@ -20,13 +23,20 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateSmartHome([FromBody] SmartHomeCreationDTO dto)
+        public async Task<ActionResult> CreateSmartHome([FromForm] SmartHomeCreationDTO dto)
         {
             // TODO: Get user from token
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            String username = identity.FindFirst(ClaimTypes.Name).Value;
             GetSmartHomeDTO smartHome;
             try
             {
-                smartHome = await _smartHomeService.CreateSmartHome(dto, "boki");
+                smartHome = await _smartHomeService.CreateSmartHome(dto, username);
             }
             catch (Exception e)
             {
@@ -53,13 +63,20 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetSmartHomesForUser()
+        public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters)
         {
             // TODO: Get user from token
-            List<GetSmartHomeDTO> smartHomes;
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            String username = identity.FindFirst(ClaimTypes.Name).Value;
+            SmartHomePaginatedDTO smartHomes;
             try
             {
-                smartHomes = await _smartHomeService.GetSmartHomesForUser("boki");
+                smartHomes = await _smartHomeService.GetSmartHomesForUser(username, pageParameters);
             }
             catch (Exception e)
             {

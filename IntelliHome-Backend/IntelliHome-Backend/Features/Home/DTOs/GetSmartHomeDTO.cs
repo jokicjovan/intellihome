@@ -23,6 +23,9 @@ namespace IntelliHome_Backend.Features.Home.DTOs
         // public List<GetSmartDeviceDTO> SmartDevices { get; set; }
         public GetUserDTO Owner { get; set; }
 
+        // image from file system
+
+
         public GetSmartHomeDTO(SmartHome smartHome)
         {
             Id = smartHome.Id;

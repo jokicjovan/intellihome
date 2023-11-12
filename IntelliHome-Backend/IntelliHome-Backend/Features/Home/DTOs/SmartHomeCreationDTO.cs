@@ -11,7 +11,7 @@ namespace IntelliHome_Backend.Features.Home.DTOs
         public string Area { get; set; }
         public SmartHomeType Type { get; set; }
         public short NumberOfFloors { get; set; }
-        public string? Image { get; set; }
+        public IFormFile? Image { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }

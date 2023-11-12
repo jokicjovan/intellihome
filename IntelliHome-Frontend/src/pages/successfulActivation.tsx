@@ -1,5 +1,5 @@
 import {Box, CircularProgress, Container, CssBaseline, Link, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {CheckCircle, Error} from "@mui/icons-material";
 import {useMutation} from "react-query";
@@ -29,7 +29,7 @@ const SuccessfulActivation=()=>{
         },
     })
     useEffect(() => {
-        const code = searchParams.get('code');
+        const code = searchParams.get('code')!;
         activateMutation.mutate(code);
 
     },[]);
