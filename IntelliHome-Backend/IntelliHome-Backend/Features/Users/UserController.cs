@@ -24,10 +24,10 @@ namespace IntelliHome_Backend.Features.Users
         }
 
         [HttpPost]
-        public async Task<User> register(UserDTO userDTO)
+        public async Task<User> register([FromForm] UserDTO userDTO)
         {
             User user = new User(userDTO.FirstName,userDTO.LastName,userDTO.Email,userDTO.Username,userDTO.Password,false,null);
-            return await _userService.CreateUser(user);
+            return await _userService.CreateUser(user,userDTO.Image);
         }
 
         [HttpPost]
@@ -60,6 +60,14 @@ namespace IntelliHome_Backend.Features.Users
         {
             await _confirmationService.ActivateAccount(code);
             return Ok("Account activated successfully!");
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<String>> logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok("Logged out successfully!");
         }
     }
     

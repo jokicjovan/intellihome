@@ -11,9 +11,12 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import {UnauthenticatedRoute} from "./security/UnauthenticatedRoute";
 import {AuthenticatedRoute} from "./security/AuthenticatedRoute";
-import SuccessfullRegistration from "./pages/SuccessfullRegistration";
+import SuccessfulRegistration from "./pages/SuccessfulRegistration";
 import {QueryClient, QueryClientProvider} from "react-query";
-import SuccessfullActivation from "./pages/successfullActivation";
+import SuccessfulActivation from "./pages/successfulActivation";
+import Navbar from "./components/Shared/Navbar";
+import Layout from "./components/Shared/Layout";
+import AddAdmin from "./pages/AddAdmin";
 
 axios.defaults.withCredentials = true
 
@@ -32,9 +35,9 @@ const theme = createTheme({
 const router = createBrowserRouter([
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
-    {path:"/successfullRegistration", element: <UnauthenticatedRoute><SuccessfullRegistration/></UnauthenticatedRoute>},
-    {path:"/successfullActivation", element: <UnauthenticatedRoute><SuccessfullActivation/></UnauthenticatedRoute>},
-    {path:"/home", element: <AuthenticatedRoute><Home/>/</AuthenticatedRoute>},
+    {path:"/successfullActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
+    {path:"/home", element: <AuthenticatedRoute><Layout><Home/></Layout></AuthenticatedRoute>},
+    {path:"/addAdmin", element: <AuthenticatedRoute><Layout><AddAdmin/></Layout></AuthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])
 const queryClient = new QueryClient()
