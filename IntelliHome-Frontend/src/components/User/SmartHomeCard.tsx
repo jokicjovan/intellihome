@@ -8,11 +8,27 @@ const SmartHomeCard = (props) => {
     const iconStyle = { fontStyle: "bold", fontWeight: "600", color: "#343F71", margin: "5px" };
     const containerStyle = { display: "flex", flexDirection: "row", padding: "0 10px", alignItems: "center" };
     const buttonStyle = { width: "200px",backgroundColor: "#DBDDEB", color: "#343F71", fontWeight: "600", textTransform: "none", margin: "10px auto", display: "block", borderRadius:"5px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)"}
+    const boxStyle = {
+        width: "280px",
+        height: "280px",
+        backgroundColor: isConditionMet ? "white" : "#E1E1E0",
+        borderRadius: "15px",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        textAlign: "center",
+        mb:"10px",
+        '@media screen and (min-width: 1800px)': {
+            mb: "50px",
+            mt: "50px",
+        },
+        '@media screen and (max-width: 768px)': {
+            mb: "5px",
+        },
+    }
 
     const data = props.data
 
     return (
-        <Box sx={{ width: "280px", height: "280px", backgroundColor: isConditionMet ? "white" : "#E1E1E0", borderRadius: "15px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", textAlign: "center", mb:"10px" }}>
+        <Box sx={boxStyle}>
             <Container disableGutters sx={{ display: "flex", flexDirection: "row", marginY: "auto", marginX:"5px 0" }}>
                 <img
                     src={environment + '/' + data.image}

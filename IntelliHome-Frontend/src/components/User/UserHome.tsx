@@ -58,7 +58,7 @@ const UserHome=()=>{
             <Button onClick={()=>console.log("stisnuo")} sx={buttonStyle}><Add sx={{marginX:"5px", color:"white" }} fontSize="inherit"/><Typography sx={typoStyle}>Add</Typography></Button>
         </Container>
 
-        <Container  maxWidth="xl">
+        <Container maxWidth="xl" style={{ position: 'relative' }}>
             {renderPanel()}
             <TablePagination
                 component="div"
@@ -68,6 +68,7 @@ const UserHome=()=>{
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 rowsPerPageOptions={[8]}
+                style={{ position: 'fixed', bottom: 10, right: 30}}
             />
         </Container>
 
