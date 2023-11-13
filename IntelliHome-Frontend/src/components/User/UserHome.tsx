@@ -5,6 +5,7 @@ import axios from "axios";
 import SmartHomeCard from "./SmartHomeCard.tsx";
 import {environment} from "../../security/Environment.tsx";
 import SmartHomeCreatingMap from "./SmartHomeCreatingMap.tsx";
+import SmartHomeCreatingInfo from "./SmartHomeCreatingInfo.tsx";
 
 const UserHome=()=>{
     const buttonStyle={backgroundColor:"#FBC40E", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", width:"80px",  height:"30px", fontSize:"20px",fontWeight:"600",margin:"15px",borderRadius:"5px", ':hover':{backgroundColor:"#EDB90D"}, textTransform: "none"}
@@ -18,9 +19,11 @@ const UserHome=()=>{
     const [modalPage, setModalPage] = React.useState(0);
     const [button1Text, setButton1Text] = React.useState("Cancel");
     const [button2Text, setButton2Text] = React.useState("Next");
-    const [line1Color, setLine1Color] = React.useState("#343F71FF")
+    const [line1Color] = React.useState("#343F71FF")
     const [line2Color, setLine2Color] = React.useState("#DBDDEB")
     const [line3Color, setLine3Color] = React.useState("#DBDDEB")
+    const [mapData, setMapData] = React.useState({});
+
 
     const searchStyle = {
         '& label.Mui-focused': {
@@ -91,6 +94,11 @@ const UserHome=()=>{
         setOpenModal(false);
     };
 
+    const handleModalOpen = () => {
+        setOpenModal(true);
+        setPage(0);
+    }
+
     const button1Handler = () => {
         if(modalPage===0){
             setOpenModal(false);
@@ -124,6 +132,12 @@ const UserHome=()=>{
         }
     }
 
+    const handleLocationSelect = (locationInfo) => {
+        console.log('Location selected:', locationInfo);
+        setMapData(locationInfo);
+    };
+
+
     const modalContent = (
         <Box sx={{ width: "50vw", height: "60vh", backgroundColor: "white", borderRadius: "10px", padding: "20px", display: "flex", flexDirection: "column", position: "relative" }}>
             <Typography sx={{ fontSize: "30px", fontWeight: "600", margin: "10px" }}>Add new property</Typography>
@@ -134,7 +148,37 @@ const UserHome=()=>{
             </Box>
             {/* Content */}
             <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-                {modalPage === 0 && <SmartHomeCreatingMap />}
+                {modalPage === 0 && <SmartHomeCreatingMap onLocationSelect={handleLocationSelect}/>}
+                {modalPage === 1 && <SmartHomeCreatingInfo mapData={mapData}/>}
+                {modalPage === 2 && (
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "100%",
+                            position: "relative",
+                        }}
+                    >
+                        <Typography sx={{ fontSize: "20px", fontWeight: "600", textAlign: "center" }}>
+                            Upload photos of your property
+                        </Typography>
+                        <input
+                            type="file"
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                width: "100%",
+                                height: "100%",
+                                transform: "translate(-50%, -50%)",
+                                opacity: 0,
+                                cursor: "pointer",
+                            }}
+                        />
+                    </Box>
+                )}
             </Box>
             {/* Buttons */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt:"30px" }}>
@@ -165,7 +209,7 @@ const UserHome=()=>{
                     padding: 10,
                 }
             }}  focused/>
-            <Button onClick={()=>setOpenModal(true)} sx={buttonStyle}><Add sx={{marginX:"5px", color:"white" }} fontSize="inherit"/><Typography sx={typoStyle}>Add</Typography></Button>
+            <Button onClick={()=>handleModalOpen()} sx={buttonStyle}><Add sx={{marginX:"5px", color:"white" }} fontSize="inherit"/><Typography sx={typoStyle}>Add</Typography></Button>
         </Container>
 
         <Container maxWidth="xl" style={{ position: 'relative' }}>

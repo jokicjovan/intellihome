@@ -3,7 +3,7 @@ import {MapContainer, Popup, Marker, TileLayer, useMapEvents} from "react-leafle
 import L from "leaflet";
 
 
-const SmartHomeCreatingMap = () => {
+const SmartHomeCreatingMap = ({onLocationSelect}) => {
     const position = L.latLng(45.2671, 19.8335);
 
     const [clickedMarker, setClickedMarker] = useState(null);
@@ -20,14 +20,22 @@ const SmartHomeCreatingMap = () => {
                 const { address } = data;
                 console.log('Address found:', address);
 
-                console.log(`Address: ${address.road + ' ' + address.house_number}`);
-                console.log(`City: ${address.city_district}`);
-                console.log(`Country: ${address.country}`);
+                const locationInfo = {
+                    address: `${address.road} ${address.house_number}`,
+                    city: address.city_district,
+                    country: address.country,
+                    latitude: lat,
+                    longitude: lng,
+                };
 
                 // Set the clicked marker for display on the map
                 setClickedMarker({
                     position: [lat, lng],
+                    popupContent: `Address: ${locationInfo.address}, City: ${locationInfo.city}, Country: ${locationInfo.country}`,
                 });
+
+                // Pass the location info to the parent component
+                onLocationSelect(locationInfo);
             } else {
                 console.log('Address not found');
             }
