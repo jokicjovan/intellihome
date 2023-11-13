@@ -11,7 +11,7 @@ const SmartHomeCard = (props) => {
     const boxStyle = {
         width: "280px",
         height: "280px",
-        backgroundColor: isConditionMet ? "white" : "#E1E1E0",
+            backgroundColor: isConditionMet ? "white" : "#E1E1E0",
         borderRadius: "15px",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
         textAlign: "center",
