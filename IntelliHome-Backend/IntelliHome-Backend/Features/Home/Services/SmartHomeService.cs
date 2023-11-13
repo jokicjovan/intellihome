@@ -73,10 +73,10 @@ namespace IntelliHome_Backend.Features.Home.Services
 
         }
 
-        public async Task<SmartHomePaginatedDTO> GetSmartHomesForUser(string username, PageParametersDTO pageParameters)
+        public async Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters)
         {
             User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
-            List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUser(user);
+            List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
             SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
             {
                 TotalCount = smartHomes.Count,

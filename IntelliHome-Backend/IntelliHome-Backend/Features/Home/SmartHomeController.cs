@@ -1,4 +1,5 @@
-﻿using Data.Models.Home;
+﻿using System.ComponentModel.DataAnnotations;
+using Data.Models.Home;
 using Data.Models.PKA;
 using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
@@ -63,7 +64,7 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters)
+        public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters, [FromQuery] String search)
         {
             // TODO: Get user from token
             AuthenticateResult result = await HttpContext.AuthenticateAsync();
@@ -76,7 +77,14 @@ namespace IntelliHome_Backend.Features.Home
             SmartHomePaginatedDTO smartHomes;
             try
             {
-                smartHomes = await _smartHomeService.GetSmartHomesForUser(username, pageParameters);
+                if (search == null)
+                {
+                    search = "";
+                }
+                // remove first and last character from search string
+                search = search.Substring(1, search.Length - 2);
+
+                smartHomes = await _smartHomeService.GetSmartHomesForUser(username, search, pageParameters);
             }
             catch (Exception e)
             {

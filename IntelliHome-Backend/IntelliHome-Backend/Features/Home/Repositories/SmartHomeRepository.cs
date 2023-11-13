@@ -30,5 +30,16 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .Where(s => s.Owner.Username == user.Username)
                 .ToListAsync();
         }
+
+        public async Task<List<SmartHome>> GetSmartHomesForUserWithNameSearch(User user, string search)
+        {
+            return await _entities
+                .Include(s => s.SmartDevices)
+                .Include(s => s.Owner)
+                .Include(s => s.City)
+                .Where(s => s.Owner.Username == user.Username)
+                .Where(s => s.Name.ToLower().Contains(search.ToLower()))
+                .ToListAsync();
+        }
     }
 }

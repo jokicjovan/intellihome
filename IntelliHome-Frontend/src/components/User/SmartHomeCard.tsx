@@ -16,7 +16,7 @@ const SmartHomeCard = (props) => {
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
         textAlign: "center",
         mb:"10px",
-        '@media screen and (min-width: 1800px)': {
+        '@media screen and (min-height: 800px)': {
             mb: "50px",
             mt: "50px",
         },

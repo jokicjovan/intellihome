@@ -1,4 +1,4 @@
-import {Box, Button, Container, Grid, TablePagination, Typography} from "@mui/material";
+import {Box, Button, Container, Grid, TablePagination, TextField, Typography} from "@mui/material";
 import {Add} from "@mui/icons-material";
 import React, {useEffect} from "react";
 import axios from "axios";
@@ -12,6 +12,29 @@ const UserHome=()=>{
     const [totalCount, setTotalCount] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(8);
     const [smartHomes, setSmartHomes]=React.useState([]);
+    const [search, setSearch]=React.useState("");
+    const searchStyle = {
+        '& label.Mui-focused': {
+            color: '#343F71FF',
+            fontWeight: 'bold',
+        },
+        '& .MuiOutlinedInput-root': {
+            '&.Mui-focused fieldset': {
+                borderColor: '#343F71FF',
+                borderRadius: '10px',
+            },
+            borderRadius: '10px',
+        },
+        margin: '15px auto',
+        width: '50%',
+        backgroundColor: '#DBDDEB',
+        borderRadius: '10px',
+        border: '10px',
+        '& input': {
+            fontSize: '16px',
+            fontWeight: 'bold',
+        },
+    };
 
     const handleChangePage = (event, newPage: number) => {
         setPage(newPage);
@@ -21,15 +44,20 @@ const UserHome=()=>{
         setPage(0);
     };
 
-    useEffect( ()=>{
-        axios.get(environment + `/api/SmartHome/GetSmartHomesForUser?PageNumber=${page + 1}&PageSize=${rowsPerPage}`).then(res => {
+    const getSmartHomes = () => {
+        console.log(search == "")
+        axios.get(environment + `/api/SmartHome/GetSmartHomesForUser?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
             console.log(res.data);
             setTotalCount(res.data.totalCount);
             setSmartHomes(res.data.smartHomes);
         }).catch(err => {
             console.log(err)
         });
-    },[page,rowsPerPage])
+    }
+
+    useEffect( ()=>{
+        getSmartHomes()
+    },[page, rowsPerPage, search])
 
     const renderPanel = () => {
         return <>
@@ -47,14 +75,24 @@ const UserHome=()=>{
         </>
     };
 
+    const searchHandler = (event) => {
+        setSearch(event.target.value);
+    }
+
 
     return <Box sx={{width:"100%", height:"100%", backgroundColor:"#DBDDEB"}}>
         <Container  maxWidth="xl" sx={{display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            mt:"10px",
         }} >
             <Typography mb={1} align="left" sx={{fontSize:"40px", fontWeight:"600", margin: "5px 10px"}}>Properties</Typography>
+            <TextField id="search_bar" onChange={searchHandler} label="Search" variant="outlined" sx={searchStyle} inputProps={{
+                style: {
+                    padding: 10,
+                }
+            }}  focused/>
             <Button onClick={()=>console.log("stisnuo")} sx={buttonStyle}><Add sx={{marginX:"5px", color:"white" }} fontSize="inherit"/><Typography sx={typoStyle}>Add</Typography></Button>
         </Container>
 
