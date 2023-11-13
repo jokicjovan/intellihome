@@ -28,9 +28,7 @@ namespace Data.Context
         public DbSet<VehicleGate> VehicleGates { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Battery> Batteries { get; set; }
         public DbSet<BatterySystem> BatterySystems { get; set; }
-        public DbSet<SolarPanel> SolarPanels { get; set; }
         public DbSet<SolarPanelSystem> SolarPanelSystems { get; set; }
         public DbSet<VehicleCharger> VehicleChargers { get; set; }
         public DbSet<VehicleChargingPoint> VehicleChargingPoints { get; set; }
@@ -92,8 +90,9 @@ namespace Data.Context
                     j => j.HasOne<WashingMachineMode>().WithMany(),
                     j => j.HasOne<WashingMachine>().WithMany()
                 );
+
             modelBuilder.Entity<Admin>().HasData(
-    new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true));
+            new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true));
         }
     }
 }

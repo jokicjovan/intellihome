@@ -8,18 +8,17 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
-        private readonly IHeartbeatService _heartbeatService;
+        private readonly ISimulationService _simulationService;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository, IHeartbeatService heartbeatService)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository, ISimulationService simulationService)
         {
             _airConditionerRepository = airConditionerRepository;
-            _heartbeatService = heartbeatService;
+            _simulationService = simulationService;
         }
 
         public async Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
             airConditioner = await _airConditionerRepository.Create(airConditioner);
-            await _heartbeatService.ToggleDeviceSimulator(airConditioner, true);
-            await _heartbeatService.SetupLastWillHandler(airConditioner.Id);
+            await _simulationService.ToggleDeviceSimulator(airConditioner, true);
             return airConditioner;
         }
     }

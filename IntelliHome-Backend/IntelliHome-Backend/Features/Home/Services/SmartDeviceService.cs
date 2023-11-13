@@ -18,7 +18,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             return _smartDeviceRepository.Read(smartDeviceId);
         }
 
-        public Task<SmartDevice> UpdateSmartDevices(SmartDevice smartDevice)
+        public Task<SmartDevice> UpdateSmartDevice(SmartDevice smartDevice)
         {
             return _smartDeviceRepository.Update(smartDevice);
         }

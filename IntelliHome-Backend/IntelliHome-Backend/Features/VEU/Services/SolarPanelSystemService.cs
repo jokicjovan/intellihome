@@ -1,19 +1,16 @@
 ﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
-using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
-    public class SolarPanelService : ISolarPanelService
+    public class SolarPanelSystemService : ISolarPanelSystemService
     {
-        private readonly ISolarPanelRepository _solarPanelRepository;
         private readonly ISolarPanelSystemRepository _solarPanelSystemRepository;
 
-        public SolarPanelService(ISolarPanelRepository solarPanelRepository, ISolarPanelSystemRepository solarPanelSystemRepository)
+        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository)
         {
-            _solarPanelRepository = solarPanelRepository;
             _solarPanelSystemRepository = solarPanelSystemRepository;
         }
 
@@ -30,11 +27,6 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 throw new ResourceNotFoundException("Solar panel system with provided Id not found!");
             }
             return solarPanelSystem;
-        }
-
-        public Task<SolarPanel> CreateSolarPanel(SolarPanel solarPanel)
-        {
-            return _solarPanelRepository.Create(solarPanel);
         }
     }
 }

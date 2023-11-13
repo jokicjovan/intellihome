@@ -13,15 +13,15 @@ namespace IntelliHome_Backend.Features.VEU
     public class VEUController : ControllerBase
     {
         private readonly ISmartHomeService _smartHomeService;
-        private readonly IBatteryService _batteryService;
-        private readonly ISolarPanelService _solarPanelService;
+        private readonly IBatterySystemService _batterySystemService;
+        private readonly ISolarPanelSystemService _solarPanelSystemService;
         private readonly IVehicleChargerService _vehicleChargerService;
 
-        public VEUController(ISmartHomeService smartHomeService, IBatteryService batteryService, ISolarPanelService solarPanelService, IVehicleChargerService vehicleChargerService)
+        public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService, ISolarPanelSystemService solarPanelSystemService, IVehicleChargerService vehicleChargerService)
         {
             _smartHomeService = smartHomeService;
-            _batteryService = batteryService;
-            _solarPanelService = solarPanelService;
+            _batterySystemService = batterySystemService;
+            _solarPanelSystemService = solarPanelSystemService;
             _vehicleChargerService = vehicleChargerService;
         }
 
@@ -32,18 +32,8 @@ namespace IntelliHome_Backend.Features.VEU
             batterySystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             batterySystem.Name = dto.Name;
             batterySystem.Category = SmartDeviceCategory.VEU;
-            batterySystem = await _batteryService.CreateBatterySystem(batterySystem);
+            batterySystem = await _batterySystemService.CreateBatterySystem(batterySystem);
             return Ok(batterySystem);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateBattery([FromQuery] Guid batterySystemId, [FromBody] BatteryCreationDTO dto)
-        {
-            Battery battery = new Battery();
-            battery.BatterySystem = await _batteryService.GetBatterySystem(batterySystemId);
-            battery.Capacity = dto.Capacity;
-            battery = await _batteryService.CreateBattery(battery);
-            return Ok(battery);
         }
 
         [HttpPost]
@@ -53,19 +43,8 @@ namespace IntelliHome_Backend.Features.VEU
             solarPanelSystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             solarPanelSystem.Name = dto.Name;
             solarPanelSystem.Category = SmartDeviceCategory.VEU;
-            solarPanelSystem = await _solarPanelService.CreateSolarPanelSystem(solarPanelSystem);
+            solarPanelSystem = await _solarPanelSystemService.CreateSolarPanelSystem(solarPanelSystem);
             return Ok(solarPanelSystem);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateSolarPanel([FromQuery] Guid solarPanelSystemId, [FromBody] SolarPanelCreationDTO dto)
-        {
-            SolarPanel solarPanel = new SolarPanel();
-            solarPanel.solarPanelSystem = await _solarPanelService.GetSolarPanelSystem(solarPanelSystemId);
-            solarPanel.Area = dto.Area;
-            solarPanel.Efficiency = dto.Efficiency;
-            solarPanel = await _solarPanelService.CreateSolarPanel(solarPanel);
-            return Ok(solarPanel);
         }
 
         [HttpPost]

@@ -8,7 +8,7 @@ class Device:
         self.device_id = device_id
         self.event = asyncio.Event()
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
-        self.client.will_set(f"{device_id}/will", payload=f"Device {device_id} offline", qos=1, retain=False)
+        self.client.will_set("will", payload=f"{device_id}", qos=1, retain=False)
         self.client.connect("localhost", 1883, keepalive=300)
         self.client.loop_start()
 

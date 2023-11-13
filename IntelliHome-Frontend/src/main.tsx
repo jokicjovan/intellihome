@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
-import axios from "axios";
+import axios from 'axios';
 import React from 'react';
 import {AuthProvider} from "./security/AuthContext.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
@@ -14,7 +14,7 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import SuccessfulActivation from "./pages/successfulActivation";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
-import CreateSmartDevice from "./components/SmartDevices/CreateSmartDevice.tsx";
+import SmartDeviceRegistrationForm from "./components/SmartDevices/Registration/SmartDeviceRegistrationForm.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -31,7 +31,7 @@ const theme = createTheme({
 });
 
 const router = createBrowserRouter([
-    {path:"/CreateSmartDevice", element: <UnauthenticatedRoute><CreateSmartDevice deviceType={"AirConditioner"}/></UnauthenticatedRoute>},
+    {path:"/SmartDeviceRegistrationForm", element: <UnauthenticatedRoute><SmartDeviceRegistrationForm deviceType={"Lamp"}/></UnauthenticatedRoute>},
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},

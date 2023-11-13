@@ -5,14 +5,12 @@ using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
-    public class BatteryService : IBatteryService
+    public class BatterySystemService : IBatterySystemService
     {
-        private readonly IBatteryRepository _batteryRepository;
         private readonly IBatterySystemRepository _batterySystemRepository;
 
-        public BatteryService(IBatteryRepository batteryRepository, IBatterySystemRepository batterySystemRepository)
+        public BatterySystemService(IBatterySystemRepository batterySystemRepository)
         {
-            _batteryRepository = batteryRepository;
             _batterySystemRepository = batterySystemRepository;
         }
 
@@ -29,11 +27,6 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 throw new ResourceNotFoundException("Battery system with provided Id not found!");
             }
             return batterySystem;
-        }
-
-        public Task<Battery> CreateBattery(Battery battery)
-        {
-            return _batteryRepository.Create(battery);
         }
     }
 }

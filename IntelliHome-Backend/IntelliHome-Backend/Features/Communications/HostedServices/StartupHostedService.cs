@@ -1,11 +1,12 @@
-﻿using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+﻿using IntelliHome_Backend.Features.Communications.Services;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.Communications.HostedServices
 {
-    public class HeartbeatHostedService : IHostedService
+    public class StartupHostedService : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
-        public HeartbeatHostedService(IServiceProvider serviceProvider)
+        public StartupHostedService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -15,7 +16,9 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
-                Task.Run(() => heartbeatService.SetupSimulatorsFromDatabase());
+                ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
+                Task.Run(() => simulationService.SetupSimulatorsFromDatabase());
+                Task.Run(() => heartbeatService.SetupLastWillHandler());
                 return Task.CompletedTask;
             }
         }
@@ -24,8 +27,8 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
-                heartbeatService.SetupSimulatorsFromDatabase(false).Wait();
+                ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
+                simulationService.SetupSimulatorsFromDatabase(false).Wait();
                 return Task.CompletedTask;
             }
         }

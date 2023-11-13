@@ -2,10 +2,9 @@
 
 namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
-    public interface ISolarPanelService
+    public interface ISolarPanelSystemService
     {
         Task<SolarPanelSystem> CreateSolarPanelSystem(SolarPanelSystem solarPanelSystem);
         Task<SolarPanelSystem> GetSolarPanelSystem(Guid Id);
-        Task<SolarPanel> CreateSolarPanel(SolarPanel solarPanel);
     }
 }

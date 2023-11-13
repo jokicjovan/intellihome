@@ -52,9 +52,7 @@ builder.Services.AddScoped<IWashingMachineModeRepository, WashingMachineModeRepo
 builder.Services.AddScoped<ILampRepository, LampRepository>();
 builder.Services.AddScoped<ISprinklerRepository, SprinklerRepository>();
 builder.Services.AddScoped<IVehicleGateRepository, VehicleGateRepository>();
-builder.Services.AddScoped<IBatteryRepository, BatteryRepository>();
 builder.Services.AddScoped<IBatterySystemRepository, BatterySystemRepository>();
-builder.Services.AddScoped<ISolarPanelRepository, SolarPanelRepository>();
 builder.Services.AddScoped<ISolarPanelSystemRepository, SolarPanelSystemRepository>();
 builder.Services.AddScoped<IVehicleChargerRepository, VehicleChargerRepository>();
 builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPointRepository>();
@@ -67,16 +65,16 @@ builder.Services.AddScoped<ISmartHomeService, SmartHomeService>();
 builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
 builder.Services.AddScoped<IAmbientSensorService, AmbientSensorService>();
 builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();
-builder.Services.AddScoped<IWashingMachineModeService, WashingMachineModeService>();
 builder.Services.AddScoped<ILampService, LampService>();
 builder.Services.AddScoped<ISprinklerService, SprinklerService>();
 builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
-builder.Services.AddScoped<IBatteryService, BatteryService>();
-builder.Services.AddScoped<ISolarPanelService, SolarPanelService>();
+builder.Services.AddScoped<IBatterySystemService, BatterySystemService>();
+builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
-builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
 
-builder.Services.AddHostedService<HeartbeatHostedService>();
+builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
+builder.Services.AddSingleton<ISimulationService, SimulationService>();
+builder.Services.AddHostedService<StartupHostedService>();
 builder.Services.AddSingleton(provider =>
 {
     var factory = new MqttFactory();

@@ -15,16 +15,14 @@ namespace IntelliHome_Backend.Features.PKA
         private readonly IAirConditionerService _airConditionerService;
         private readonly IAmbientSensorService _ambientSensorService;
         private readonly IWashingMachineService _washingMachineService;
-        private readonly IWashingMachineModeService _washingMachineModeService;
 
         public PKAController(ISmartHomeService smartHomeService, IAirConditionerService airConditionerService,
-            IAmbientSensorService ambientSensorService, IWashingMachineService washingMachineService, IWashingMachineModeService washingMachineModeService)
+            IAmbientSensorService ambientSensorService, IWashingMachineService washingMachineService)
         {
             _smartHomeService = smartHomeService;
             _airConditionerService = airConditionerService;
             _ambientSensorService = ambientSensorService;
             _washingMachineService = washingMachineService;
-            _washingMachineModeService = washingMachineModeService;
         }
 
         [HttpPost]
@@ -62,9 +60,16 @@ namespace IntelliHome_Backend.Features.PKA
             washingMachine.Name = dto.Name;
             washingMachine.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
             washingMachine.PowerPerHour = dto.PowerPerHour;
-            washingMachine.Modes = _washingMachineModeService.GetWashingMachineModes(dto.ModesIds);
+            washingMachine.Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds);
             washingMachine = await _washingMachineService.CreateWashingMachine(washingMachine);
             return Ok(washingMachine);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetWashingMachineModes()
+        {
+            IEnumerable<WashingMachineMode> allWashingMachineModes = await _washingMachineService.GetAllWashingMachineModes();
+            return Ok(allWashingMachineModes);
         }
     }
 }
