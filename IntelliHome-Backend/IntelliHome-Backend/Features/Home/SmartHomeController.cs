@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Security.Claims;
 using IntelliHome_Backend.Features.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IntelliHome_Backend.Features.Home
 {
@@ -95,6 +96,7 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> GetSmartHomesForApproval([FromQuery] PageParametersDTO pageParameters)
         {
             SmartHomePaginatedDTO smartHomes;
@@ -113,6 +115,7 @@ namespace IntelliHome_Backend.Features.Home
 
         //TODO: Add authorization, just admin can approve smart homes
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ApproveSmartHome(Guid id)
         {
             try
@@ -130,6 +133,7 @@ namespace IntelliHome_Backend.Features.Home
 
         // TODO: Add authorization, just admin can delete smart homes or owner of the smart home
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteSmartHome(Guid id, Guid userId, String reason)
         {
             try
