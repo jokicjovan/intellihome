@@ -32,44 +32,53 @@ namespace IntelliHome_Backend.Features.PKA
         [HttpPost]
         public async Task<ActionResult> CreateAirConditioner([FromQuery] Guid smartHomeId, [FromForm] AirConditionerCreationDTO dto)
         {
-            AirConditioner airConditioner = new AirConditioner();
-            airConditioner.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            airConditioner.Name = dto.Name;
-            airConditioner.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
-            airConditioner.PowerPerHour = dto.PowerPerHour;
-            airConditioner.MinTemperature = dto.MinTemperature;
-            airConditioner.MaxTemperature = dto.MaxTemperature;
-            airConditioner.Modes = dto.Modes;
-            if (dto.Image != null && dto.Image.Length > 0) airConditioner.Image = _imageService.SaveDeviceImage(dto.Image);
+            AirConditioner airConditioner = new AirConditioner
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                PowerPerHour = dto.PowerPerHour,
+                MinTemperature = dto.MinTemperature,
+                MaxTemperature = dto.MaxTemperature,
+                Modes = dto.Modes,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             airConditioner = await _airConditionerService.CreateAirConditioner(airConditioner);
             return Ok(airConditioner);
+
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateAmbientSensor([FromQuery] Guid smartHomeId, [FromForm] AmbientSensorCreationDTO dto)
         {
-            AmbientSensor ambientSensor = new AmbientSensor();
-            ambientSensor.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            ambientSensor.Name = dto.Name;
-            ambientSensor.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
-            ambientSensor.PowerPerHour = dto.PowerPerHour;
-            if (dto.Image != null && dto.Image.Length > 0) ambientSensor.Image = _imageService.SaveDeviceImage(dto.Image);
+            AmbientSensor ambientSensor = new AmbientSensor
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                PowerPerHour = dto.PowerPerHour,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             ambientSensor = await _ambientSensorService.CreateAmbientSensor(ambientSensor);
             return Ok(ambientSensor);
+
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateWashingMachine([FromQuery] Guid smartHomeId, [FromForm] WashingMachineCreationDTO dto)
         {
-            WashingMachine washingMachine = new WashingMachine();
-            washingMachine.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            washingMachine.Name = dto.Name;
-            washingMachine.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
-            washingMachine.PowerPerHour = dto.PowerPerHour;
-            washingMachine.Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds);
-            if (dto.Image != null && dto.Image.Length > 0) washingMachine.Image = _imageService.SaveDeviceImage(dto.Image);
+            WashingMachine washingMachine = new WashingMachine
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                PowerPerHour = dto.PowerPerHour,
+                Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds),
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             washingMachine = await _washingMachineService.CreateWashingMachine(washingMachine);
             return Ok(washingMachine);
+
         }
 
         [HttpGet]

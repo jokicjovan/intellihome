@@ -33,42 +33,51 @@ namespace IntelliHome_Backend.Features.SPU
         [HttpPost]
         public async Task<ActionResult> CreateLamp([FromQuery] Guid smartHomeId, [FromForm] LampCreationDTO dto)
         {
-            Lamp lamp = new Lamp();
-            lamp.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            lamp.Name = dto.Name;
-            lamp.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
-            lamp.PowerPerHour = dto.PowerPerHour;
-            lamp.BrightnessLimit = dto.BrightnessLimit;
-            if (dto.Image != null && dto.Image.Length > 0) lamp.Image = _imageService.SaveDeviceImage(dto.Image);
+            Lamp lamp = new Lamp
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                PowerPerHour = dto.PowerPerHour,
+                BrightnessLimit = dto.BrightnessLimit,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             lamp = await _lampService.CreateLamp(lamp);
             return Ok(lamp);
+
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateSprinkler([FromQuery] Guid smartHomeId, [FromForm] SprinklerCreationDTO dto)
         {
-            Sprinkler sprinkler = new Sprinkler();
-            sprinkler.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            sprinkler.Name = dto.Name;
-            sprinkler.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
-            sprinkler.PowerPerHour = dto.PowerPerHour;
-            if (dto.Image != null && dto.Image.Length > 0) sprinkler.Image = _imageService.SaveDeviceImage(dto.Image);
+            Sprinkler sprinkler = new Sprinkler
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                PowerPerHour = dto.PowerPerHour,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             sprinkler = await _sprinklerService.CreateSprinkler(sprinkler);
             return Ok(sprinkler);
+
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateVehicleGate([FromQuery] Guid smartHomeId, [FromForm] VehicleGateCreationDTO dto)
         {
-            VehicleGate vehicleGate = new VehicleGate();
-            vehicleGate.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            vehicleGate.Name = dto.Name;
-            vehicleGate.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
-            vehicleGate.PowerPerHour = dto.PowerPerHour;
-            vehicleGate.AllowedLicencePlates = dto.AllowedLicencePlates;
-            if (dto.Image != null && dto.Image.Length > 0) vehicleGate.Image = _imageService.SaveDeviceImage(dto.Image);
+            VehicleGate vehicleGate = new VehicleGate
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                PowerPerHour = dto.PowerPerHour,
+                AllowedLicencePlates = dto.AllowedLicencePlates,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             vehicleGate = await _vehicleGateService.CreateVehicleGate(vehicleGate);
             return Ok(vehicleGate);
+
         }
     }
 }

@@ -32,12 +32,14 @@ namespace IntelliHome_Backend.Features.VEU
         [HttpPost]
         public async Task<ActionResult> CreateBatterySystem([FromQuery] Guid smartHomeId, [FromForm] BatterySystemCreationDTO dto)
         {
-            BatterySystem batterySystem = new BatterySystem();
-            batterySystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            batterySystem.Name = dto.Name;
-            batterySystem.Category = SmartDeviceCategory.VEU;
-            batterySystem.Capacity = dto.Capacity;
-            if (dto.Image != null && dto.Image.Length > 0) batterySystem.Image = _imageService.SaveDeviceImage(dto.Image);
+            BatterySystem batterySystem = new BatterySystem
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = SmartDeviceCategory.VEU,
+                Capacity = dto.Capacity,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             batterySystem = await _batterySystemService.CreateBatterySystem(batterySystem);
             return Ok(batterySystem);
         }
@@ -45,13 +47,15 @@ namespace IntelliHome_Backend.Features.VEU
         [HttpPost]
         public async Task<ActionResult> CreateSolarPanelSystem([FromQuery] Guid smartHomeId, [FromForm] SolarPanelSystemCreationDTO dto)
         {
-            SolarPanelSystem solarPanelSystem = new SolarPanelSystem();
-            solarPanelSystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            solarPanelSystem.Name = dto.Name;
-            solarPanelSystem.Category = SmartDeviceCategory.VEU;
-            solarPanelSystem.Area = dto.Area;
-            solarPanelSystem.Efficiency = dto.Efficiency;
-            if (dto.Image != null && dto.Image.Length > 0) solarPanelSystem.Image = _imageService.SaveDeviceImage(dto.Image);
+            SolarPanelSystem solarPanelSystem = new SolarPanelSystem
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = SmartDeviceCategory.VEU,
+                Area = dto.Area,
+                Efficiency = dto.Efficiency,
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             solarPanelSystem = await _solarPanelSystemService.CreateSolarPanelSystem(solarPanelSystem);
             return Ok(solarPanelSystem);
         }
@@ -59,24 +63,17 @@ namespace IntelliHome_Backend.Features.VEU
         [HttpPost]
         public async Task<ActionResult> CreateVehicleCharger([FromQuery] Guid smartHomeId, [FromForm] VehicleChargerCreationDTO dto)
         {
-            VehicleCharger vehicleCharger = new VehicleCharger();
-            vehicleCharger.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
-            vehicleCharger.Name = dto.Name;
-            vehicleCharger.Category = SmartDeviceCategory.VEU;
-            vehicleCharger.Power = dto.Power;
-            if (dto.Image != null && dto.Image.Length > 0) vehicleCharger.Image = _imageService.SaveDeviceImage(dto.Image);
+            VehicleCharger vehicleCharger = new VehicleCharger
+            {
+                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                Name = dto.Name,
+                Category = SmartDeviceCategory.VEU,
+                Power = dto.Power,
+                ChargingPoints = Enumerable.Range(0, dto.NumberOfChargingPoints).Select(_ => new VehicleChargingPoint { IsFree = true }).ToList(),
+                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+            };
             vehicleCharger = await _vehicleChargerService.CreateVehicleCharger(vehicleCharger);
             return Ok(vehicleCharger);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateVehicleChargingPoint([FromQuery] Guid vehicleChargerId)
-        {
-            VehicleChargingPoint vehicleChargingPoint = new VehicleChargingPoint();
-            vehicleChargingPoint.IsFree = true;
-            vehicleChargingPoint.VehicleCharger = await _vehicleChargerService.GetVehicleCharger(vehicleChargerId);
-            vehicleChargingPoint = await _vehicleChargerService.CreateVehicleChargingPoint(vehicleChargingPoint);
-            return Ok(vehicleChargingPoint);
         }
     }
 }

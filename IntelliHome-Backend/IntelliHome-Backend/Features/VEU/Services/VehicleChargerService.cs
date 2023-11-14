@@ -30,10 +30,5 @@ namespace IntelliHome_Backend.Features.VEU.Services
             }
             return vehicleCharger;
         }
-
-        public Task<VehicleChargingPoint> CreateVehicleChargingPoint(VehicleChargingPoint vehicleChargingPoint)
-        {
-            return _vehicleChargingPointRepository.Create(vehicleChargingPoint);
-        }
     }
 }

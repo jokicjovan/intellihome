@@ -14,7 +14,6 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import SuccessfulActivation from "./pages/successfulActivation";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
-import AmbientSensorRegistrationForm from "./components/SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
 import WashingMachineRegistrationForm from "./components/SmartDevices/Registration/PKA/WashingMachineRegistrationForm.tsx";
 
 axios.defaults.withCredentials = true
