@@ -39,7 +39,7 @@ namespace IntelliHome_Backend.Features.SPU
             lamp.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
             lamp.PowerPerHour = dto.PowerPerHour;
             lamp.BrightnessLimit = dto.BrightnessLimit;
-            if (dto.Image != null) lamp.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) lamp.Image = _imageService.SaveDeviceImage(dto.Image);
             lamp = await _lampService.CreateLamp(lamp);
             return Ok(lamp);
         }
@@ -52,7 +52,7 @@ namespace IntelliHome_Backend.Features.SPU
             sprinkler.Name = dto.Name;
             sprinkler.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
             sprinkler.PowerPerHour = dto.PowerPerHour;
-            if (dto.Image != null) sprinkler.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) sprinkler.Image = _imageService.SaveDeviceImage(dto.Image);
             sprinkler = await _sprinklerService.CreateSprinkler(sprinkler);
             return Ok(sprinkler);
         }
@@ -66,7 +66,7 @@ namespace IntelliHome_Backend.Features.SPU
             vehicleGate.Category = Data.Models.Shared.SmartDeviceCategory.SPU;
             vehicleGate.PowerPerHour = dto.PowerPerHour;
             vehicleGate.AllowedLicencePlates = dto.AllowedLicencePlates;
-            if (dto.Image != null) vehicleGate.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) vehicleGate.Image = _imageService.SaveDeviceImage(dto.Image);
             vehicleGate = await _vehicleGateService.CreateVehicleGate(vehicleGate);
             return Ok(vehicleGate);
         }

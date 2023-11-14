@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using IntelliHome_Backend.Features.Shared.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.VEU.DTOs
 {
-    public class SolarPanelCreationDTO
+    public class SolarPanelSystemCreationDTO : SmartDeviceDTO
     {
         [Required(ErrorMessage = "Area is required.")]
         [Range(1, 20, ErrorMessage = "Area should be between 1 and 20 m^2")]
@@ -12,6 +13,6 @@ namespace IntelliHome_Backend.Features.VEU.DTOs
         [Range(1, 100, ErrorMessage = "Efficiency should be between 1 and 100 %")]
         public Double Efficiency { get; set; }
 
-        public SolarPanelCreationDTO() { }
+        public SolarPanelSystemCreationDTO() { }
     }
 }

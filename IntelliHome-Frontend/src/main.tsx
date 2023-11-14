@@ -14,7 +14,8 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import SuccessfulActivation from "./pages/successfulActivation";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
-import AirConditionerRegistrationForm from "./components/SmartDevices/Registration/AirConditionerRegistrationForm.tsx";
+import AmbientSensorRegistrationForm from "./components/SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
+import WashingMachineRegistrationForm from "./components/SmartDevices/Registration/PKA/WashingMachineRegistrationForm.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -31,7 +32,7 @@ const theme = createTheme({
 });
 
 const router = createBrowserRouter([
-    {path:"/SmartDeviceRegistration", element: <UnauthenticatedRoute><AirConditionerRegistrationForm/></UnauthenticatedRoute>},
+    {path:"/SmartDeviceRegistration", element: <UnauthenticatedRoute><WashingMachineRegistrationForm smartHomeId="8f63caca-96ae-4a13-930a-e935c25e3a03"/></UnauthenticatedRoute>},
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},

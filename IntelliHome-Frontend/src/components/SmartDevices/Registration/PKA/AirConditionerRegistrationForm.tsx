@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import SmartDeviceRegistrationForm from "./SmartDeviceRegistrationForm.tsx";
+import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
 import {Box, Button, Checkbox, Container, FormControlLabel, TextField, Typography} from "@mui/material";
-import CommonSmartDeviceFields from "./CommonSmartDeviceFields.ts";
+import CommonSmartDeviceFields from "../Shared/CommonSmartDeviceFields.ts";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
-import {environment} from "../../../security/Environment.tsx";
+import {environment} from "../../../../security/Environment.tsx";
 
 interface AirConditionerAdditionalFields {
     Modes: string[];
@@ -12,8 +12,12 @@ interface AirConditionerAdditionalFields {
     MaxTemperature: number;
 }
 
+interface AirConditionerRegistrationFormProps {
+    smartHomeId: string;
+}
 
-const AirConditionerRegistrationForm = () => {
+
+const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<AirConditionerAdditionalFields>({
         Modes: [],
         MinTemperature: 15,
@@ -54,7 +58,7 @@ const AirConditionerRegistrationForm = () => {
             `${environment}/api/PKA/CreateAirConditioner`,
             {...commonFormData, ...additionalFormData},
             {
-                params: { smartHomeId: "6322b26a-608b-4d76-bd1d-5309ab90649d" },
+                params: { smartHomeId: smartHomeId },
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -113,14 +117,18 @@ const AirConditionerRegistrationForm = () => {
                     margin="normal"
                     required
                     fullWidth
-                    id="minTemp"
+                    id="MinTemperature"
                     label="Minimum temperature"
-                    name="minTemp"
+                    name="MinTemperature"
                     type="number"
                     value={additionalFormData.MinTemperature}
                     onChange={handleAdditionalFormInputChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="end">°C</InputAdornment>,
+                    }}
+                    inputProps={{
+                        min: 10,
+                        max: 20,
                     }}
                 />
 
@@ -129,14 +137,18 @@ const AirConditionerRegistrationForm = () => {
                     margin="normal"
                     required
                     fullWidth
-                    id="maxTemp"
+                    id="MaxTemperature"
                     label="Maximum temperature"
-                    name="maxTemp"
+                    name="MaxTemperature"
                     type="number"
                     value={additionalFormData.MaxTemperature}
                     onChange={handleAdditionalFormInputChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="end">°C</InputAdornment>,
+                    }}
+                    inputProps={{
+                        min: 25,
+                        max: 35,
                     }}
                 />
 

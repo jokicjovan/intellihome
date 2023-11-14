@@ -7,7 +7,7 @@ namespace IntelliHome_Backend.Features.PKA.DTOs
     public class AirConditionerCreationDTO : SmartDeviceDTO
     {
         [Required(ErrorMessage = "Minimum temperature is required.")]
-        [Range(5, 15, ErrorMessage = "Minimum temperature should be between 5 and 15")]
+        [Range(10, 20, ErrorMessage = "Minimum temperature should be between 5 and 15")]
         public double MinTemperature { get; set; }
 
         [Required(ErrorMessage = "Maximum temperature is required.")]

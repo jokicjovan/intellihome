@@ -40,7 +40,7 @@ namespace IntelliHome_Backend.Features.PKA
             airConditioner.MinTemperature = dto.MinTemperature;
             airConditioner.MaxTemperature = dto.MaxTemperature;
             airConditioner.Modes = dto.Modes;
-            if(dto.Image != null) airConditioner.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) airConditioner.Image = _imageService.SaveDeviceImage(dto.Image);
             airConditioner = await _airConditionerService.CreateAirConditioner(airConditioner);
             return Ok(airConditioner);
         }
@@ -53,7 +53,7 @@ namespace IntelliHome_Backend.Features.PKA
             ambientSensor.Name = dto.Name;
             ambientSensor.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
             ambientSensor.PowerPerHour = dto.PowerPerHour;
-            if (dto.Image != null) ambientSensor.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) ambientSensor.Image = _imageService.SaveDeviceImage(dto.Image);
             ambientSensor = await _ambientSensorService.CreateAmbientSensor(ambientSensor);
             return Ok(ambientSensor);
         }
@@ -67,7 +67,7 @@ namespace IntelliHome_Backend.Features.PKA
             washingMachine.Category = Data.Models.Shared.SmartDeviceCategory.PKA;
             washingMachine.PowerPerHour = dto.PowerPerHour;
             washingMachine.Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds);
-            if (dto.Image != null) washingMachine.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) washingMachine.Image = _imageService.SaveDeviceImage(dto.Image);
             washingMachine = await _washingMachineService.CreateWashingMachine(washingMachine);
             return Ok(washingMachine);
         }

@@ -1,8 +1,6 @@
 ﻿using Data.Models.Shared;
-using Data.Models.SPU;
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
@@ -32,25 +30,28 @@ namespace IntelliHome_Backend.Features.VEU
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateBatterySystem([FromQuery] Guid smartHomeId, [FromForm] SmartDeviceDTO dto)
+        public async Task<ActionResult> CreateBatterySystem([FromQuery] Guid smartHomeId, [FromForm] BatterySystemCreationDTO dto)
         {
             BatterySystem batterySystem = new BatterySystem();
             batterySystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             batterySystem.Name = dto.Name;
             batterySystem.Category = SmartDeviceCategory.VEU;
-            if (dto.Image != null) batterySystem.Image = _imageService.SaveDeviceImage(dto.Image);
+            batterySystem.Capacity = dto.Capacity;
+            if (dto.Image != null && dto.Image.Length > 0) batterySystem.Image = _imageService.SaveDeviceImage(dto.Image);
             batterySystem = await _batterySystemService.CreateBatterySystem(batterySystem);
             return Ok(batterySystem);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateSolarPanelSystem([FromQuery] Guid smartHomeId, [FromForm] SmartDeviceDTO dto)
+        public async Task<ActionResult> CreateSolarPanelSystem([FromQuery] Guid smartHomeId, [FromForm] SolarPanelSystemCreationDTO dto)
         {
             SolarPanelSystem solarPanelSystem = new SolarPanelSystem();
             solarPanelSystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             solarPanelSystem.Name = dto.Name;
             solarPanelSystem.Category = SmartDeviceCategory.VEU;
-            if (dto.Image != null) solarPanelSystem.Image = _imageService.SaveDeviceImage(dto.Image);
+            solarPanelSystem.Area = dto.Area;
+            solarPanelSystem.Efficiency = dto.Efficiency;
+            if (dto.Image != null && dto.Image.Length > 0) solarPanelSystem.Image = _imageService.SaveDeviceImage(dto.Image);
             solarPanelSystem = await _solarPanelSystemService.CreateSolarPanelSystem(solarPanelSystem);
             return Ok(solarPanelSystem);
         }
@@ -63,7 +64,7 @@ namespace IntelliHome_Backend.Features.VEU
             vehicleCharger.Name = dto.Name;
             vehicleCharger.Category = SmartDeviceCategory.VEU;
             vehicleCharger.Power = dto.Power;
-            if (dto.Image != null) vehicleCharger.Image = _imageService.SaveDeviceImage(dto.Image);
+            if (dto.Image != null && dto.Image.Length > 0) vehicleCharger.Image = _imageService.SaveDeviceImage(dto.Image);
             vehicleCharger = await _vehicleChargerService.CreateVehicleCharger(vehicleCharger);
             return Ok(vehicleCharger);
         }

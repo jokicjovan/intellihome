@@ -1,4 +1,5 @@
 ﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
@@ -8,16 +9,22 @@ namespace IntelliHome_Backend.Features.PKA.Services
     {
         private readonly IWashingMachineRepository _washingMachineRepository;
         private readonly IWashingMachineModeRepository _washingMachineModeRepository;
+        private readonly ISimulationService _simulationService;
 
-        public WashingMachineService(IWashingMachineRepository washingMachineRepository, IWashingMachineModeRepository washingMachineModeRepository)
+        public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
+            IWashingMachineModeRepository washingMachineModeRepository,
+            ISimulationService simulationService)
         {
             _washingMachineRepository = washingMachineRepository;
             _washingMachineModeRepository = washingMachineModeRepository;
+            _simulationService = simulationService;
         }
 
-        public Task<WashingMachine> CreateWashingMachine(WashingMachine washingMachine)
+        public async Task<WashingMachine> CreateWashingMachine(WashingMachine washingMachine)
         {
-            return _washingMachineRepository.Create(washingMachine);
+            washingMachine = await _washingMachineRepository.Create(washingMachine);
+            await _simulationService.ToggleDeviceSimulator(washingMachine, true);
+            return washingMachine;
         }
 
         public List<WashingMachineMode> GetWashingMachineModes(List<Guid> modesIds)

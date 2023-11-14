@@ -29,9 +29,9 @@ const SmartDeviceRegistrationForm: React.FC<SmartDeviceRegistrationFormProps> = 
                 margin="normal"
                 required
                 fullWidth
-                id="name"
+                id="Name"
                 label="Name"
-                name="name"
+                name="Name"
                 type="text"
                 value={formData.Name}
                 onChange={handleInputChange}
@@ -41,14 +41,17 @@ const SmartDeviceRegistrationForm: React.FC<SmartDeviceRegistrationFormProps> = 
                 margin="normal"
                 required
                 fullWidth
-                id="power"
-                label="Power"
-                name="power"
+                id="PowerPerHour"
+                label="PowerPerHour"
+                name="PowerPerHour"
                 type="number"
                 value={formData.PowerPerHour}
                 onChange={handleInputChange}
                 InputProps={{
                     endAdornment: <InputAdornment position="end">KWh</InputAdornment>,
+                }}
+                inputProps={{
+                    min: 0
                 }}
             />
             <Button startIcon={formData.Image.size === 0 ? <Close style={{color:"red",fontSize:"26px"}}/>:
