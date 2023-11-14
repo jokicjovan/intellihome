@@ -11,7 +11,7 @@ namespace IntelliHome_Backend.Features.PKA.DTOs
         public double MinTemperature { get; set; }
 
         [Required(ErrorMessage = "Maximum temperature is required.")]
-        [Range(25, 30, ErrorMessage = "Maximum temperature should be between 25 and 30")]
+        [Range(25, 35, ErrorMessage = "Maximum temperature should be between 25 and 30")]
         public double MaxTemperature { get; set; }
 
         [Required(ErrorMessage = "At least one mode is required.")]

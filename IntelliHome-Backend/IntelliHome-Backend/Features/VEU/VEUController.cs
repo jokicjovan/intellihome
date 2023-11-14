@@ -1,7 +1,9 @@
 ﻿using Data.Models.Shared;
+using Data.Models.SPU;
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.Shared.Services;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -16,45 +18,52 @@ namespace IntelliHome_Backend.Features.VEU
         private readonly IBatterySystemService _batterySystemService;
         private readonly ISolarPanelSystemService _solarPanelSystemService;
         private readonly IVehicleChargerService _vehicleChargerService;
+        private readonly IImageService _imageService;
 
-        public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService, ISolarPanelSystemService solarPanelSystemService, IVehicleChargerService vehicleChargerService)
+        public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService, 
+                ISolarPanelSystemService solarPanelSystemService, IVehicleChargerService vehicleChargerService,
+                IImageService imageService)
         {
             _smartHomeService = smartHomeService;
             _batterySystemService = batterySystemService;
             _solarPanelSystemService = solarPanelSystemService;
             _vehicleChargerService = vehicleChargerService;
+            _imageService = imageService;
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateBatterySystem([FromQuery] Guid smartHomeId, [FromBody] SmartDeviceDTO dto)
+        public async Task<ActionResult> CreateBatterySystem([FromQuery] Guid smartHomeId, [FromForm] SmartDeviceDTO dto)
         {
             BatterySystem batterySystem = new BatterySystem();
             batterySystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             batterySystem.Name = dto.Name;
             batterySystem.Category = SmartDeviceCategory.VEU;
+            if (dto.Image != null) batterySystem.Image = _imageService.SaveDeviceImage(dto.Image);
             batterySystem = await _batterySystemService.CreateBatterySystem(batterySystem);
             return Ok(batterySystem);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateSolarPanelSystem([FromQuery] Guid smartHomeId, [FromBody] SmartDeviceDTO dto)
+        public async Task<ActionResult> CreateSolarPanelSystem([FromQuery] Guid smartHomeId, [FromForm] SmartDeviceDTO dto)
         {
             SolarPanelSystem solarPanelSystem = new SolarPanelSystem();
             solarPanelSystem.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             solarPanelSystem.Name = dto.Name;
             solarPanelSystem.Category = SmartDeviceCategory.VEU;
+            if (dto.Image != null) solarPanelSystem.Image = _imageService.SaveDeviceImage(dto.Image);
             solarPanelSystem = await _solarPanelSystemService.CreateSolarPanelSystem(solarPanelSystem);
             return Ok(solarPanelSystem);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateVehicleCharger([FromQuery] Guid smartHomeId, [FromBody] VehicleChargerCreationDTO dto)
+        public async Task<ActionResult> CreateVehicleCharger([FromQuery] Guid smartHomeId, [FromForm] VehicleChargerCreationDTO dto)
         {
             VehicleCharger vehicleCharger = new VehicleCharger();
             vehicleCharger.SmartHome = await _smartHomeService.GetSmartHome(smartHomeId);
             vehicleCharger.Name = dto.Name;
             vehicleCharger.Category = SmartDeviceCategory.VEU;
             vehicleCharger.Power = dto.Power;
+            if (dto.Image != null) vehicleCharger.Image = _imageService.SaveDeviceImage(dto.Image);
             vehicleCharger = await _vehicleChargerService.CreateVehicleCharger(vehicleCharger);
             return Ok(vehicleCharger);
         }

@@ -26,6 +26,7 @@ using IntelliHome_Backend.Features.Communications.Services;
 using IntelliHome_Backend.Features.Communications.HostedServices;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using IntelliHome_Backend.Features.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +72,7 @@ builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
 builder.Services.AddScoped<IBatterySystemService, BatterySystemService>();
 builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
 builder.Services.AddSingleton<ISimulationService, SimulationService>();

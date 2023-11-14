@@ -8,6 +8,6 @@ namespace IntelliHome_Backend.Features.Shared.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Image is required.")]
-        public string Image { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

@@ -44,4 +44,8 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="static\devices\" />
+  </ItemGroup>
+
 </Project>

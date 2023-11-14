@@ -14,7 +14,7 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import SuccessfulActivation from "./pages/successfulActivation";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
-import SmartDeviceRegistrationForm from "./components/SmartDevices/Registration/SmartDeviceRegistrationForm.tsx";
+import AirConditionerRegistrationForm from "./components/SmartDevices/Registration/AirConditionerRegistrationForm.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -31,7 +31,7 @@ const theme = createTheme({
 });
 
 const router = createBrowserRouter([
-    {path:"/SmartDeviceRegistrationForm", element: <UnauthenticatedRoute><SmartDeviceRegistrationForm deviceType={"Lamp"}/></UnauthenticatedRoute>},
+    {path:"/SmartDeviceRegistration", element: <UnauthenticatedRoute><AirConditionerRegistrationForm/></UnauthenticatedRoute>},
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
