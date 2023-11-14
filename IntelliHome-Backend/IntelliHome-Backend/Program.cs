@@ -74,6 +74,8 @@ builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
+builder.Services.AddSingleton<IDeviceConnectionService, DeviceConnectionService>();
+
 builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
 builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddHostedService<StartupHostedService>();

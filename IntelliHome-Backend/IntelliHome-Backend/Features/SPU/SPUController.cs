@@ -1,7 +1,5 @@
-﻿using Data.Models.PKA;
-using Data.Models.SPU;
+﻿using Data.Models.SPU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;

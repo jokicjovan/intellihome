@@ -45,7 +45,6 @@ namespace IntelliHome_Backend.Features.PKA
             };
             airConditioner = await _airConditionerService.CreateAirConditioner(airConditioner);
             return Ok(airConditioner);
-
         }
 
         [HttpPost]
@@ -61,7 +60,6 @@ namespace IntelliHome_Backend.Features.PKA
             };
             ambientSensor = await _ambientSensorService.CreateAmbientSensor(ambientSensor);
             return Ok(ambientSensor);
-
         }
 
         [HttpPost]
@@ -78,7 +76,6 @@ namespace IntelliHome_Backend.Features.PKA
             };
             washingMachine = await _washingMachineService.CreateWashingMachine(washingMachine);
             return Ok(washingMachine);
-
         }
 
         [HttpGet]

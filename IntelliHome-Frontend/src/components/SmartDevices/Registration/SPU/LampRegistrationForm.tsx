@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
 import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
-import {
-    Box,
-    Container,
-    Typography
-} from "@mui/material";
+import {Box, Container, TextField, Typography} from "@mui/material";
 import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDeviceFields.ts";
+import InputAdornment from "@mui/material/InputAdornment";
 import SmartDeviceService from "../../../../services/smartDevices/SmartDeviceService.ts";
-import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
 
-interface AmbientSensorAdditionalFields {
+interface LampAdditionalFields {
     PowerPerHour: number;
+    BrightnessLimit: number;
 }
 
-interface AmbientSensorRegistrationFormProps {
+interface LampRegistrationFormProps {
     smartHomeId: string;
 }
 
-const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId}) => {
-    const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
-        PowerPerHour: 0
+
+const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId}) => {
+    const [additionalFormData, setAdditionalFormData] = useState<LampAdditionalFields>({
+        BrightnessLimit: 100,
+        PowerPerHour: 0,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({
-        Name: "Ambient Sensor",
+        Name: "Lamp",
         Image: new Blob([])
     });
 
@@ -41,9 +41,16 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
         setCommonFormData(smartDeviceData);
     };
 
-    const handleAmbientSensorSubmit = (e: React.FormEvent) => {
+    const handleAdditionalFormInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAdditionalFormData({
+            ...additionalFormData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleLampSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp);
     };
 
     return (
@@ -61,7 +68,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
         >
             <Box
                 component="form"
-                onSubmit={handleAmbientSensorSubmit}
+                onSubmit={handleLampSubmit}
                 sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -71,7 +78,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                 }}
             >
                 <Typography variant="h4" sx={{ textAlign: "left", width: 1 }}>
-                    Add Ambient Sensor
+                    Add Lamp
                 </Typography>
 
                 <SmartDeviceRegistrationForm
@@ -83,10 +90,30 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                     onValueChange={handlePowerValueChange}
                 />
 
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="BrightnessLimit"
+                    label="Brightness limit"
+                    name="BrightnessLimit"
+                    type="number"
+                    value={additionalFormData.BrightnessLimit}
+                    onChange={handleAdditionalFormInputChange}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">Lm</InputAdornment>,
+                    }}
+                    inputProps={{
+                        min: 20,
+                        max: 1500,
+                    }}
+                />
+
                 <DeviceRegistrationButtons onCancel={() => {}}/>
             </Box>
         </Container>
     );
 };
 
-export default AmbientSensorRegistrationForm;
+export default LampRegistrationForm;

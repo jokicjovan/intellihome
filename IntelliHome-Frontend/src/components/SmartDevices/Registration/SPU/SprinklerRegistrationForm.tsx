@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
-import {
-    Box,
-    Container,
-    Typography
-} from "@mui/material";
+import {Box, Container, Typography} from "@mui/material";
 import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDeviceFields.ts";
 import SmartDeviceService from "../../../../services/smartDevices/SmartDeviceService.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
@@ -12,21 +8,21 @@ import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts
 import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
 
-interface AmbientSensorAdditionalFields {
+interface SprinklerAdditionalFields {
     PowerPerHour: number;
 }
 
-interface AmbientSensorRegistrationFormProps {
+interface SprinklerRegistrationFormProps {
     smartHomeId: string;
 }
 
-const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId}) => {
-    const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
-        PowerPerHour: 0
+const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({smartHomeId}) => {
+    const [additionalFormData, setAdditionalFormData] = useState<SprinklerAdditionalFields>({
+        PowerPerHour: 0,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({
-        Name: "Ambient Sensor",
+        Name: "Sprinkler",
         Image: new Blob([])
     });
 
@@ -40,10 +36,9 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
     const handleCommonFormInputChange = (smartDeviceData: CommonSmartDeviceFields) => {
         setCommonFormData(smartDeviceData);
     };
-
-    const handleAmbientSensorSubmit = (e: React.FormEvent) => {
+    const handleSprinklerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler);
     };
 
     return (
@@ -61,7 +56,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
         >
             <Box
                 component="form"
-                onSubmit={handleAmbientSensorSubmit}
+                onSubmit={handleSprinklerSubmit}
                 sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -71,7 +66,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                 }}
             >
                 <Typography variant="h4" sx={{ textAlign: "left", width: 1 }}>
-                    Add Ambient Sensor
+                    Add Sprinkler
                 </Typography>
 
                 <SmartDeviceRegistrationForm
@@ -89,4 +84,4 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
     );
 };
 
-export default AmbientSensorRegistrationForm;
+export default SprinklerRegistrationForm;

@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
-import {Box, Button, Checkbox, Container, FormControlLabel, TextField, Typography} from "@mui/material";
-import CommonSmartDeviceFields from "../Shared/CommonSmartDeviceFields.ts";
+import {
+    Box,
+    Checkbox,
+    Container,
+    FormControlLabel,
+    TextField,
+    Typography
+} from "@mui/material";
+import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDeviceFields.ts";
 import InputAdornment from "@mui/material/InputAdornment";
-import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceService from "../../../../services/smartDevices/SmartDeviceService.ts";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
+import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
+import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
 
 interface AirConditionerAdditionalFields {
+    PowerPerHour: number;
     Modes: string[];
     MinTemperature: number;
     MaxTemperature: number;
@@ -19,19 +30,22 @@ interface AirConditionerRegistrationFormProps {
 
 const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<AirConditionerAdditionalFields>({
+        PowerPerHour: 0,
         Modes: [],
         MinTemperature: 15,
-        MaxTemperature: 35
+        MaxTemperature: 30
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({
-        PowerPerHour: 0,
         Name: "Air Conditioner",
         Image: new Blob([])
     });
 
-    const handleCommonFormInputChange = (smartDeviceData: CommonSmartDeviceFields) => {
-        setCommonFormData(smartDeviceData);
+    const handlePowerValueChange = (powerValue: number) => {
+        setAdditionalFormData((prevData) => ({
+            ...prevData,
+            PowerPerHour: powerValue
+        }));
     };
 
     const handleAdditionalFormInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,9 +55,12 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
         });
     };
 
+    const handleCommonFormInputChange = (smartDeviceData: CommonSmartDeviceFields) => {
+        setCommonFormData(smartDeviceData);
+    };
+
     const handleCheckboxChange = (mode: string) => {
         const isSelected = additionalFormData.Modes.includes(mode);
-
         setAdditionalFormData((prevData) => ({
             ...prevData,
             Modes: isSelected
@@ -54,22 +71,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
 
     const handleAirConditionerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        axios.post(
-            `${environment}/api/PKA/CreateAirConditioner`,
-            {...commonFormData, ...additionalFormData},
-            {
-                params: { smartHomeId: smartHomeId },
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        )
-            .then((res) => {
-                if (res.status === 200) console.log("Success");
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner);
     };
 
     const modesCheckboxes = [
@@ -110,6 +112,10 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                 <SmartDeviceRegistrationForm
                     formData={commonFormData}
                     onFormChange={handleCommonFormInputChange}
+                />
+
+                <PowerPerHourInput
+                    onValueChange={handlePowerValueChange}
                 />
 
                 <TextField
@@ -170,40 +176,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     ))}
                 </Box>
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "end",
-                        margin: 1,
-                        marginBottom: 0,
-                        width: 1,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            marginRight: 2,
-                            backgroundColor: "white",
-                            border: 1,
-                            '&:hover': {
-                                backgroundColor: 'lightGray',
-                            },
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            border: 1,
-                        }}
-                    >
-                        Create
-                    </Button>
-                </Box>
+                <DeviceRegistrationButtons onCancel={() => {}}/>
             </Box>
         </Container>
     );

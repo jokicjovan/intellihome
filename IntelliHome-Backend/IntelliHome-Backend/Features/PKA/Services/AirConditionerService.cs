@@ -8,17 +8,22 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
-        private readonly ISimulationService _simulationService;
+        private readonly IDeviceConnectionService _deviceConnectionService;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository, ISimulationService simulationService)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository, IDeviceConnectionService deviceConnectionService)
         {
             _airConditionerRepository = airConditionerRepository;
-            _simulationService = simulationService;
+            _deviceConnectionService = deviceConnectionService;
         }
 
         public async Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
             airConditioner = await _airConditionerRepository.Create(airConditioner);
-            await _simulationService.ToggleDeviceSimulator(airConditioner, true);
+            bool success = await _deviceConnectionService.ConnectWithSmartDevice(airConditioner);
+            if (success)
+            {
+                airConditioner.IsConnected = true;
+                await _airConditionerRepository.Update(airConditioner);
+            }
             return airConditioner;
         }
     }

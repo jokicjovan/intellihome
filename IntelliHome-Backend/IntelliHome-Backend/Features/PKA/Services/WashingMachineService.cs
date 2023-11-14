@@ -9,21 +9,26 @@ namespace IntelliHome_Backend.Features.PKA.Services
     {
         private readonly IWashingMachineRepository _washingMachineRepository;
         private readonly IWashingMachineModeRepository _washingMachineModeRepository;
-        private readonly ISimulationService _simulationService;
+        private readonly IDeviceConnectionService _deviceConnectionService;
 
         public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
             IWashingMachineModeRepository washingMachineModeRepository,
-            ISimulationService simulationService)
+            IDeviceConnectionService deviceConnectionService)
         {
             _washingMachineRepository = washingMachineRepository;
             _washingMachineModeRepository = washingMachineModeRepository;
-            _simulationService = simulationService;
+            _deviceConnectionService = deviceConnectionService;
         }
 
         public async Task<WashingMachine> CreateWashingMachine(WashingMachine washingMachine)
         {
             washingMachine = await _washingMachineRepository.Create(washingMachine);
-            await _simulationService.ToggleDeviceSimulator(washingMachine, true);
+            bool success = await _deviceConnectionService.ConnectWithSmartDevice(washingMachine);
+            if (success)
+            {
+                washingMachine.IsConnected = true;
+                await _washingMachineRepository.Update(washingMachine);
+            }
             return washingMachine;
         }
 

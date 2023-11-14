@@ -1,5 +1,4 @@
 interface CommonSmartDeviceFields {
-    PowerPerHour: number;
     Name: string;
     Image: Blob;
 }

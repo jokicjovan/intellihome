@@ -1,11 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
-import {Box, Button, Checkbox, Container, FormControlLabel, Typography} from "@mui/material";
-import CommonSmartDeviceFields from "../Shared/CommonSmartDeviceFields.ts";
+import {Box, Checkbox, Container, FormControlLabel, Typography} from "@mui/material";
+import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDeviceFields.ts";
+import SmartDeviceService from "../../../../services/smartDevices/SmartDeviceService.ts";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import {environment} from "../../../../utils/Environment.ts";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
+import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
+import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
 
 interface WashingMachineAdditionalFields {
+    PowerPerHour: number;
     ModesIds: string[];
 }
 
@@ -29,13 +35,20 @@ interface ModeCheckbox{
 const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<WashingMachineAdditionalFields>({
         ModesIds: [],
+        PowerPerHour: 0,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({
-        PowerPerHour: 0,
         Name: "Washing Machine",
         Image: new Blob()
     });
+
+    const handlePowerValueChange = (powerValue: number) => {
+        setAdditionalFormData((prevData) => ({
+            ...prevData,
+            PowerPerHour: powerValue
+        }));
+    };
 
     const handleCommonFormInputChange = (smartDeviceData: CommonSmartDeviceFields) => {
         setCommonFormData(smartDeviceData);
@@ -52,24 +65,9 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         }));
     };
 
-    const handleAirConditionerSubmit = (e: React.FormEvent) => {
+    const handleWashingMachineSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        axios.post(
-            `${environment}/api/PKA/CreateWashingMachine`,
-            {...commonFormData, ...additionalFormData},
-            {
-                params: { smartHomeId: smartHomeId },
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        )
-            .then((res) => {
-                if (res.status === 200) console.log("Success");
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine);
     };
 
     const [modesCheckboxes , setModesCheckboxes] = useState<ModeCheckbox[]>([]);
@@ -108,7 +106,7 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         >
             <Box
                 component="form"
-                onSubmit={handleAirConditionerSubmit}
+                onSubmit={handleWashingMachineSubmit}
                 sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -124,6 +122,10 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
                 <SmartDeviceRegistrationForm
                     formData={commonFormData}
                     onFormChange={handleCommonFormInputChange}
+                />
+
+                <PowerPerHourInput
+                    onValueChange={handlePowerValueChange}
                 />
 
                 <Box sx={{width:1}}>
@@ -144,40 +146,7 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
                     ))}
                 </Box>
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "end",
-                        margin: 1,
-                        marginBottom: 0,
-                        width: 1,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            marginRight: 2,
-                            backgroundColor: "white",
-                            border: 1,
-                            '&:hover': {
-                                backgroundColor: 'lightGray',
-                            },
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            border: 1,
-                        }}
-                    >
-                        Create
-                    </Button>
-                </Box>
+                <DeviceRegistrationButtons onCancel={() => {}}/>
             </Box>
         </Container>
     );

@@ -1,4 +1,5 @@
 ﻿using Data.Models.VEU;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
@@ -8,15 +9,24 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class BatterySystemService : IBatterySystemService
     {
         private readonly IBatterySystemRepository _batterySystemRepository;
+        private readonly IDeviceConnectionService _deviceConnectionService;
 
-        public BatterySystemService(IBatterySystemRepository batterySystemRepository)
+        public BatterySystemService(IBatterySystemRepository batterySystemRepository, IDeviceConnectionService deviceConnectionService)
         {
             _batterySystemRepository = batterySystemRepository;
+            _deviceConnectionService = deviceConnectionService;
         }
 
-        public Task<BatterySystem> CreateBatterySystem(BatterySystem batterySystem)
+        public async Task<BatterySystem> CreateBatterySystem(BatterySystem batterySystem)
         {
-            return _batterySystemRepository.Create(batterySystem);
+            batterySystem = await _batterySystemRepository.Create(batterySystem);
+            bool success = await _deviceConnectionService.ConnectWithSmartDevice(batterySystem);
+            if (success)
+            {
+                batterySystem.IsConnected = true;
+                await _batterySystemRepository.Update(batterySystem);
+            }
+            return batterySystem;
         }
         
         public async Task<BatterySystem> GetBatterySystem(Guid Id)
