@@ -7,6 +7,8 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using SendGrid.Helpers.Mail;
+using SendGrid;
 
 namespace IntelliHome_Backend.Features.Home.Services
 {
@@ -94,11 +96,53 @@ namespace IntelliHome_Backend.Features.Home.Services
             await _smartHomeRepository.Update(smartHome);
 
             // TODO: Send mail to user
+            User user = await _userRepository.Read(smartHome.Owner.Id) ?? throw new ResourceNotFoundException("User with provided Id not found!");
+            _sendApprovalRejectionMail(user, "", false);
         }
 
-        public async Task DeleteSmartHome(Guid id)
+        public async Task DeleteSmartHome(Guid id, Guid userId, String reason)
         {
+            //TODO: Send mail to user
+            User user = await _userRepository.Read(userId) ?? throw new ResourceNotFoundException("User with provided Id not found!");
+            _sendApprovalRejectionMail(user, reason, true);
             await _smartHomeRepository.Delete(id);
+        }
+
+        private async Task _sendApprovalRejectionMail(User user, String reason, Boolean isRejection)
+        {
+            StreamReader sr = new StreamReader("sendgrid_api_key.txt");
+            String sendgridApiKey = sr.ReadLine();
+            SendGridClient client = new SendGridClient(sendgridApiKey);
+            SendGridMessage msg = new SendGridMessage();
+            msg.SetFrom(new EmailAddress("certificateswebapp@gmail.com", "IntelliHome"));
+            msg.AddTo(new EmailAddress(user.Email, String.Concat(user.FirstName, " ", user.LastName)));
+            msg.Subject = isRejection ? "Smart home rejection mail" : "Smart home approval mail " ;
+
+            string messageContent = isRejection
+                ? $"Dear {user.FirstName}, unfortunately, your smart home application has been rejected. Reason: {reason}"
+                : $"Dear {user.FirstName}, congratulations! Your smart home application has been approved.";
+
+            msg.AddContent(MimeType.Text, messageContent);
+            msg.AddContent(MimeType.Html, $"<p>{messageContent}</p>");
+
+            Response response = await client.SendEmailAsync(msg);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Mail error");
+            }
+        }
+
+        public async Task<SmartHomePaginatedDTO> GetSmartHomesForApproval(PageParametersDTO pageParameters)
+        {
+            List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForApproval();
+            SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
+            {
+                TotalCount = smartHomes.Count,
+                SmartHomes = smartHomes.Skip((pageParameters.PageNumber - 1) * pageParameters.PageSize)
+                    .Take(pageParameters.PageSize).Select(s => new GetSmartHomeDTO(s)).ToList()
+            };
+            return result;
         }
     }
 }

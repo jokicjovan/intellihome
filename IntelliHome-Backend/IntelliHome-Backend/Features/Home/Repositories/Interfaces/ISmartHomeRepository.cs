@@ -8,5 +8,6 @@ namespace IntelliHome_Backend.Features.Home.Repositories.Interfaces
     {
         Task<List<SmartHome>> GetSmartHomesForUser(User user);
         Task<List<SmartHome>> GetSmartHomesForUserWithNameSearch(User user, string search);
+        Task<List<SmartHome>> GetSmartHomesForApproval();
     }
 }

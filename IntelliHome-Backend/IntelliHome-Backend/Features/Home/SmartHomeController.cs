@@ -94,6 +94,22 @@ namespace IntelliHome_Backend.Features.Home
             return Ok(smartHomes);
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetSmartHomesForApproval([FromQuery] PageParametersDTO pageParameters)
+        {
+            SmartHomePaginatedDTO smartHomes;
+            try
+            {
+                smartHomes = await _smartHomeService.GetSmartHomesForApproval(pageParameters);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(smartHomes);
+        }
+
 
         //TODO: Add authorization, just admin can approve smart homes
         [HttpPut]
@@ -114,11 +130,11 @@ namespace IntelliHome_Backend.Features.Home
 
         // TODO: Add authorization, just admin can delete smart homes or owner of the smart home
         [HttpDelete]
-        public async Task<ActionResult> DeleteSmartHome(Guid id)
+        public async Task<ActionResult> DeleteSmartHome(Guid id, Guid userId, String reason)
         {
             try
             {
-                await _smartHomeService.DeleteSmartHome(id);
+                await _smartHomeService.DeleteSmartHome(id, userId, reason);
             }
             catch (Exception e)
             {
