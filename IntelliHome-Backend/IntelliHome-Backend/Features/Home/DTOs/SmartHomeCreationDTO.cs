@@ -7,7 +7,8 @@ namespace IntelliHome_Backend.Features.Home.DTOs
     {
         public string Name { get; set; }
         public string Address { get; set; }
-        public Guid CityId { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
         public string Area { get; set; }
         public SmartHomeType Type { get; set; }
         public short NumberOfFloors { get; set; }

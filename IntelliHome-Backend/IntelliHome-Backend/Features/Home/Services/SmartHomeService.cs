@@ -38,7 +38,7 @@ namespace IntelliHome_Backend.Features.Home.Services
         public async Task<GetSmartHomeDTO> CreateSmartHome(SmartHomeCreationDTO dto, String username)
         {
             User user = await _userRepository.FindByUsername(username) ?? throw new ResourceNotFoundException("User with provided username not found!");
-            City city = await _cityRepository.Read(dto.CityId) ?? throw new ResourceNotFoundException("City with provided Id not found!");
+            City city = await _cityRepository.FindByNameAndCountry(dto.City, dto.Country) ?? throw new ResourceNotFoundException("City is not supported");
 
 
             //TODO: Save image to file system

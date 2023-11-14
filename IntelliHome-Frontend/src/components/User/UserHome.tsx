@@ -6,6 +6,7 @@ import SmartHomeCard from "./SmartHomeCard.tsx";
 import {environment} from "../../security/Environment.tsx";
 import SmartHomeCreatingMap from "./SmartHomeCreatingMap.tsx";
 import SmartHomeCreatingInfo from "./SmartHomeCreatingInfo.tsx";
+ import {useMutation} from "react-query";
 
 const UserHome=()=>{
     const buttonStyle={backgroundColor:"#FBC40E", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", width:"80px",  height:"30px", fontSize:"20px",fontWeight:"600",margin:"15px",borderRadius:"5px", ':hover':{backgroundColor:"#EDB90D"}, textTransform: "none"}
@@ -96,7 +97,12 @@ const UserHome=()=>{
 
     const handleModalOpen = () => {
         setOpenModal(true);
-        setPage(0);
+        setModalPage(0);
+        setButton1Text("Cancel");
+        setButton2Text("Next");
+        setLine2Color("#DBDDEB");
+        setLine3Color("#DBDDEB");
+        setMapData({});
     }
 
     const button1Handler = () => {
@@ -128,13 +134,57 @@ const UserHome=()=>{
         }
         else if(modalPage===2){
             setOpenModal(false);
+            // add image to map data
+            createSmarthome()
             //TODO: Create new smart home
+
         }
     }
 
-    const handleLocationSelect = (locationInfo) => {
-        console.log('Location selected:', locationInfo);
-        setMapData(locationInfo);
+    const smartHomeCreationMutation = useMutation({
+        mutationFn: (data: FormData) => {
+            return axios.post(environment + '/api/SmartHome/CreateSmartHome', data)
+                .then((res) => {
+                    if (res.status !== 200) {
+                        alert(res.data.message);
+                    } else {
+                        alert("Smart home created successfully!");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    // Handle errors here
+                    // You can also show a user-friendly error message
+                    alert("Error creating smart home: " + error.response.data);
+                });
+        },
+    });
+
+    const createSmarthome = async () => {
+        const formData= new FormData();
+        formData.append("name", mapData['name']);
+        formData.append("address", mapData['address']);
+        formData.append("city", mapData['city']);
+        formData.append("country", mapData['country']);
+        formData.append("area", mapData['area']);
+        formData.append("numberOfFloors", mapData['numberOfFloors']);
+        formData.append("type", mapData['type']);
+        formData.append("latitude", mapData['latitude']);
+        formData.append("longitude", mapData['longitude']);
+        formData.append("image", mapData['image']);
+
+        smartHomeCreationMutation.mutate(formData);
+    };
+
+
+
+    const handleMapDataChange = (updatedMapData) => {
+        setMapData(updatedMapData);
+    };
+
+    const onUploadImage = (event) => {
+        mapData['image'] = event.target.files[0];
+        setMapData(mapData);
     };
 
 
@@ -148,8 +198,8 @@ const UserHome=()=>{
             </Box>
             {/* Content */}
             <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-                {modalPage === 0 && <SmartHomeCreatingMap onLocationSelect={handleLocationSelect}/>}
-                {modalPage === 1 && <SmartHomeCreatingInfo mapData={mapData}/>}
+                {modalPage === 0 && <SmartHomeCreatingMap onLocationSelect={handleMapDataChange}/>}
+                {modalPage === 1 && <SmartHomeCreatingInfo mapData={mapData} onMapDataChange={handleMapDataChange}/>}
                 {modalPage === 2 && (
                     <Box
                         sx={{
@@ -165,6 +215,8 @@ const UserHome=()=>{
                             Upload photos of your property
                         </Typography>
                         <input
+                            id="smart-home-image"
+                            onChange={onUploadImage}
                             type="file"
                             style={{
                                 position: "absolute",

@@ -11,5 +11,10 @@ namespace IntelliHome_Backend.Features.Home.Repositories
         public CityRepository(PostgreSqlDbContext context) : base(context)
         {
         }
+
+        public async Task<City> FindByNameAndCountry(string city, string country)
+        {
+            return _entities.FirstOrDefault(c => c.Name == city && c.Country == country);
+        }
     }
 }
