@@ -41,5 +41,15 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .Where(s => s.Name.ToLower().Contains(search.ToLower()))
                 .ToListAsync();
         }
+
+        public async Task<List<SmartHome>> GetSmartHomesForApproval()
+        {
+            return await _entities
+                .Include(s => s.SmartDevices)
+                .Include(s => s.Owner)
+                .Include(s => s.City)
+                .Where(s => s.IsApproved == false)
+                .ToListAsync();
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task<GetSmartHomeDTO> CreateSmartHome(SmartHomeCreationDTO dto, String username);
         Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters);
         Task ApproveSmartHome(Guid id);
-        Task DeleteSmartHome(Guid id);
+        Task DeleteSmartHome(Guid id, Guid userId, String reason);
+        Task<SmartHomePaginatedDTO> GetSmartHomesForApproval(PageParametersDTO pageParameters);
     }
 }
