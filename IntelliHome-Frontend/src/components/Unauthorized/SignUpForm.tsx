@@ -7,7 +7,6 @@ import {environment} from "../../security/Environment";
 import {useState} from "react";
 import SuccessfulRegistrationContainer from "./SuccessfulRegistrationContainer";
 
-
 const SignUpForm = () => {
     const navigate = useNavigate()
     const [successfulRegistration,setSuccessfulRegistration] = useState(false);
@@ -51,6 +50,7 @@ const SignUpForm = () => {
         // Call the mutation function with the form data
         registrationMutation.mutate(formData);
     };
+    // @ts-ignore
     return<>{!successfulRegistration? <Box component="form" onSubmit={handleSignUp}  sx={{display:"flex",width:"100%",justifyContent:"center",flexDirection:"column"}}>
         <Typography mb={1} align="center" sx={{fontSize:"48px",fontWeight:"600"}}>Sign Up</Typography>
         <TextField name="firstName"   placeholder="First Name" sx={styled}></TextField>

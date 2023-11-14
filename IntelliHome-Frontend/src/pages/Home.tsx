@@ -1,7 +1,18 @@
-import {Box} from "@mui/material";
+import {Typography} from "@mui/material";
+import UserHome from "../components/User/UserHome.tsx";
+import {AuthContext} from "../security/AuthContext.tsx";
+import {useContext} from "react";
+import AdminHome from "../components/Admin/AdminHome.tsx";
+
 
 const Home=()=>{
-    return <Box sx={{width:"100%",height:"100%",backgroundColor:"white"}}><p>Home</p></Box>
-}
+    const { role} = useContext(AuthContext);
+    return (
+        <>
+            {role==="Admin" &&<AdminHome/>}
+            {role==="User" &&<UserHome/>}
+        </>
+    )
+};
 
-export default  Home;
+export default Home;

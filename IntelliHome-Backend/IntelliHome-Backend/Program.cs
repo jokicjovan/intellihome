@@ -27,6 +27,7 @@ using IntelliHome_Backend.Features.Communications.HostedServices;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using IntelliHome_Backend.Features.Shared.Services;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConfirmationRepository, ConfirmationRepository>();
 builder.Services.AddScoped<ISmartDeviceRepository, SmartDeviceRepository>();
 builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
 builder.Services.AddScoped<IAmbientSensorRepository, AmbientSensorRepository>();
 builder.Services.AddScoped<IWashingMachineRepository, WashingMachineRepository>();
@@ -115,6 +117,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+
+
 var app = builder.Build();
 
 
@@ -128,6 +132,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"static/")),
+    RequestPath = new PathString("/static")
+});
 
 app.UseMiddleware<ExceptionMiddleware>(true);
 

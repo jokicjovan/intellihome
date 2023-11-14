@@ -7,7 +7,7 @@ import {AuthProvider} from "./security/AuthContext.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
 import SignIn from "./pages/SignIn.tsx";
 import SignUp from "./pages/SignUp";
-import Home from "./pages/Home";
+import Home from "./pages/Home.tsx";
 import {UnauthenticatedRoute} from "./security/UnauthenticatedRoute";
 import {AuthenticatedRoute} from "./security/AuthenticatedRoute";
 import {QueryClient, QueryClientProvider} from "react-query";
