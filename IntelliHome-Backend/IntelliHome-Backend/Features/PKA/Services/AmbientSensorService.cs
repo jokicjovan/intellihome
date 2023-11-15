@@ -1,5 +1,5 @@
 ﻿using Data.Models.PKA;
-using IntelliHome_Backend.Features.PKA.Repositories;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
@@ -8,15 +8,24 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AmbientSensorService : IAmbientSensorService
     {
         private readonly IAmbientSensorRepository _ambientSensorRepository;
+        private readonly IDeviceConnectionService _deviceConnectionService;
 
-        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository)
+        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IDeviceConnectionService deviceConnectionService)
         {
             _ambientSensorRepository = ambientSensorRepository;
+            _deviceConnectionService = deviceConnectionService;
         }
 
-        public Task<AmbientSensor> CreateAmbientSensor(AmbientSensor ambientSensor)
+        public async Task<AmbientSensor> CreateAmbientSensor(AmbientSensor ambientSensor)
         {
-            return _ambientSensorRepository.Create(ambientSensor);
+            ambientSensor = await _ambientSensorRepository.Create(ambientSensor);
+            bool success = await _deviceConnectionService.ConnectWithSmartDevice(ambientSensor);
+            if (success)
+            {
+                ambientSensor.IsConnected = true;
+                await _ambientSensorRepository.Update(ambientSensor);
+            }
+            return ambientSensor;
         }
     }
 }
