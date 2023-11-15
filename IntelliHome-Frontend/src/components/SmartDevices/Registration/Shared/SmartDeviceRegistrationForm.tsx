@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, TextField} from "@mui/material";
+import {Button, TextField, useTheme} from "@mui/material";
 import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDeviceFields.ts";
 import {CheckCircle, Close} from "@mui/icons-material";
 
@@ -9,6 +9,7 @@ interface SmartDeviceRegistrationFormProps {
 }
 
 const SmartDeviceRegistrationForm: React.FC<SmartDeviceRegistrationFormProps> = ({ formData, onFormChange }) => {
+    const theme = useTheme();
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         onFormChange({ ...formData, [name]: value });
@@ -36,7 +37,8 @@ const SmartDeviceRegistrationForm: React.FC<SmartDeviceRegistrationFormProps> = 
                 onChange={handleInputChange}
             />
 
-            <Button startIcon={formData.Image.size === 0 ? <Close style={{color:"red",fontSize:"26px"}}/>:
+            <Button startIcon={formData.Image.size === 0 ?
+                <Close style={{color:"red",fontSize:"26px"}}/>:
                 <CheckCircle style={{color:"#039F13",fontSize:"26px"}}/>}
                     sx={{backgroundColor:"transparent",
                         textTransform:"none",
@@ -46,8 +48,10 @@ const SmartDeviceRegistrationForm: React.FC<SmartDeviceRegistrationFormProps> = 
                         paddingY:"10px",
                         margin:"15px auto",
                         borderRadius:"15px",
+                        border:1,
+                        borderColor:"lightGray",
                         '&:hover': {
-                            backgroundColor: 'gray',
+                            backgroundColor: theme.palette.secondary.main,
                         },}}
             >Upload device picture
                 <input type="file" onChange={handleImageUpload} style={{display: "block",

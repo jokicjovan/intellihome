@@ -18,7 +18,7 @@ interface SprinklerRegistrationFormProps {
 
 const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<SprinklerAdditionalFields>({
-        PowerPerHour: 0,
+        PowerPerHour: 1,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({

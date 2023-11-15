@@ -1,4 +1,5 @@
 ﻿using IntelliHome_Backend.Features.Shared.Exceptions;
+using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 
 namespace IntelliHome_Backend.Features.Shared.Services
 {
@@ -13,7 +14,7 @@ namespace IntelliHome_Backend.Features.Shared.Services
             }
 
             string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            string SavePath = Path.Combine("static/devices", ImageName);
+            string SavePath = Path.Combine("static/smartDevices", ImageName);
             using (var stream = new FileStream(SavePath, FileMode.Create))
             {
                 image.CopyTo(stream);

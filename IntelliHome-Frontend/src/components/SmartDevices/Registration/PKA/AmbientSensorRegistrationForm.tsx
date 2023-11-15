@@ -22,7 +22,7 @@ interface AmbientSensorRegistrationFormProps {
 
 const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
-        PowerPerHour: 0
+        PowerPerHour: 1
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({

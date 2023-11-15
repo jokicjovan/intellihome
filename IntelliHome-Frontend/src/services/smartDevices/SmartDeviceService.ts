@@ -6,10 +6,9 @@ import SmartDeviceCategory from "../../models/enums/SmartDeviceCategory.ts";
 const SmartDeviceService = {
     registerSmartDevice: async (formData : any, smartHomeId : string, smartDeviceCategory: SmartDeviceCategory, smartDeviceType: SmartDeviceType) => {
         axios.post(
-            `${environment}/api/${smartDeviceCategory}/Create${smartDeviceType}`,
+            `${environment}/api/${smartDeviceCategory}/Create${smartDeviceType}/${smartHomeId}`,
             formData,
             {
-                params: { smartHomeId: smartHomeId },
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

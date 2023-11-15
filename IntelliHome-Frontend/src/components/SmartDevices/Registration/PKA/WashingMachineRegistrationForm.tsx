@@ -35,7 +35,7 @@ interface ModeCheckbox{
 const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<WashingMachineAdditionalFields>({
         ModesIds: [],
-        PowerPerHour: 0,
+        PowerPerHour: 1,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({

@@ -22,7 +22,7 @@ interface LampRegistrationFormProps {
 const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<LampAdditionalFields>({
         BrightnessLimit: 100,
-        PowerPerHour: 0,
+        PowerPerHour: 1,
     });
 
     const [commonFormData, setCommonFormData] = useState<CommonSmartDeviceFields>({
@@ -96,7 +96,7 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
                     required
                     fullWidth
                     id="BrightnessLimit"
-                    label="Brightness limit"
+                    label="Brightness Limit"
                     name="BrightnessLimit"
                     type="number"
                     value={additionalFormData.BrightnessLimit}

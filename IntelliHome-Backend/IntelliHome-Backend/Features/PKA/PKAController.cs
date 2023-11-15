@@ -3,7 +3,7 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
-using IntelliHome_Backend.Features.Shared.Services;
+using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome_Backend.Features.PKA
@@ -30,7 +30,8 @@ namespace IntelliHome_Backend.Features.PKA
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAirConditioner([FromQuery] Guid smartHomeId, [FromForm] AirConditionerCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateAirConditioner([FromRoute] Guid smartHomeId, [FromForm] AirConditionerCreationDTO dto)
         {
             AirConditioner airConditioner = new AirConditioner
             {
@@ -48,7 +49,8 @@ namespace IntelliHome_Backend.Features.PKA
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAmbientSensor([FromQuery] Guid smartHomeId, [FromForm] AmbientSensorCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateAmbientSensor([FromRoute] Guid smartHomeId, [FromForm] AmbientSensorCreationDTO dto)
         {
             AmbientSensor ambientSensor = new AmbientSensor
             {
@@ -63,7 +65,8 @@ namespace IntelliHome_Backend.Features.PKA
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateWashingMachine([FromQuery] Guid smartHomeId, [FromForm] WashingMachineCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateWashingMachine([FromRoute] Guid smartHomeId, [FromForm] WashingMachineCreationDTO dto)
         {
             WashingMachine washingMachine = new WashingMachine
             {

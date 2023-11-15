@@ -1,6 +1,6 @@
 ﻿using Data.Models.SPU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services;
+using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,8 @@ namespace IntelliHome_Backend.Features.SPU
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateLamp([FromQuery] Guid smartHomeId, [FromForm] LampCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateLamp([FromRoute] Guid smartHomeId, [FromForm] LampCreationDTO dto)
         {
             Lamp lamp = new Lamp
             {
@@ -46,7 +47,8 @@ namespace IntelliHome_Backend.Features.SPU
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateSprinkler([FromQuery] Guid smartHomeId, [FromForm] SprinklerCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateSprinkler([FromRoute] Guid smartHomeId, [FromForm] SprinklerCreationDTO dto)
         {
             Sprinkler sprinkler = new Sprinkler
             {
@@ -62,7 +64,8 @@ namespace IntelliHome_Backend.Features.SPU
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateVehicleGate([FromQuery] Guid smartHomeId, [FromForm] VehicleGateCreationDTO dto)
+        [Route("{smartHomeId:Guid}")]
+        public async Task<ActionResult> CreateVehicleGate([FromRoute] Guid smartHomeId, [FromForm] VehicleGateCreationDTO dto)
         {
             VehicleGate vehicleGate = new VehicleGate
             {

@@ -28,6 +28,7 @@ using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using IntelliHome_Backend.Features.Shared.Services;
 using Microsoft.Extensions.FileProviders;
+using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 
 var builder = WebApplication.CreateBuilder(args);
 

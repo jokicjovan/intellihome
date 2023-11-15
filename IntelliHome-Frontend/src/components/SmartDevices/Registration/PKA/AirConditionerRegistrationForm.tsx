@@ -30,7 +30,7 @@ interface AirConditionerRegistrationFormProps {
 
 const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId}) => {
     const [additionalFormData, setAdditionalFormData] = useState<AirConditionerAdditionalFields>({
-        PowerPerHour: 0,
+        PowerPerHour: 1,
         Modes: [],
         MinTemperature: 15,
         MaxTemperature: 30
@@ -124,7 +124,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     required
                     fullWidth
                     id="MinTemperature"
-                    label="Minimum temperature"
+                    label="Minimum Temperature"
                     name="MinTemperature"
                     type="number"
                     value={additionalFormData.MinTemperature}
@@ -144,7 +144,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     required
                     fullWidth
                     id="MaxTemperature"
-                    label="Maximum temperature"
+                    label="Maximum Temperature"
                     name="MaxTemperature"
                     type="number"
                     value={additionalFormData.MaxTemperature}

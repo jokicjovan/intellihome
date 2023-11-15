@@ -14,7 +14,7 @@ interface PowerVisibilityComponentProps {
 
 const PowerPerHourInput: React.FC<PowerVisibilityComponentProps> = ({onValueChange}) => {
     const [isPowerVisible, setIsPowerVisible] = useState(true);
-    const [powerPerHour, setPowerPerHour] = useState(0);
+    const [powerPerHour, setPowerPerHour] = useState(1);
 
     const handlePowerVisibilityChange = (
         e: React.ChangeEvent<HTMLInputElement>
@@ -48,12 +48,12 @@ const PowerPerHourInput: React.FC<PowerVisibilityComponentProps> = ({onValueChan
                     <FormControlLabel
                         value="visible"
                         control={<Radio />}
-                        label="Network power"
+                        label="Network powered"
                     />
                     <FormControlLabel
                         value="hidden"
                         control={<Radio />}
-                        label="Self sufficient"
+                        label="Self powered"
                     />
                 </RadioGroup>
             </FormControl>
@@ -65,7 +65,7 @@ const PowerPerHourInput: React.FC<PowerVisibilityComponentProps> = ({onValueChan
                     required
                     fullWidth
                     id="PowerPerHour"
-                    label="Power per hour"
+                    label="Power Per Hour"
                     name="PowerPerHour"
                     type="number"
                     value={powerPerHour}
@@ -76,7 +76,7 @@ const PowerPerHourInput: React.FC<PowerVisibilityComponentProps> = ({onValueChan
                         ),
                     }}
                     inputProps={{
-                        min: 0,
+                        min: 1,
                     }}
                 />
             )}
