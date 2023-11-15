@@ -2,7 +2,7 @@
 
 namespace IntelliHome_Backend.Features.Shared.DTOs
 {
-    public class SmartDeviceDTO
+    public class SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }

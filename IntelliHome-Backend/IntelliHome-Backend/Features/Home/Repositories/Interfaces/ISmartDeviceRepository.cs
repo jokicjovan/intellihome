@@ -7,5 +7,6 @@ namespace IntelliHome_Backend.Features.Home.Repositories.Interfaces
     {
         IEnumerable<SmartDevice> FindAllWIthHome();
         IEnumerable<SmartDevice> UpdateAll(List<SmartDevice> smartDevices);
+        IEnumerable<SmartDevice> FindSmartDevicesForSmartHome(Guid smartHomeId);
     }
 }

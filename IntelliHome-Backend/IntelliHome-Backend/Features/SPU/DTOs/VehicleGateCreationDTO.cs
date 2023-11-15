@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.SPU.DTOs
 {
-    public class VehicleGateCreationDTO : SmartDeviceDTO
+    public class VehicleGateCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "At least one allowed licence plate is required.")]
         [RegexStringListValidator(@"^[A-Z]{2}\d{3,5}[A-Z]{2}$")]

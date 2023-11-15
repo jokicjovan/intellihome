@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.VEU.DTOs
 {
-    public class VehicleChargerCreationDTO : SmartDeviceDTO
+    public class VehicleChargerCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "Power is required.")]
         [Range(1, 1000, ErrorMessage = "Power should be between 1.4KW and 1000KW")]

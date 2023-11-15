@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.SPU.DTOs
 {
-    public class SprinklerCreationDTO : SmartDeviceDTO
+    public class SprinklerCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "PowerPerHour is required.")]
         public double PowerPerHour { get; set; }
