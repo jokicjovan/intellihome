@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {environment} from "../../security/Environment.tsx";
-import {Box, Button, Container, Dialog, TablePagination, TextField, Typography} from "@mui/material";
+import {Box, Button, Container, Dialog, Grid, TablePagination, TextField, Typography} from "@mui/material";
 import {Add, LocationOn} from "@mui/icons-material";
 import SmartDeviceCard from "./SmartDeviceCard.tsx";
+import SmartHomeCard from "../User/SmartHomeCard.tsx";
 
 
 const SmartHomeMain = ( {smartHomeId} ) => {
@@ -15,6 +16,7 @@ const SmartHomeMain = ( {smartHomeId} ) => {
     const iconStyle = { fontStyle: "bold", fontWeight: "600", color: "#343F71", margin: "5px"};
     const buttonStyle={backgroundColor:"#FBC40E", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", width:"200px",  height:"30px", fontSize:"20px",fontWeight:"600",margin:"15px",borderRadius:"5px", ':hover':{backgroundColor:"#EDB90D"}, textTransform: "none"}
     const typoStyle={color:"white", fontWeight:"600", fontSize:"15px"}
+    const [smartDevices, setSmartDevices] = useState([]);
 
     useEffect(() => {
         console.log(smartHomeId)
@@ -33,11 +35,31 @@ const SmartHomeMain = ( {smartHomeId} ) => {
     }
 
     const renderPanel = () => {
-        return (
-            <div>
-                <SmartDeviceCard smartDevice={{name:"Air conditioner", type:0, isOnline:true}}/>
+        return <>
+            {smartDevices.length===0 ? <p>No smart devices to show...</p> : <div>
+                <Grid container sx={{ boxSizing: 'border-box', mt: 1, height: '100%', width: '100%', px: 3 }}>
+                    {smartDevices.map((item) => (
+                        <Grid item key={item.id} xs={12} sm={6} md={4} lg={3}>
+                            <SmartDeviceCard smartDevice={item} />
+                        </Grid>
+                    ))}
+                </Grid>
             </div>
-        )
+            }
+        </>
+    }
+
+    useEffect( ()=>{
+        getSmartDevices()
+    },[page, rowsPerPage])
+
+    const getSmartDevices = () => {
+        axios.get(environment + `/api/SmartDevice/GetSmartDevices/${smartHomeId}?PageNumber=${page}&PageSize=${rowsPerPage}`).then(res => {
+            setSmartDevices(res.data.smartDevices);
+            setTotalCount(res.data.totalCount);
+        }).catch(err => {
+            console.log(err)
+        });
     }
 
     const handleChangePage = (event, newPage) => {

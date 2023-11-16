@@ -17,8 +17,7 @@ const SmartDeviceCard = (props) => {
             {/* Your content goes here */}
             <div style={{ margin: "auto 5px" }}>
                 <img
-                    // src={environment + '/' + data.image}
-                    src={"../../../public/vite.svg"}
+                    src={environment + '/' + smartDevice.image}
                     alt="Smart Home Image"
                     style={{ width: "50px", height: "50px", border: "5px solid #343F71", borderRadius: "8px", marginLeft: "20px" }}
                 />
