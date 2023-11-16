@@ -29,6 +29,7 @@ import AirConditionerRegistrationForm
     from "./components/SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import WashingMachineRegistrationForm
     from "./components/SmartDevices/Registration/PKA/WashingMachineRegistrationForm.tsx";
+import SmartHome from "./pages/SmartHome.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
     {path:"/home", element: <AuthenticatedRoute><Layout><Home/></Layout></AuthenticatedRoute>},
     {path:"/addAdmin", element: <UnauthenticatedRoute><Layout><AddAdmin/></Layout></UnauthenticatedRoute>},
+    { path: "/smarthome/:id", element: <AuthenticatedRoute><Layout><SmartHome /></Layout></AuthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])
 const queryClient = new QueryClient()

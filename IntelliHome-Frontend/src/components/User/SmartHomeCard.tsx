@@ -1,9 +1,11 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { Apartment, Devices, LocationOn, PhotoSizeSelectSmall } from "@mui/icons-material";
 import { environment } from "../../security/Environment.tsx";
+import {useNavigate} from "react-router-dom";
 
 const SmartHomeCard = (props) => {
     const data = props.data
+    const navigate = useNavigate();
     const isConditionMet = data.isApproved; // Replace with your actual condition
     const textStyle = { fontStyle: "bold", fontWeight: "600", color: "black", margin: "5px" };
     const iconStyle = { fontStyle: "bold", fontWeight: "600", color: "#343F71", margin: "5px" };
@@ -28,6 +30,10 @@ const SmartHomeCard = (props) => {
         mb: "10px",
         display: "flex",
         flexDirection: "column",
+    }
+
+    const handleButtonClick = () => {
+        if (isConditionMet) navigate("/smartHome/" + data.id)
     }
 
 
@@ -56,7 +62,7 @@ const SmartHomeCard = (props) => {
             <Container disableGutters sx={containerStyle}>
                 <Devices sx={iconStyle} /><Typography sx={textStyle}>0 device active</Typography>
             </Container>
-            <Button sx={{ ...buttonStyle, mt: 'auto' }}>View details</Button>
+            <Button sx={{ ...buttonStyle, mt: 'auto' }} onClick={handleButtonClick}>View details</Button>
         </Box>
     );
 };
