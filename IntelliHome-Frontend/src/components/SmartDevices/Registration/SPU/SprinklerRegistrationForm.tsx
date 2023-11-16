@@ -14,9 +14,10 @@ interface SprinklerAdditionalFields {
 
 interface SprinklerRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({smartHomeId}) => {
+const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<SprinklerAdditionalFields>({
         PowerPerHour: 1,
     });
@@ -38,12 +39,19 @@ const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({s
     };
     const handleSprinklerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -51,7 +59,9 @@ const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({s
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -78,7 +88,7 @@ const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({s
                     onValueChange={handlePowerValueChange}
                 />
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

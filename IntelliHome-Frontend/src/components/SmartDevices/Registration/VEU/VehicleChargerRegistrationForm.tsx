@@ -15,9 +15,10 @@ interface VehicleChargerAdditionalFields {
 
 interface VehicleChargerRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormProps> = ({smartHomeId}) => {
+const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<VehicleChargerAdditionalFields>({
         Power: 1,
         NumberOfChargingPoints: 2
@@ -41,12 +42,19 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
 
     const handleVehicleChargerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VehicleCharger);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VehicleCharger)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -54,7 +62,9 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -121,7 +131,7 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
                     />
                 </Box>
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

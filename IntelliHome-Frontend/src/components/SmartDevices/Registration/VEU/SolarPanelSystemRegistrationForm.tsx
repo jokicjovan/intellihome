@@ -15,9 +15,10 @@ interface SolarPanelSystemAdditionalFields {
 
 interface SolarPanelSystemRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFormProps> = ({smartHomeId}) => {
+const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<SolarPanelSystemAdditionalFields>({
         Area: 5,
         Efficiency: 1
@@ -41,12 +42,19 @@ const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFo
 
     const handleSolarPanelSystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SolarPanelSystem);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SolarPanelSystem)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -54,7 +62,9 @@ const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFo
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -121,7 +131,7 @@ const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFo
                 />
                 </Box>
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

@@ -6,7 +6,7 @@ import SmartHomeCard from "./SmartHomeCard.tsx";
 import {environment} from "../../security/Environment.tsx";
 import SmartHomeCreatingMap from "./SmartHomeCreatingMap.tsx";
 import SmartHomeCreatingInfo from "./SmartHomeCreatingInfo.tsx";
- import {useMutation} from "react-query";
+import {useMutation} from "react-query";
 
 const UserHome=()=>{
     const buttonStyle={backgroundColor:"#FBC40E", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", width:"80px",  height:"30px", fontSize:"20px",fontWeight:"600",margin:"15px",borderRadius:"5px", ':hover':{backgroundColor:"#EDB90D"}, textTransform: "none"}

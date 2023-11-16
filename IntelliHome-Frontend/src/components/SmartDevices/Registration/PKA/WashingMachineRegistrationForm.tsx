@@ -17,6 +17,7 @@ interface WashingMachineAdditionalFields {
 
 interface WashingMachineRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
 interface WashingMachineMode{
@@ -32,7 +33,9 @@ interface ModeCheckbox{
 }
 
 
-const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId}) => {
+const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const [error, setError] = useState<string | null>(null);
+
     const [additionalFormData, setAdditionalFormData] = useState<WashingMachineAdditionalFields>({
         ModesIds: [],
         PowerPerHour: 1,
@@ -67,7 +70,22 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
 
     const handleWashingMachineSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine);
+
+        if (additionalFormData.ModesIds.length === 0) {
+            setError("At least one mode must be selected!");
+            return;
+        }
+        setError(null);
+
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     const [modesCheckboxes , setModesCheckboxes] = useState<ModeCheckbox[]>([]);
@@ -93,7 +111,6 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -101,7 +118,9 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -145,8 +164,13 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
                         />
                     ))}
                 </Box>
+                {error && (
+                    <Typography variant="body2" color="error" sx={{ textAlign: "left", width: 1, marginBottom: 1 }}>
+                        {error}
+                    </Typography>
+                )}
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

@@ -28,9 +28,12 @@ interface VehicleGateAdditionalFields {
 
 interface VehicleGateRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> = ({smartHomeId}) => {
+const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const [error, setError] = useState<string | null>(null);
+
     const [additionalFormData, setAdditionalFormData] = useState<VehicleGateAdditionalFields>({
         PowerPerHour: 1,
         AllowedLicencePlates: []
@@ -83,12 +86,26 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
 
     const handleVehicleGateSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VehicleGate);
+
+        if (additionalFormData.AllowedLicencePlates.length === 0) {
+            setError("At least one licence plate must be added!");
+            return;
+        }
+        setError(null);
+
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VehicleGate)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -96,7 +113,9 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -184,8 +203,13 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
                         </List>
                     </Box>
                 </Box>
+                {error && (
+                    <Typography variant="body2" color="error" sx={{ textAlign: "left", width: 1, marginBottom: 1 }}>
+                        {error}
+                    </Typography>
+                )}
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

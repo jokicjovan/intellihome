@@ -10,12 +10,10 @@ import {
     Menu,
     MenuItem,
     TablePagination,
-    TextField,
     Typography
 } from "@mui/material";
 import {Add, LocationOn} from "@mui/icons-material";
 import SmartDeviceCard from "./SmartDeviceCard.tsx";
-import SmartHomeCard from "../User/SmartHomeCard.tsx";
 import AirConditionerRegistrationForm from "../SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import AmbientSensorRegistrationForm from "../SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
 import WashingMachineRegistrationForm from "../SmartDevices/Registration/PKA/WashingMachineRegistrationForm.tsx";
@@ -42,7 +40,6 @@ const SmartHomeMain = ( {smartHomeId} ) => {
     const [modalContentItem, setModalContentItem] = useState(-1);
 
     useEffect(() => {
-        console.log(smartHomeId)
         if (smartHomeId) {
             getSmartHome();
         }
@@ -51,7 +48,6 @@ const SmartHomeMain = ( {smartHomeId} ) => {
     const getSmartHome = () => {
         axios.get(environment + `/api/SmartHome/GetSmartHome?Id=${smartHomeId}`).then(res => {
             setSmartHome(res.data);
-            console.log(res.data)
         }).catch(err => {
             console.log(err)
         });
@@ -95,6 +91,7 @@ const SmartHomeMain = ( {smartHomeId} ) => {
 
     const handleCloseModal = () => {
         setOpenModal(false);
+        getSmartDevices();
     };
 
     const handleOpenModal = (item) => {
@@ -103,16 +100,16 @@ const SmartHomeMain = ( {smartHomeId} ) => {
     }
 
     const modalContent = (
-        <Box sx={{ width: "50vw", height: "60vh", backgroundColor: "white", borderRadius: "10px", padding: "20px", display: "flex", flexDirection: "column", position: "relative" }}>
-            {modalContentItem === 0 && <AirConditionerRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 1 && <AmbientSensorRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 2 && <WashingMachineRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 3 && <LampRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 4 && <SprinklerRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 5 && <VehicleGateRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 6 && <BatterySystemRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 7 && <SolarPanelSystemRegistrationForm smartHomeId={smartHomeId}/>}
-            {modalContentItem === 8 && <VehicleChargerRegistrationForm smartHomeId={smartHomeId}/>}
+        <Box sx={{ width: "100%", height: "100%", backgroundColor: "white", display: "flex", flexDirection: "column", position: "relative" }}>
+            {modalContentItem === 0 && <AirConditionerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 1 && <AmbientSensorRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 2 && <WashingMachineRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 3 && <LampRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 4 && <SprinklerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 5 && <VehicleGateRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 6 && <BatterySystemRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 7 && <SolarPanelSystemRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+            {modalContentItem === 8 && <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
 
         </Box>
     );
@@ -182,7 +179,7 @@ const SmartHomeMain = ( {smartHomeId} ) => {
                 </Menu>
             </Container>
 
-            <Container maxWidth="xl" style={{ position: 'relative' }}>
+            <Container  style={{ position: 'relative' }}>
                 {renderPanel()}
                 <TablePagination
                     component="div"
@@ -195,7 +192,7 @@ const SmartHomeMain = ( {smartHomeId} ) => {
                 />
             </Container>
 
-            <Dialog  maxWidth="xl" open={openModal} onClose={handleCloseModal}>
+            <Dialog open={openModal} onClose={handleCloseModal}>
                 {modalContent}
             </Dialog>
 

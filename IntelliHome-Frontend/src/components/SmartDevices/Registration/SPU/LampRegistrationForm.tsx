@@ -16,10 +16,11 @@ interface LampAdditionalFields {
 
 interface LampRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
 
-const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId}) => {
+const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<LampAdditionalFields>({
         BrightnessLimit: 100,
         PowerPerHour: 1,
@@ -50,12 +51,19 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
 
     const handleLampSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -63,7 +71,9 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -110,7 +120,7 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
                     }}
                 />
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

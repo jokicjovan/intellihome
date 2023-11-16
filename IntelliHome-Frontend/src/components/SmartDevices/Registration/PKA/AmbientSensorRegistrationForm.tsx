@@ -18,9 +18,10 @@ interface AmbientSensorAdditionalFields {
 
 interface AmbientSensorRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId}) => {
+const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
         PowerPerHour: 1
     });
@@ -43,12 +44,19 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
 
     const handleAmbientSensorSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -56,7 +64,9 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -83,7 +93,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                     onValueChange={handlePowerValueChange}
                 />
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

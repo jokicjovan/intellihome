@@ -77,6 +77,7 @@ const PowerPerHourInput: React.FC<PowerVisibilityComponentProps> = ({onValueChan
                     }}
                     inputProps={{
                         min: 1,
+                        max: 1000
                     }}
                 />
             )}

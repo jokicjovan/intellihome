@@ -25,10 +25,13 @@ interface AirConditionerAdditionalFields {
 
 interface AirConditionerRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
 
-const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId}) => {
+const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const [error, setError] = useState<string | null>(null);
+
     const [additionalFormData, setAdditionalFormData] = useState<AirConditionerAdditionalFields>({
         PowerPerHour: 1,
         Modes: [],
@@ -71,7 +74,22 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
 
     const handleAirConditionerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner);
+
+        if (additionalFormData.Modes.length === 0) {
+            setError("At least one mode must be selected!");
+            return;
+        }
+        setError(null);
+
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     const modesCheckboxes = [
@@ -83,7 +101,6 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -91,7 +108,9 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -175,8 +194,13 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                         />
                     ))}
                 </Box>
+                {error && (
+                    <Typography variant="body2" color="error" sx={{ textAlign: "left", width: 1, marginBottom: 1 }}>
+                        {error}
+                    </Typography>
+                )}
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );

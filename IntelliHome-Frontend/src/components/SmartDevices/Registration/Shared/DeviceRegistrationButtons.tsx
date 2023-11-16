@@ -3,9 +3,10 @@ import { Box, Button } from '@mui/material';
 
 interface DeviceRegistrationButtonsProps {
     onCancel: () => void;
+    onSubmit: () => void;
 }
 
-const DeviceRegistrationButtons: React.FC<DeviceRegistrationButtonsProps> = ({ onCancel }) => {
+const DeviceRegistrationButtons: React.FC<DeviceRegistrationButtonsProps> = ({ onCancel, onSubmit}) => {
     return (
         <Box
             sx={{

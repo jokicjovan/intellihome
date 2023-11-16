@@ -14,9 +14,10 @@ interface BatterySystemAdditionalFields {
 
 interface BatterySystemRegistrationFormProps {
     smartHomeId: string;
+    onClose: () => void;
 }
 
-const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProps> = ({smartHomeId}) => {
+const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const [additionalFormData, setAdditionalFormData] = useState<BatterySystemAdditionalFields>({
         Capacity: 10,
     });
@@ -39,12 +40,19 @@ const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProp
 
     const handleBatterySystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BatterySystem);
+        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BatterySystem)
+            .then((res) => {
+                if (res.status === 200) {
+                    onClose();
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     };
 
     return (
         <Container
-            component="main"
             maxWidth="xs"
             sx={{
                 display: "flex",
@@ -52,7 +60,9 @@ const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProp
                 alignItems: "center",
                 backgroundColor: "white",
                 borderRadius: 3,
-                justifyContent: "start"
+                justifyContent: "start",
+                padding:0,
+                margin:0
             }}
         >
             <Box
@@ -95,7 +105,7 @@ const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProp
                     }}
                 />
 
-                <DeviceRegistrationButtons onCancel={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
     );
