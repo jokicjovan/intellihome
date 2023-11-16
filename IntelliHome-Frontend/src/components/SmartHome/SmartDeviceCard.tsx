@@ -12,7 +12,7 @@ const SmartDeviceCard = (props) => {
     return (
         <Box sx={{ background: "white", width: "25vw", height: "12vh", borderRadius: "15px", mt: "10px", display: "flex", position: "relative" }}>
             {/* Rounded left edge */}
-            <div style={{ height: "100%", width: "10px", position: "absolute", left: 0, top: 0, backgroundColor:`${colors[smartDevice.type]}`, borderTopLeftRadius: "15px", borderBottomLeftRadius: "15px" }}></div>
+            <div style={{ height: "100%", width: "10px", position: "absolute", left: 0, top: 0, backgroundColor:`${colors[smartDevice.category]}`, borderTopLeftRadius: "15px", borderBottomLeftRadius: "15px" }}></div>
 
             {/* Your content goes here */}
             <div style={{ margin: "auto 5px" }}>
