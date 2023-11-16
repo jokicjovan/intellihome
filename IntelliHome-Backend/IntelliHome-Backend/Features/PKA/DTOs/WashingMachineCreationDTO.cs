@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.PKA.DTOs
 {
-    public class WashingMachineCreationDTO : SmartDeviceDTO
+    public class WashingMachineCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "At least one mode Id is required.")]
         public List<Guid> ModesIds{ get; set; }

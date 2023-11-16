@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.SPU.DTOs
 {
-    public class LampCreationDTO : SmartDeviceDTO
+    public class LampCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "Brightness limit is required.")]
         [Range(20, 1500, ErrorMessage = "Brightness limit should be between 20 and 1500 lumens")]

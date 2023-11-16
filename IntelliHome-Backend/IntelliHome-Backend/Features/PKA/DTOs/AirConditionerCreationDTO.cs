@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IntelliHome_Backend.Features.PKA.DTOs
 {
-    public class AirConditionerCreationDTO : SmartDeviceDTO
+    public class AirConditionerCreationDTO : SmartDeviceCreationDTO
     {
         [Required(ErrorMessage = "Minimum temperature is required.")]
         [Range(10, 20, ErrorMessage = "Minimum temperature should be between 5 and 15")]
