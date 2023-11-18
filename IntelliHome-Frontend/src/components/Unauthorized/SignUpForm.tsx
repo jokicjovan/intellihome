@@ -103,7 +103,7 @@ const SignUpForm = () => {
         <TextField  name="username" placeholder="Username" error={errorUsername}  helperText={errorUsername?"Username must be at least 5 characters long":""} sx={styled}></TextField>
         <TextField name="password" type="password" variant="outlined"  placeholder="Password" error={errorPassword}  helperText={errorPassword?"Password must have 8 characters(1 number, 1 uppercase and 1 lowercase)":""} sx={styled}></TextField>
         <TextField name="confirmPassword" type="password" variant="outlined"  placeholder="Confirm Password" error={errorSamePassword}  helperText={errorSamePassword?"Passwords do not match":""} sx={styled}></TextField>
-        <Button startIcon={fileData===null?<Close style={{color:"red",fontSize:"26px"}}/>:<CheckCircle style={{color:"#039F13",fontSize:"26px"}}/>} sx={{backgroundColor:"transparent", textTransform:"none", width:"400px",fontSize:"26px",fontWeight:"600",paddingY:"10px",margin:"15px auto",borderRadius:"15px", ':hover':{backgroundColor:"transparent"}}}>Upload profile picture
+        <Button startIcon={fileData===null?<Close style={{color:"red",fontSize:"26px"}}/>:<CheckCircle style={{color:"#039F13",fontSize:"26px"}}/>} sx={{backgroundColor:"transparent",color:"black", textTransform:"none", width:"400px",fontSize:"26px",fontWeight:"600",paddingY:"10px",margin:"15px auto",borderRadius:"15px", ':hover':{backgroundColor:"transparent"}}}>Upload profile picture
             <input type="file" onChange={handleChangeFile} style={{display: "block",
                 height: "100%",
                 width: "100%",
@@ -119,7 +119,7 @@ const SignUpForm = () => {
         {axiosError=='User with that email already exists!' &&<Typography align="center" sx={{fontSize:"0.75rem",fontWeight:"400", color:"#d32f2f"}}>Email already in use</Typography>}
         {axiosError=='User with that username already exists!' &&<Typography align="center" sx={{fontSize:"0.75rem",fontWeight:"400", color:"#d32f2f"}}>Username already in use</Typography>}
         {axiosError!='' && axiosError!='User with that email already exists!' && axiosError!='User with that username already exists!'&&<Typography align="center" sx={{fontSize:"0.75rem",fontWeight:"400", color:"#d32f2f"}}>Something went wrong</Typography>}
-        <Button type="submit" sx={{backgroundColor:"#FBC40E", width:"400px",fontSize:"22px",fontWeight:"600",paddingY:"10px",margin:"15px auto",borderRadius:"15px", ':hover':{backgroundColor:"#EDB90D"}}}>Sign Up</Button>
+        <Button type="submit" sx={{backgroundColor:"#FBC40E",color:"black", width:"400px",fontSize:"22px",fontWeight:"600",paddingY:"10px",margin:"15px auto",borderRadius:"15px", ':hover':{backgroundColor:"#EDB90D"}}}>Sign Up</Button>
         <Typography align="center" sx={{fontSize:"18px",fontWeight:"600"}}>Already have an account?</Typography>
         <Link onClick={()=>{navigate("/signin")}}align="center" sx={{fontSize:"20px",color:"#343F71",fontWeight:"600", ":hover":{cursor:"pointer"}}}>Sign in</Link>
     </Box> :<SuccessfulRegistrationContainer/>}</>

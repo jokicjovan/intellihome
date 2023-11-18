@@ -62,13 +62,16 @@ namespace IntelliHome_Backend.Features.Users.Services
                     throw new InvalidInputException("User with that username already exists!");
                 }
             }
-            string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            string SavePath = Path.Combine("static/profilePictures", ImageName);
-            using (var stream = new FileStream(SavePath, FileMode.Create))
+            if (image != null)
             {
-                image.CopyTo(stream);
+                string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                string SavePath = Path.Combine("static/profilePictures", ImageName);
+                using (var stream = new FileStream(SavePath, FileMode.Create))
+                {
+                    image.CopyTo(stream);
+                }
+                newUser.Image = SavePath;
             }
-            newUser.Image = SavePath;
             newUser.Password=BCrypt.Net.BCrypt.HashPassword(newUser.Password);
             newUser.IsActivated = false;
             User user = await _userRepository.Create(newUser);
@@ -123,6 +126,14 @@ namespace IntelliHome_Backend.Features.Users.Services
         {
             return await _userRepository.GetAllAdmins();
         }
+        public async Task<User> Get(Guid id)
+        {
+            return await _userRepository.Read(id);
+        }
+        public async Task<User> GetByEmail(String email)
+        {
+            return await _userRepository.FindByEmail(email);
+        }
         public async Task<User> CreateAdmin(Admin newAdmin, IFormFile image)
         {
             List<ValidationResult> validationResults = new List<ValidationResult>();
@@ -171,8 +182,26 @@ namespace IntelliHome_Backend.Features.Users.Services
                 image.CopyTo(stream);
             }
             newAdmin.Image = SavePath;
+            _confirmationService.SendPasswordMail(newAdmin,newAdmin.Password);
             newAdmin.Password = BCrypt.Net.BCrypt.HashPassword(newAdmin.Password);
+
             return await _userRepository.Create(newAdmin);
+        }
+
+
+        public async Task CreateSuperAdmin()
+        {
+            
+            string password= "P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4";
+            Admin admin= new Admin(Guid.NewGuid(), "Super", "Admin", "vukasin.bogdanovic610+101@gmail.com", "vule", BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"), true, "static/profilePictures/superAdmin.jpg", true, false);
+
+            User potentialAdmin = await _userRepository.FindByUsername(admin.Username);
+            if (potentialAdmin != null)
+            {
+                return;
+            }
+            //await _confirmationService.SendPasswordMail(admin, password);
+            await _userRepository.Create(admin);
         }
 
 

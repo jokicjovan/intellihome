@@ -1,12 +1,14 @@
 import {Box, Button, TextField, Typography} from "@mui/material";
-import React, { useState} from "react";
+import React, {useContext, useState} from "react";
 import axios from "axios";
 import {environment} from "../../security/Environment";
 import {useMutation, useQueryClient} from "react-query";
 import {useNavigate} from "react-router-dom";
+import {AuthContext} from "../../security/AuthContext";
 
 
 const AdminChangePassword = () => {
+    const {id}=useContext(AuthContext)
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     const initialState = {
@@ -35,7 +37,7 @@ const AdminChangePassword = () => {
 
     }
     const registrationMutation = useMutation({
-        mutationFn: (data:FormData) => {
+        mutationFn: (data:any) => {
             return axios.post(environment+'/api/User/changePassword', data).then((res)=>{
                 setFormData(initialState)
                 setAxiosError('');
@@ -63,10 +65,7 @@ const AdminChangePassword = () => {
         }else {setErrorSamePassword(false)}
 
         if (!hasError) {
-            const formData = new FormData();
-            formData.append("firstName", event.target.firstName.value);
-            formData.append("password", event.target.password.value);
-            registrationMutation.mutate(formData,event);
+            registrationMutation.mutate({id:id,password:event.target.password.value},event);
         }
     };
     return<><Box component="form" onSubmit={handleSignUp} sx={{ display: "flex", width: "100%", justifyContent: "center", flexDirection: "column" }}>
@@ -74,7 +73,7 @@ const AdminChangePassword = () => {
         <TextField name="confirmPassword" type="password" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} variant="outlined" placeholder="Confirm Password" error={errorSamePassword} helperText={errorSamePassword ? "Passwords do not match" : ""} sx={styled}></TextField>
         {axiosError !== '' && <Typography align="center" sx={{ fontSize: "0.75rem", fontWeight: "400", color: "#d32f2f" }}>Something went wrong</Typography>}
 
-        <Button type="submit" sx={{ backgroundColor: "#FBC40E", width: "400px", fontSize: "22px", fontWeight: "600", paddingY: "10px", margin: "15px auto", borderRadius: "15px", ':hover': { backgroundColor: "#EDB90D" } }}>Change Password</Button>
+        <Button type="submit" sx={{ backgroundColor: "#FBC40E",color:"black", width: "400px", fontSize: "22px", fontWeight: "600", paddingY: "10px", margin: "15px auto", borderRadius: "15px", ':hover': { backgroundColor: "#EDB90D" } }}>Change Password</Button>
     </Box></>
 }
 

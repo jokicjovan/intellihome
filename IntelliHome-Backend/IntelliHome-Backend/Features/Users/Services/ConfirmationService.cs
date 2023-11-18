@@ -82,6 +82,23 @@ namespace IntelliHome_Backend.Features.Users.Services
                 throw new Exception("Mail error");
             }
         }
+        public async Task SendPasswordMail(User user, string password)
+        {
+            StreamReader sr = new StreamReader("sendgrid_api_key.txt");
+            String sendgridApiKey = sr.ReadLine();
+            SendGridClient client = new SendGridClient(sendgridApiKey);
+            SendGridMessage msg = new SendGridMessage();
+            msg.SetFrom(new EmailAddress("certificateswebapp@gmail.com", "IntelliHome"));
+            msg.AddTo(new EmailAddress(user.Email, String.Concat(user.FirstName, " ", user.LastName)));
+            msg.Subject = "Welcome to Intellihome";
+            msg.PlainTextContent = $"Hello {user.FirstName}, welcome to Intellihome. Your initial password is {password}";
+            Response response = await client.SendEmailAsync(msg);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Mail error");
+            }
+        }
 
         private async Task<int> GenerateVerificationCode(int codeLength)
         {

@@ -1,4 +1,7 @@
-﻿using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+﻿using Data.Context;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using IntelliHome_Backend.Features.Users.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.Communications.HostedServices
 {
@@ -16,6 +19,10 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
             {
                 IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
                 ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
+                IUserRepository userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                IUserService userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+                Task.Run(() => userService.CreateSuperAdmin());
                 Task.Run(() => simulationService.SetupSimulatorsFromDatabase());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
                 return Task.CompletedTask;
