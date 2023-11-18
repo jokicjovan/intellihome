@@ -41,6 +41,7 @@ namespace IntelliHome_Backend.Features.Users
                 Admin admin= (Admin)user;
                 identity.AddClaim(new Claim("PasswordChanged", admin.PasswordChanged.ToString()));
             }
+            identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
             return Ok("Logged in successfully!");
         }

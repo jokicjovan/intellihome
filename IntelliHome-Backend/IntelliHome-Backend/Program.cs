@@ -21,7 +21,14 @@ using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using MQTTnet;
+using IntelliHome_Backend.Features.Communications.Services;
+using IntelliHome_Backend.Features.Communications.HostedServices;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using IntelliHome_Backend.Features.Shared.Services;
+using Microsoft.Extensions.FileProviders;
+using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +46,9 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConfirmationRepository, ConfirmationRepository>();
+builder.Services.AddScoped<ISmartDeviceRepository, SmartDeviceRepository>();
 builder.Services.AddScoped<ISmartHomeRepository, SmartHomeRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IAirConditionerRepository, AirConditionerRepository>();
 builder.Services.AddScoped<IAmbientSensorRepository, AmbientSensorRepository>();
 builder.Services.AddScoped<IWashingMachineRepository, WashingMachineRepository>();
@@ -47,9 +56,7 @@ builder.Services.AddScoped<IWashingMachineModeRepository, WashingMachineModeRepo
 builder.Services.AddScoped<ILampRepository, LampRepository>();
 builder.Services.AddScoped<ISprinklerRepository, SprinklerRepository>();
 builder.Services.AddScoped<IVehicleGateRepository, VehicleGateRepository>();
-builder.Services.AddScoped<IBatteryRepository, BatteryRepository>();
 builder.Services.AddScoped<IBatterySystemRepository, BatterySystemRepository>();
-builder.Services.AddScoped<ISolarPanelRepository, SolarPanelRepository>();
 builder.Services.AddScoped<ISolarPanelSystemRepository, SolarPanelSystemRepository>();
 builder.Services.AddScoped<IVehicleChargerRepository, VehicleChargerRepository>();
 builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPointRepository>();
@@ -57,17 +64,30 @@ builder.Services.AddScoped<IVehicleChargingPointRepository, VehicleChargingPoint
 //Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConfirmationService, ConfirmationService>();
+builder.Services.AddScoped<ISmartDeviceService, SmartDeviceService>();
 builder.Services.AddScoped<ISmartHomeService, SmartHomeService>();
 builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
 builder.Services.AddScoped<IAmbientSensorService, AmbientSensorService>();
 builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();
-builder.Services.AddScoped<IWashingMachineModeService, WashingMachineModeService>();
 builder.Services.AddScoped<ILampService, LampService>();
 builder.Services.AddScoped<ISprinklerService, SprinklerService>();
 builder.Services.AddScoped<IVehicleGateService, VehicleGateService>();
-builder.Services.AddScoped<IBatteryService, BatteryService>();
-builder.Services.AddScoped<ISolarPanelService, SolarPanelService>();
+builder.Services.AddScoped<IBatterySystemService, BatterySystemService>();
+builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
+builder.Services.AddSingleton<IDeviceConnectionService, DeviceConnectionService>();
+
+builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
+builder.Services.AddSingleton<ISimulationService, SimulationService>();
+builder.Services.AddHostedService<StartupHostedService>();
+builder.Services.AddSingleton(provider =>
+{
+    var factory = new MqttFactory();
+    var mqttClient = factory.CreateMqttClient();
+    return mqttClient;
+});
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
@@ -98,6 +118,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+
+
 var app = builder.Build();
 
 
@@ -111,6 +133,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"static/")),
+    RequestPath = new PathString("/static")
+});
 
 app.UseMiddleware<ExceptionMiddleware>(true);
 

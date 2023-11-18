@@ -27,6 +27,7 @@ const Navbar = () => {
         <Box style={{height:"100vh", width:"360px",minWidth:"360px",backgroundColor:"#343F71FF" }}>
             {role==="Admin" &&<><Button onClick={()=>navigate("/home")}  sx={buttonStyle}><Home sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Home</Typography></Button></>}
             {role==="Admin" &&<><Button onClick={()=>navigate("/addAdmin")}  sx={buttonStyle}><Group sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Add Admin</Typography></Button></>}
+            {role==="User" &&<><Button onClick={()=>navigate("/userHome")}  sx={buttonStyle}><Home sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Home</Typography></Button></>}
             <Box  width="100%" position="absolute" bottom="0">
                 <Box padding="10px" display="flex"  alignItems="center" flexDirection="row">
                     <img src="src/assets/backgroundSign.png" width="50px" height="50px" style={{objectFit:"cover",borderRadius:"100px",border:"5px solid #FBC40EFF"}}/>

@@ -7,7 +7,6 @@ import {environment} from "../../security/Environment";
 import {useState} from "react";
 import SuccessfulRegistrationContainer from "./SuccessfulRegistrationContainer";
 
-
 const SignUpForm = () => {
     const navigate = useNavigate()
     const [errorName,setErrorName]=useState(false);
@@ -94,6 +93,7 @@ const SignUpForm = () => {
             registrationMutation.mutate(formData);
         }
     };
+    // @ts-ignore
     return<>{!successfulRegistration? <Box component="form" onSubmit={handleSignUp}  sx={{display:"flex",width:"100%",justifyContent:"center",flexDirection:"column"}}>
         <Typography mb={1} align="center" sx={{fontSize:"48px",fontWeight:"600"}}>Sign Up</Typography>
         <TextField  name="firstName" placeholder="First Name" error={errorName}  helperText={errorName?"Name is required":""} sx={styled}></TextField>
