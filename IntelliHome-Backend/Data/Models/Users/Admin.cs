@@ -12,7 +12,9 @@ namespace Data.Models.Users
     {
         public Boolean IsSuperAdmin { get; set; }
 
-        public Admin(Guid id,string firstName, string lastName, string email, string username, string password, bool isActivated, string? image,bool isSuperAdmin)
+        public Boolean PasswordChanged { get; set; }
+
+        public Admin(Guid id,string firstName, string lastName, string email, string username, string password, bool isActivated, string? image, bool isSuperAdmin, bool passwordChanged)
         {
             Id = id;
             FirstName = firstName;
@@ -25,6 +27,22 @@ namespace Data.Models.Users
             SmartHomes = new List<SmartHome>();
             AllowedSmartDevices = new List<SmartDevice>();
             IsSuperAdmin = isSuperAdmin;
+            PasswordChanged = passwordChanged;
+        }
+
+        public Admin( string firstName, string lastName, string email, string username, string password, bool isActivated, string? image, bool isSuperAdmin, bool passwordChanged)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Username = username;
+            Password = password;
+            IsActivated = isActivated;
+            Image = image;
+            SmartHomes = new List<SmartHome>();
+            AllowedSmartDevices = new List<SmartDevice>();
+            IsSuperAdmin = isSuperAdmin;
+            PasswordChanged= passwordChanged;
         }
     }
 }

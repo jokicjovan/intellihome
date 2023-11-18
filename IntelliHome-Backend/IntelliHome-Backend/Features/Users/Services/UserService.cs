@@ -59,7 +59,7 @@ namespace IntelliHome_Backend.Features.Users.Services
                 }
                 else
                 {
-                    throw new InvalidInputException("User with that telephone already exists!");
+                    throw new InvalidInputException("User with that username already exists!");
                 }
             }
             string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
@@ -99,5 +99,82 @@ namespace IntelliHome_Backend.Features.Users.Services
             }
             return user;
         }
+
+        public async Task ChangePassword(Guid id, String password)
+        {
+            User user = await _userRepository.Read(id);
+            if (user == null)
+            {
+                throw new ResourceNotFoundException("User does not exist!");
+            }
+            if (user.GetType()== typeof(Admin))
+            {
+                Admin admin= (Admin)user;
+                admin.Password= BCrypt.Net.BCrypt.HashPassword(password);
+                admin.PasswordChanged = true;
+                _userRepository.Update(admin);
+            }
+            else
+            {
+                throw new ResourceNotFoundException("User does not exist!");
+            }
+        }
+        public async Task<List<Admin>> GetAllAdmins()
+        {
+            return await _userRepository.GetAllAdmins();
+        }
+        public async Task<User> CreateAdmin(Admin newAdmin, IFormFile image)
+        {
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(newAdmin, new ValidationContext(newAdmin, null, null), validationResults, true);
+            if (!isValid)
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    throw new InvalidInputException(validationResult.ErrorMessage);
+                }
+            }
+
+            User potentialAdmin = await _userRepository.FindByEmail(newAdmin.Email);
+            if (potentialAdmin != null)
+            {
+                Confirmation potentialAdminConfirmation = await _confirmationRepository.FindConfirmationByUserId(potentialAdmin.Id);
+                if (potentialAdminConfirmation != null && potentialAdminConfirmation.ExpirationDate.CompareTo(DateTime.UtcNow) <= 0)
+                {
+                    _confirmationRepository.Delete(potentialAdminConfirmation.Id);
+                    _userRepository.Delete(potentialAdminConfirmation.User.Id);
+                }
+                else
+                {
+                    throw new InvalidInputException("User with that email already exists!");
+                }
+            }
+
+            potentialAdmin = await _userRepository.FindByUsername(newAdmin.Username);
+            if (potentialAdmin != null)
+            {
+                Confirmation potentialAdminConfirmation = await _confirmationRepository.FindConfirmationByUserId(potentialAdmin.Id);
+                if (potentialAdminConfirmation != null && potentialAdminConfirmation.ExpirationDate.CompareTo(DateTime.UtcNow) <= 0)
+                {
+                    _confirmationRepository.Delete(potentialAdminConfirmation.Id);
+                    _userRepository.Delete(potentialAdminConfirmation.User.Id);
+                }
+                else
+                {
+                    throw new InvalidInputException("User with that telephone already exists!");
+                }
+            }
+            string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            string SavePath = Path.Combine("static/profilePictures", ImageName);
+            using (var stream = new FileStream(SavePath, FileMode.Create))
+            {
+                image.CopyTo(stream);
+            }
+            newAdmin.Image = SavePath;
+            newAdmin.Password = BCrypt.Net.BCrypt.HashPassword(newAdmin.Password);
+            return await _userRepository.Create(newAdmin);
+        }
+
+
     }
 }

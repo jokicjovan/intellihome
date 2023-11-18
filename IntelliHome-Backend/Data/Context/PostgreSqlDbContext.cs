@@ -93,7 +93,7 @@ namespace Data.Context
                     j => j.HasOne<WashingMachine>().WithMany()
                 );
             modelBuilder.Entity<Admin>().HasData(
-    new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true));
+    new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true,true));
         }
     }
 }

@@ -9,7 +9,7 @@ export const AuthenticatedRoute = ({ children } : any) => {
     }
 
     if (!isAuthenticated){
-        return <Navigate to="/signin" />
+        return <Navigate to="/index" />
     }
 
     return <>

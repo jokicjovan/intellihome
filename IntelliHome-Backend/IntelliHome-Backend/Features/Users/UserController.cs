@@ -37,6 +37,10 @@ namespace IntelliHome_Backend.Features.Users
             ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity.AddClaim(new Claim(ClaimTypes.Role, user.GetType().Name));
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            if (user.GetType()  == typeof(Admin)) {
+                Admin admin= (Admin)user;
+                identity.AddClaim(new Claim("PasswordChanged", admin.PasswordChanged.ToString()));
+            }
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
             return Ok("Logged in successfully!");
         }
@@ -52,7 +56,8 @@ namespace IntelliHome_Backend.Features.Users
             }
             ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
             String role = identity.FindFirst(ClaimTypes.Role).Value;
-            return Ok(JsonConvert.SerializeObject(new { role }, Newtonsoft.Json.Formatting.Indented));
+            String passwordChanged = identity.FindFirst("PasswordChanged").Value;
+            return Ok(JsonConvert.SerializeObject(new { role,passwordChanged }, Newtonsoft.Json.Formatting.Indented));
         }
 
         [HttpPost]
@@ -64,10 +69,32 @@ namespace IntelliHome_Backend.Features.Users
 
         [HttpPost]
         [Authorize]
+        public async Task<ActionResult<String>> changePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            await _userService.ChangePassword(changePasswordDTO.Id,changePasswordDTO.Password);
+            return Ok("Password changed successfully!");
+        }
+
+        [HttpPost]
+        [Authorize]
         public async Task<ActionResult<String>> logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok("Logged out successfully!");
+        }
+        [HttpGet] 
+        [Authorize]
+        public async Task<ActionResult<AllAdminsDTO>> allAdmins()
+        {
+            IEnumerable<Admin> admins = await _userService.GetAllAdmins();
+            return new AllAdminsDTO(admins);
+        }
+
+        [HttpPost]
+        public async Task<User> addAdmin([FromForm] UserDTO userDTO)
+        {
+            Admin admin = new Admin(userDTO.FirstName,userDTO.LastName,userDTO.Email,userDTO.Username,userDTO.Password,true,null,false,false);
+            return await _userService.CreateAdmin(admin, userDTO.Image);
         }
     }
     
