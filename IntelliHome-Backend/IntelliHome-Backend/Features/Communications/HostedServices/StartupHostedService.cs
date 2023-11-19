@@ -19,11 +19,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
             {
                 IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
                 ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
-                IUserRepository userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                IUserService userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-
-                Task.Run(() => userService.CreateSuperAdmin());
-                Task.Run(() => simulationService.SetupSimulatorsFromDatabase());
+                Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
                 return Task.CompletedTask;
             }
@@ -34,7 +30,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
-                simulationService.SetupSimulatorsFromDatabase(false).Wait();
+                //TODO stop all simulations
                 return Task.CompletedTask;
             }
         }

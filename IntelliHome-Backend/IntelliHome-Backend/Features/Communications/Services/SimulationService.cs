@@ -1,6 +1,8 @@
 ﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace IntelliHome_Backend.Features.Communications.Services
 {
@@ -12,18 +14,26 @@ namespace IntelliHome_Backend.Features.Communications.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<bool> ToggleDeviceSimulator(SmartDevice smartDevice, bool turnOn = true)
+        public async Task<bool> AddDeviceToSimulator(SmartDevice smartDevice)
         {
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    string baseUrl = "http://127.0.0.1:8000/";
-                    string endpoint = turnOn ? "add-device" : "remove-device";
+                    string baseUrl = "http://localhost:8080/";
+                    string endpoint = "add-device";
                     string apiUrl = baseUrl + endpoint;
 
-                    var content = new StringContent(string.Empty);
-                    HttpResponseMessage response = await client.PostAsync($"{apiUrl}/{smartDevice.Id}", content);
+                    var requestBody = new
+                    {
+                        device_id = smartDevice.Id,
+                        smart_home_id = smartDevice.SmartHome.Id,
+                        host = "localhost",
+                        port = 1883,
+                        keepalive = 30
+                    };
+                    var content = JsonContent.Create(requestBody, MediaTypeHeaderValue.Parse("application/json"), new JsonSerializerOptions());
+                    HttpResponseMessage response = await client.PostAsync($"{apiUrl}/", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -39,7 +49,7 @@ namespace IntelliHome_Backend.Features.Communications.Services
             };
         }
 
-        public async Task SetupSimulatorsFromDatabase(bool turnOn = true)
+        public async Task AddDevicesFromDatabaseToSimulator()
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -48,8 +58,7 @@ namespace IntelliHome_Backend.Features.Communications.Services
                 List<SmartDevice> smartDevices = smartDeviceService.GetAllSmartDevices().ToList();
                 foreach (SmartDevice smartDevice in smartDevices)
                 {
-                    bool success = await ToggleDeviceSimulator(smartDevice, turnOn);
-                    if (success) smartDevice.IsConnected = turnOn;
+                    smartDevice.IsConnected = await AddDeviceToSimulator(smartDevice);
                 }
                 smartDeviceService.UpdateAllSmartDevices(smartDevices);
             }
