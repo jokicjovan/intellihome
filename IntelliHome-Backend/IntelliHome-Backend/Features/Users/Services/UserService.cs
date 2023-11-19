@@ -172,7 +172,7 @@ namespace IntelliHome_Backend.Features.Users.Services
                 }
                 else
                 {
-                    throw new InvalidInputException("User with that telephone already exists!");
+                    throw new InvalidInputException("User with that username already exists!");
                 }
             }
             string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);

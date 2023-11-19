@@ -151,7 +151,7 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/static")
 });
 
-//app.UseMiddleware<ExceptionMiddleware>(true);
+app.UseMiddleware<ExceptionMiddleware>(true);
 app.UseCookiePolicy(new CookiePolicyOptions()
 {
     MinimumSameSitePolicy = SameSiteMode.Lax

@@ -1,5 +1,5 @@
 import {Box, CircularProgress, Container, CssBaseline, Link, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {CheckCircle, Error} from "@mui/icons-material";
 import {useMutation} from "react-query";
@@ -12,27 +12,28 @@ const SuccessfulActivation=()=>{
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const [isLoading,setIsLoading]= useState(true);
-    const [isValid,setIsValid]= useState(false);
+    const canCallApi = useRef(true);
 
-    const activateMutation = useMutation({
-        mutationFn: (code:string) => {
+    const [isValid,setIsValid]= useState(false);
+    const activateMutation = (code:string)=>{
             return axios.post(environment+'/api/User/activateAccount?code='+code).then(res => {
                 if (res.status === 200){
                     setIsLoading(false);
                     setIsValid(true);
-                    navigate(0);
                 }else{
                     setIsLoading(false);
                 }}).catch(()=>{
                     setIsLoading(false);
             })
-        },
-    })
+    }
     useEffect(() => {
         const code = searchParams.get('code')!;
-        activateMutation.mutate(code);
+        if (canCallApi.current) {
+            activateMutation(code);
+            canCallApi.current = false;
+        }
 
-    },[]);
+    });
 
     return <><Container  maxWidth="xl" sx={{display: "flex",
         justifyContent: "center",

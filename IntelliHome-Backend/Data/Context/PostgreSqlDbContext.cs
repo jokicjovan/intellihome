@@ -93,7 +93,7 @@ namespace Data.Context
             using (StreamReader file = new StreamReader("superadminpass.txt"))
             {
                 string pass=file.ReadLine();
-                Console.WriteLine($"Superadmin password is{pass}");
+                Console.WriteLine($"Superadmin password is {pass}");
                 modelBuilder.Entity<Admin>().HasData(
                 new Admin(Guid.NewGuid(), "Super", "Admin", "vukasin.bogdanovic610+101@gmail.com", "superadmin", BCrypt.Net.BCrypt.HashPassword(pass), true, "static/profilePictures/superAdmin.jpg", true, false));
                 file.Close();

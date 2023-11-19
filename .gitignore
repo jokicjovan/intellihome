@@ -551,5 +551,6 @@ IntelliHome-Backend/Data/InfluxDBToken.txt
 IntelliHome-Backend/Data/Migrations
 IntelliHome-Backend/IntelliHome-Backend/static
 .idea/*
+venv
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,webstorm,react
