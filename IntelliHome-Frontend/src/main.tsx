@@ -14,6 +14,10 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import SuccessfulActivation from "./pages/successfulActivation";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
+import LandingPage from "./pages/LandingPage";
+import {AdminRoute} from "./security/AdminRoute";
+import PasswordChange from "./pages/PasswordChange";
+import {AdminFirstTimeRoute} from "./security/AdminFirstTimeRoute";
 import SmartHome from "./pages/SmartHome.tsx";
 
 axios.defaults.withCredentials = true
@@ -34,8 +38,10 @@ const router = createBrowserRouter([
     {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
     {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
+    {path:"/index", element: <UnauthenticatedRoute><LandingPage/></UnauthenticatedRoute>},
     {path:"/home", element: <AuthenticatedRoute><Layout><Home/></Layout></AuthenticatedRoute>},
-    {path:"/addAdmin", element: <UnauthenticatedRoute><Layout><AddAdmin/></Layout></UnauthenticatedRoute>},
+    {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdmin/></Layout></AdminRoute></AuthenticatedRoute>},
+    {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChange/></AdminFirstTimeRoute></AuthenticatedRoute>},
     {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHome/></Layout></AuthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])

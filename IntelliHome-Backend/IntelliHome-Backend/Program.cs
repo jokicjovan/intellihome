@@ -43,6 +43,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PostgreSqlDbContext>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConfirmationRepository, ConfirmationRepository>();
@@ -96,7 +97,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8000")
+            builder.WithOrigins("http://localhost:8000", "https://accounts.google.com")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -113,6 +114,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
            options.Cookie.MaxAge = options.ExpireTimeSpan;
            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
            options.EventsType = typeof(CustomCookieAuthenticationEvents);
+       }).AddGoogle(options =>
+       {
+           StreamReader sr = new StreamReader("oauth_key.txt");
+           String clientId = sr.ReadLine();
+           String clientSecret = sr.ReadLine();
+           options.ClientId = clientId;
+           options.ClientSecret = clientSecret;
+           options.CallbackPath = "/api/User/handle-signin-google";
+           options.Scope.Add("https://www.googleapis.com/auth/userinfo.profile");
+           options.Scope.Add("https://www.googleapis.com/auth/userinfo.email");
        });
 
 
@@ -140,8 +151,12 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/static")
 });
 
-app.UseMiddleware<ExceptionMiddleware>(true);
-
+//app.UseMiddleware<ExceptionMiddleware>(true);
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

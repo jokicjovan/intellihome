@@ -1,4 +1,7 @@
-﻿using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+﻿using Data.Context;
+using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using IntelliHome_Backend.Features.Users.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.Communications.HostedServices
 {

@@ -90,9 +90,14 @@ namespace Data.Context
                     j => j.HasOne<WashingMachineMode>().WithMany(),
                     j => j.HasOne<WashingMachine>().WithMany()
                 );
-
-            modelBuilder.Entity<Admin>().HasData(
-            new Admin(Guid.NewGuid(),"Super","Admin","vukasin.bogdanovic610+101@gmail.com","superadmin",BCrypt.Net.BCrypt.HashPassword("P5$x]kL6~bD5mXXYQ;pk1D++,(sJA4+O#YEZ@{AgG3t5T[FQd4"),true,"static/profilePictures/superAdmin.jpg",true));
-        }
+            using (StreamReader file = new StreamReader("superadminpass.txt"))
+            {
+                string pass=file.ReadLine();
+                Console.WriteLine($"Superadmin password is{pass}");
+                modelBuilder.Entity<Admin>().HasData(
+                new Admin(Guid.NewGuid(), "Super", "Admin", "vukasin.bogdanovic610+101@gmail.com", "superadmin", BCrypt.Net.BCrypt.HashPassword(pass), true, "static/profilePictures/superAdmin.jpg", true, false));
+                file.Close();
+            }
+            }
     }
 }
