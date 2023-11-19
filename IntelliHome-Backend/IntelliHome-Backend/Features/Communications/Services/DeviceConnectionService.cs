@@ -13,7 +13,7 @@ namespace IntelliHome_Backend.Features.Communications.Services
         }
 
         public Task<bool> ConnectWithSmartDevice(SmartDevice smartDevice) {
-            return _simulationService.ToggleDeviceSimulator(smartDevice, true);
+            return _simulationService.AddDeviceToSimulator(smartDevice);
         }
     }
 }
