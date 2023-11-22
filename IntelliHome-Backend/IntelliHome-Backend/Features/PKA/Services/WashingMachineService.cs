@@ -9,11 +9,11 @@ namespace IntelliHome_Backend.Features.PKA.Services
     {
         private readonly IWashingMachineRepository _washingMachineRepository;
         private readonly IWashingMachineModeRepository _washingMachineModeRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
         public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
             IWashingMachineModeRepository washingMachineModeRepository,
-            IDeviceConnectionService deviceConnectionService)
+            ISmartDeviceConnectionService deviceConnectionService)
         {
             _washingMachineRepository = washingMachineRepository;
             _washingMachineModeRepository = washingMachineModeRepository;

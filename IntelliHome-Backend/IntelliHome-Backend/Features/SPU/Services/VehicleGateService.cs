@@ -8,9 +8,9 @@ namespace IntelliHome_Backend.Features.SPU.Services
     public class VehicleGateService : IVehicleGateService
     {
         private readonly IVehicleGateRepository _vehicleGateRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IDeviceConnectionService deviceConnectionService)
+        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _vehicleGateRepository = vehicleGateRepository;
             _deviceConnectionService = deviceConnectionService;

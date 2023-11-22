@@ -9,9 +9,9 @@ namespace IntelliHome_Backend.Features.SPU.Services
     public class LampService : ILampService
     {
         private readonly ILampRepository _lampRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public LampService(ILampRepository lampRepository, IDeviceConnectionService deviceConnectionService)
+        public LampService(ILampRepository lampRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _lampRepository = lampRepository;
             _deviceConnectionService = deviceConnectionService;

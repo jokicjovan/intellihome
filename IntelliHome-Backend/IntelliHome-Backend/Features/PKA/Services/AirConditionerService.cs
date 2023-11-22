@@ -8,9 +8,9 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository, IDeviceConnectionService deviceConnectionService)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _airConditionerRepository = airConditionerRepository;
             _deviceConnectionService = deviceConnectionService;

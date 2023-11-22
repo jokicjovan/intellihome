@@ -10,9 +10,9 @@ namespace IntelliHome_Backend.Features.VEU.Services
     {
         private readonly IVehicleChargerRepository _vehicleChargerRepository;
         private readonly IVehicleChargingPointRepository _vehicleChargingPointRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public VehicleChargerService(IVehicleChargerRepository vehicleChargerRepository, IVehicleChargingPointRepository vehicleChargingPointRepository, IDeviceConnectionService deviceConnectionService)
+        public VehicleChargerService(IVehicleChargerRepository vehicleChargerRepository, IVehicleChargingPointRepository vehicleChargingPointRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _vehicleChargerRepository = vehicleChargerRepository;
             _vehicleChargingPointRepository = vehicleChargingPointRepository;

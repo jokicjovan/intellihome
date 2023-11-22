@@ -10,9 +10,9 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class SolarPanelSystemService : ISolarPanelSystemService
     {
         private readonly ISolarPanelSystemRepository _solarPanelSystemRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, IDeviceConnectionService deviceConnectionService)
+        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _solarPanelSystemRepository = solarPanelSystemRepository;
             _deviceConnectionService = deviceConnectionService;

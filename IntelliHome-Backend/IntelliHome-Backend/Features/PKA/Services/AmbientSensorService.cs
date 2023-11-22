@@ -8,9 +8,9 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AmbientSensorService : IAmbientSensorService
     {
         private readonly IAmbientSensorRepository _ambientSensorRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IDeviceConnectionService deviceConnectionService)
+        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _ambientSensorRepository = ambientSensorRepository;
             _deviceConnectionService = deviceConnectionService;

@@ -17,7 +17,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                IHeartbeatService heartbeatService = scope.ServiceProvider.GetRequiredService<IHeartbeatService>();
+                ISmartDeviceConnectionService heartbeatService = scope.ServiceProvider.GetRequiredService<ISmartDeviceConnectionService>();
                 ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
                 Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());

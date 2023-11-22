@@ -8,9 +8,9 @@ namespace IntelliHome_Backend.Features.SPU.Services
     public class SprinklerService : ISprinklerService
     {
         private readonly ISprinklerRepository _sprinklerRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public SprinklerService(ISprinklerRepository sprinklerRepository, IDeviceConnectionService deviceConnectionService)
+        public SprinklerService(ISprinklerRepository sprinklerRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _sprinklerRepository = sprinklerRepository;
             _deviceConnectionService = deviceConnectionService;

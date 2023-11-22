@@ -9,9 +9,9 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class BatterySystemService : IBatterySystemService
     {
         private readonly IBatterySystemRepository _batterySystemRepository;
-        private readonly IDeviceConnectionService _deviceConnectionService;
+        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public BatterySystemService(IBatterySystemRepository batterySystemRepository, IDeviceConnectionService deviceConnectionService)
+        public BatterySystemService(IBatterySystemRepository batterySystemRepository, ISmartDeviceConnectionService deviceConnectionService)
         {
             _batterySystemRepository = batterySystemRepository;
             _deviceConnectionService = deviceConnectionService;

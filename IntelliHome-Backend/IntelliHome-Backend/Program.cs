@@ -1,4 +1,5 @@
 using Data.Context;
+using MQTTnet;
 using IntelliHome_Backend.Features.Home.Repositories;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services;
@@ -21,7 +22,6 @@ using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
-using MQTTnet;
 using IntelliHome_Backend.Features.Communications.Services;
 using IntelliHome_Backend.Features.Communications.HostedServices;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using IntelliHome_Backend.Features.Shared.Services;
 using Microsoft.Extensions.FileProviders;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
+using MQTTnet.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,17 +79,23 @@ builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
-builder.Services.AddSingleton<IDeviceConnectionService, DeviceConnectionService>();
-
-builder.Services.AddSingleton<IHeartbeatService, HeartbeatService>();
-builder.Services.AddSingleton<ISimulationService, SimulationService>();
-builder.Services.AddHostedService<StartupHostedService>();
+//Communications
 builder.Services.AddSingleton(provider =>
 {
     var factory = new MqttFactory();
     var mqttClient = factory.CreateMqttClient();
     return mqttClient;
 });
+builder.Services.AddSingleton<IMqttService>(provider =>
+{
+    var mqttClient = provider.GetRequiredService<IMqttClient>();
+    var mqttService = new MqttService(mqttClient);
+    mqttService.ConnectAsync("localhost", 1883).Wait();
+    return mqttService;
+});
+builder.Services.AddSingleton<ISmartDeviceConnectionService, SmartDeviceConnectionService>();
+builder.Services.AddSingleton<ISimulationService, SimulationService>();
+builder.Services.AddHostedService<StartupHostedService>();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
