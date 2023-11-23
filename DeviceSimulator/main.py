@@ -1,10 +1,9 @@
 from fastapi import FastAPI
-
 from DTOs.SmartDeviceDTO import SmartDeviceDTO
-from Models.DeviceManager import DeviceManager
+from Models.SmartDeviceManager import SmartDeviceManager
 
 app = FastAPI()
-devices_manager = DeviceManager()
+devices_manager = SmartDeviceManager()
 
 
 @app.on_event("startup")
@@ -13,12 +12,12 @@ async def startup_event():
 
 
 @app.post("/add-device/")
-async def add_device(device: SmartDeviceDTO):
-    devices_manager.add_device(device)
-    return {"message": f"Device added: {device.device_id}"}
+async def add_device(smartDeviceDTO: SmartDeviceDTO):
+    devices_manager.add_device(smartDeviceDTO)
+    return {"message": f"Smart device added: {smartDeviceDTO.device_id}"}
 
 
 @app.post("/remove-device/{device_id}")
 async def remove_device(device_id: str):
     devices_manager.remove_device(device_id)
-    return {"message": f"Device removed: {device_id}"}
+    return {"message": f"Smart device removed: {device_id}"}

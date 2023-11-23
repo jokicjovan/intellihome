@@ -28,6 +28,8 @@ namespace IntelliHome_Backend.Features.Communications.Services
                     {
                         device_id = smartDevice.Id,
                         smart_home_id = smartDevice.SmartHome.Id,
+                        device_category = smartDevice.Category.ToString(),
+                        device_type = smartDevice.GetType().Name,
                         host = "localhost",
                         port = 1883,
                         keepalive = 30

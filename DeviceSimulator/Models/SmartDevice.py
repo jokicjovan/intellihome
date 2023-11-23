@@ -3,9 +3,10 @@ import paho.mqtt.client as mqtt
 
 
 class SmartDevice:
-    def __init__(self, device_id, smart_home_id):
+    def __init__(self, device_id, smart_home_id, device_category):
         self.device_id = device_id
         self.smart_home_id = smart_home_id
+        self.device_category = device_category
         self.event = asyncio.Event()
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
 
