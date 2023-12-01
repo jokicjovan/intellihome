@@ -1,6 +1,5 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
 using IntelliHome_Backend.Features.Communications.Handlers.PKA.Interfaces;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
@@ -11,18 +10,16 @@ namespace IntelliHome_Backend.Features.Communications.Handlers.PKA
 {
     public class AmbientSensorHandler : IAmbientSensorHandler
     {
-        private readonly ISimulationsHandler _simulationsHandler;
         private readonly IMqttService _mqttService;
         private readonly IServiceProvider _serviceProvider;
 
-        public AmbientSensorHandler(ISimulationsHandler simulationsHandler, IMqttService mqttService, IServiceProvider serviceProvider)
+        public AmbientSensorHandler(IMqttService mqttService, IServiceProvider serviceProvider)
         {
-            _simulationsHandler = simulationsHandler;
             _mqttService = mqttService;
             _serviceProvider = serviceProvider;
         }
 
-        public async void RegisterAmbientSensorListeners() {
+        public async void RegisterAmbientSensorsListeners() {
             using (var scope = _serviceProvider.CreateScope())
             {
                 IAmbientSensorService ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
@@ -34,9 +31,16 @@ namespace IntelliHome_Backend.Features.Communications.Handlers.PKA
             }
         }
 
-        private async void HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
+        private Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
+            return Task.CompletedTask;
+        }
+
+        public async void PublishMessageToAmbientSensor(AmbientSensor ambientSensor, String payload)
+        {
+            String topic = $"ToDevice/{ambientSensor.SmartHome.Id}/{ambientSensor.Category}/{ambientSensor.Type}/{ambientSensor.Id}";
+            await _mqttService.PublishAsync(topic, payload);
         }
     }
 }

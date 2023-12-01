@@ -24,7 +24,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
 
                 Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
-                Task.Run(() => ambientSensorHandler.RegisterAmbientSensorListeners());
+                Task.Run(() => ambientSensorHandler.RegisterAmbientSensorsListeners());
                 return Task.CompletedTask;
             }
         }

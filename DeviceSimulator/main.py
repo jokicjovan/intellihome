@@ -11,6 +11,18 @@ async def startup_event():
     pass
 
 
+@app.post("/turn-on-device/{device_id}")
+async def turn_on_device(device_id: str):
+    devices_manager.turn_on_device(device_id)
+    return {"message": f"Smart device turned on: {device_id}"}
+
+
+@app.post("/turn-off-device/{device_id}")
+async def turn_on_device(device_id: str):
+    devices_manager.turn_off_device(device_id)
+    return {"message": f"Smart device turned off: {device_id}"}
+
+
 @app.post("/add-device/")
 async def add_device(smartDeviceDTO: SmartDeviceDTO):
     devices_manager.add_device(smartDeviceDTO)

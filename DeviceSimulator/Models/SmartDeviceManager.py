@@ -10,6 +10,7 @@ from Models.SmartDevice import SmartDevice
 from Models.VEU.BatterySystem import BatterySystem
 from Models.VEU.SolarPanelSystem import SolarPanelSystem
 from Models.VEU.VehicleCharger import VehicleCharger
+import asyncio
 
 
 class SmartDeviceManager:
@@ -40,3 +41,13 @@ class SmartDeviceManager:
         smart_device = self.smart_devices.pop(device_id, None)
         if smart_device:
             smart_device.disconnect()
+
+    def turn_on_device(self, device_id):
+        smart_device = self.smart_devices.get(device_id, None)
+        if smart_device:
+            smart_device.turn_on()
+
+    def turn_off_device(self, device_id):
+        smart_device = self.smart_devices.get(device_id, None)
+        if smart_device:
+            smart_device.turn_off()

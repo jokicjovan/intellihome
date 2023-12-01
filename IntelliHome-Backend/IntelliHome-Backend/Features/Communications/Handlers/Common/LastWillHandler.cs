@@ -22,12 +22,11 @@ namespace IntelliHome_Backend.Features.Communications.Handlers.Common
             await _mqttService.SubscribeAsync("will", HandleLastWillMessageAsync);
         }
 
-        private async void HandleLastWillMessageAsync(MqttApplicationMessageReceivedEventArgs e)
+        private async Task HandleLastWillMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
-                Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString() + "WILL");
                 Guid deviceId = Guid.Parse(e.ApplicationMessage.ConvertPayloadToString());
                 SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
                 smartDevice.IsConnected = false;

@@ -2,6 +2,6 @@
 {
     public interface IAmbientSensorHandler
     {
-        public void RegisterAmbientSensorListeners();
+        public void RegisterAmbientSensorsListeners();
     }
 }

@@ -8,12 +8,18 @@ class SmartDevice:
         self.smart_home_id = smart_home_id
         self.device_category = device_category
         self.device_type = device_type
-        self.event = asyncio.Event()
+        self.is_on = False
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
 
     async def send_data(self):
-        while True:
-            await asyncio.sleep(5)
+        pass
+
+    def turn_on(self):
+        self.is_on = True
+        asyncio.create_task(self.send_data())
+
+    def turn_off(self):
+        self.is_on = False
 
     def connect(self, host, port, keepalive):
         self.client.will_set("will", payload=f"{self.device_id}", qos=1, retain=False)
