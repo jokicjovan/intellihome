@@ -1,5 +1,6 @@
 ﻿using Data.Context;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
+using IntelliHome_Backend.Features.Communications.Handlers.PKA.Interfaces;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Users.Services.Interfaces;
 
@@ -17,10 +18,13 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                ISmartDeviceConnectionService heartbeatService = scope.ServiceProvider.GetRequiredService<ISmartDeviceConnectionService>();
-                ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
+                ILastWillHandler heartbeatService = scope.ServiceProvider.GetRequiredService<ILastWillHandler>();
+                ISimulationsHandler simulationService = scope.ServiceProvider.GetRequiredService<ISimulationsHandler>();
+                IAmbientSensorHandler ambientSensorHandler = scope.ServiceProvider.GetRequiredService<IAmbientSensorHandler>();
+
                 Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
+                Task.Run(() => ambientSensorHandler.RegisterAmbientSensorListeners());
                 return Task.CompletedTask;
             }
         }
@@ -29,7 +33,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                ISimulationService simulationService = scope.ServiceProvider.GetRequiredService<ISimulationService>();
+                ISimulationsHandler simulationService = scope.ServiceProvider.GetRequiredService<ISimulationsHandler>();
                 //TODO stop all simulations
                 return Task.CompletedTask;
             }

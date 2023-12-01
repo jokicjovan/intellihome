@@ -31,7 +31,7 @@ class SmartDeviceManager:
 
         device_class = device_type_mapping.get(deviceDTO.device_type, SmartDevice)
         device = device_class(deviceDTO.device_id, deviceDTO.smart_home_id, deviceDTO.device_category,
-                              **deviceDTO.kwargs)
+                              deviceDTO.device_type, **deviceDTO.kwargs)
 
         device.connect(deviceDTO.host, deviceDTO.port, deviceDTO.keepalive)
         self.smart_devices[device.device_id] = device

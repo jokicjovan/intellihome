@@ -2,12 +2,12 @@ from enum import Enum
 
 
 class DeviceType(str, Enum):
-    AmbientSensor = "AmbientSensor",
-    AirConditioner = "AirConditioner",
-    WashingMachine = "WashingMachine",
-    Lamp = "Lamp",
-    VehicleGate = "VehicleGate",
-    Sprinkler = "Sprinkler",
-    BatterySystem = "BatterySystem",
-    SolarPanelSystem = "SolarPanelSystem",
-    VehicleCharger = "VehicleCharger"
+    AmbientSensor = "AMBIENTSENSOR",
+    AirConditioner = "AIRCONDITIONER",
+    WashingMachine = "WASHINGMACHINE",
+    Lamp = "LAMP",
+    VehicleGate = "VEHICLEGATE",
+    Sprinkler = "SPRINKLER",
+    BatterySystem = "BATTERYSYSTEM",
+    SolarPanelSystem = "SOLARPANELSYSTEM",
+    VehicleCharger = "VEHICLECHARGER"

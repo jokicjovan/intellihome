@@ -1,25 +1,20 @@
 ﻿using Data.Models.Shared;
+using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
 using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using MQTTnet;
 using MQTTnet.Client;
 
-namespace IntelliHome_Backend.Features.Communications.Services
+namespace IntelliHome_Backend.Features.Communications.Handlers.Common
 {
-    public class SmartDeviceConnectionService : ISmartDeviceConnectionService
+    public class LastWillHandler : ILastWillHandler
     {
         private readonly IMqttService _mqttService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ISimulationService _simulationService;
-        public SmartDeviceConnectionService(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationService simulationService)
+        public LastWillHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simulationService)
         {
             _mqttService = mqttService;
             _serviceProvider = serviceProvider;
-            _simulationService = simulationService;
-        }
-
-        public Task<bool> ConnectWithSmartDevice(SmartDevice smartDevice) {
-            return _simulationService.AddDeviceToSimulator(smartDevice);
         }
 
         public async Task SetupLastWillHandler()
@@ -32,10 +27,11 @@ namespace IntelliHome_Backend.Features.Communications.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
+                Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString() + "WILL");
                 Guid deviceId = Guid.Parse(e.ApplicationMessage.ConvertPayloadToString());
-                SmartDevice smartDevice = await smartDeviceService.GetSmartDevice(deviceId);
+                SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
                 smartDevice.IsConnected = false;
-                await smartDeviceService.UpdateSmartDevice(smartDevice);
+                await smartDeviceService.Update(smartDevice);
             }
         }
 

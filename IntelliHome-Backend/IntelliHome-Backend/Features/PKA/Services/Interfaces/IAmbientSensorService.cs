@@ -1,9 +1,10 @@
 ﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.PKA.Services.Interfaces
 {
-    public interface IAmbientSensorService
+    public interface IAmbientSensorService : ICrudService<AmbientSensor>
     {
-        Task<AmbientSensor> CreateAmbientSensor(AmbientSensor ambientSensor);
+        IEnumerable<AmbientSensor> GetAllWithHome();
     }
 }

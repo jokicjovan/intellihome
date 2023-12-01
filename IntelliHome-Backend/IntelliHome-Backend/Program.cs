@@ -30,6 +30,10 @@ using IntelliHome_Backend.Features.Shared.Services;
 using Microsoft.Extensions.FileProviders;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using MQTTnet.Client;
+using IntelliHome_Backend.Features.Communications.Handlers.Common;
+using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
+using IntelliHome_Backend.Features.Communications.Handlers.PKA;
+using IntelliHome_Backend.Features.Communications.Handlers.PKA.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,9 +97,11 @@ builder.Services.AddSingleton<IMqttService>(provider =>
     mqttService.ConnectAsync("localhost", 1883).Wait();
     return mqttService;
 });
-builder.Services.AddSingleton<ISmartDeviceConnectionService, SmartDeviceConnectionService>();
-builder.Services.AddSingleton<ISimulationService, SimulationService>();
+builder.Services.AddSingleton<ILastWillHandler, LastWillHandler>();
+builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();
 builder.Services.AddHostedService<StartupHostedService>();
+//Handlers
+builder.Services.AddSingleton<IAmbientSensorHandler, AmbientSensorHandler>();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");

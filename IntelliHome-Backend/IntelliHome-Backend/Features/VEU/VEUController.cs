@@ -35,13 +35,14 @@ namespace IntelliHome_Backend.Features.VEU
         {
             BatterySystem batterySystem = new BatterySystem
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
                 Category = SmartDeviceCategory.VEU,
+                Type = SmartDeviceType.BATTERYSYSTEM,
                 Capacity = dto.Capacity,
                 Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            batterySystem = await _batterySystemService.CreateBatterySystem(batterySystem);
+            batterySystem = await _batterySystemService.Create(batterySystem);
             return Ok(batterySystem);
         }
 
@@ -51,14 +52,15 @@ namespace IntelliHome_Backend.Features.VEU
         {
             SolarPanelSystem solarPanelSystem = new SolarPanelSystem
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
                 Category = SmartDeviceCategory.VEU,
+                Type = SmartDeviceType.SOLARPANELSYSTEM,
                 Area = dto.Area,
                 Efficiency = dto.Efficiency,
                 Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            solarPanelSystem = await _solarPanelSystemService.CreateSolarPanelSystem(solarPanelSystem);
+            solarPanelSystem = await _solarPanelSystemService.Create(solarPanelSystem);
             return Ok(solarPanelSystem);
         }
 
@@ -68,14 +70,15 @@ namespace IntelliHome_Backend.Features.VEU
         {
             VehicleCharger vehicleCharger = new VehicleCharger
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
                 Category = SmartDeviceCategory.VEU,
+                Type = SmartDeviceType.VEHICLECHARGER,
                 Power = dto.Power,
                 ChargingPoints = Enumerable.Range(0, dto.NumberOfChargingPoints).Select(_ => new VehicleChargingPoint { IsFree = true }).ToList(),
                 Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            vehicleCharger = await _vehicleChargerService.CreateVehicleCharger(vehicleCharger);
+            vehicleCharger = await _vehicleChargerService.Create(vehicleCharger);
             return Ok(vehicleCharger);
         }
     }

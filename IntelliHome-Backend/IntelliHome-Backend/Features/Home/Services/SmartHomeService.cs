@@ -25,11 +25,6 @@ namespace IntelliHome_Backend.Features.Home.Services
             _cityRepository = cityRepository;
         }
 
-        public async Task<SmartHome> GetSmartHome(Guid Id)
-        {
-            SmartHome smartHome = await _smartHomeRepository.Read(Id) ?? throw new ResourceNotFoundException("Smart house with provided Id not found!");
-            return smartHome;
-        }
 
         public async Task<GetSmartHomeDTO> GetSmartHomeDTO(Guid Id)
         {
@@ -143,6 +138,32 @@ namespace IntelliHome_Backend.Features.Home.Services
                     .Take(pageParameters.PageSize).Select(s => new GetSmartHomeDTO(s)).ToList()
             };
             return result;
+        }
+
+        public Task<SmartHome> Create(SmartHome entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<SmartHome> Get(Guid id)
+        {
+            SmartHome smartHome = await _smartHomeRepository.Read(id) ?? throw new ResourceNotFoundException("Smart house with provided Id not found!");
+            return smartHome;
+        }
+
+        public Task<IEnumerable<SmartHome>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SmartHome> Update(SmartHome entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SmartHome> Delete(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

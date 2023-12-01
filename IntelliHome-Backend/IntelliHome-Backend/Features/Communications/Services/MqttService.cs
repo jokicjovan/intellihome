@@ -50,13 +50,16 @@ namespace IntelliHome_Backend.Features.Communications.Services
             await _mqttClient.SubscribeAsync(new MqttTopicFilter { Topic = topic });
             _mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
-                try
+                if (e.ApplicationMessage.Topic == topic)
                 {
-                    messageHandler(e);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                    try
+                    {
+                        messageHandler(e);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             };
         }

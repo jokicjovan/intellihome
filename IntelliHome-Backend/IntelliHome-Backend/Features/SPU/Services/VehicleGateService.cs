@@ -1,5 +1,4 @@
 ﻿using Data.Models.SPU;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 
@@ -8,24 +7,42 @@ namespace IntelliHome_Backend.Features.SPU.Services
     public class VehicleGateService : IVehicleGateService
     {
         private readonly IVehicleGateRepository _vehicleGateRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public VehicleGateService(IVehicleGateRepository vehicleGateRepository)
         {
             _vehicleGateRepository = vehicleGateRepository;
-            _deviceConnectionService = deviceConnectionService;
         }
 
-        public async Task<VehicleGate> CreateVehicleGate(VehicleGate vehicleGate)
+        public async Task<VehicleGate> Create(VehicleGate entity)
         {
-            vehicleGate = await _vehicleGateRepository.Create(vehicleGate);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(vehicleGate);
-            if (success)
-            {
-                vehicleGate.IsConnected = true;
-                await _vehicleGateRepository.Update(vehicleGate);
-            }
-            return vehicleGate;
+            entity = await _vehicleGateRepository.Create(entity);
+            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
+            //if (success)
+            //{
+            //    entity.IsConnected = true;
+            //    await _vehicleGateRepository.Update(entity);
+            //}
+            return entity;
+        }
+
+        public Task<VehicleGate> Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VehicleGate> Get(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<VehicleGate>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VehicleGate> Update(VehicleGate entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -23,7 +23,7 @@ const SmartDeviceCard = (props) => {
                 />
             </div>
             <Typography sx={{margin:"auto 15px", fontSize:"23px", fontWeight:"600", color:"#343F71"}}>{smartDevice.name}</Typography>
-            <div style={{ width: "12px", height: "12px", position: "absolute", top: 10, right: 10, backgroundColor: `${smartDevice.isOnline ? "green" : "red"}`, borderRadius: "50%" }}></div>
+            <div style={{ width: "12px", height: "12px", position: "absolute", top: 10, right: 10, backgroundColor: `${smartDevice.isConnected ? "green" : "red"}`, borderRadius: "50%" }}></div>
 
 
         </Box>

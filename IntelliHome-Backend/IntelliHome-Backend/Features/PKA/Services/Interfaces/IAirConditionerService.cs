@@ -1,9 +1,9 @@
 ﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.PKA.Services.Interfaces
 {
-    public interface IAirConditionerService
+    public interface IAirConditionerService : ICrudService<AirConditioner>
     {
-        Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner);
     }
 }
