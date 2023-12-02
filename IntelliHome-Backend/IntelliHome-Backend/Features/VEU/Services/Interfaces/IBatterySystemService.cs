@@ -1,10 +1,10 @@
-﻿using Data.Models.VEU;
+﻿using Data.Models.PKA;
+using Data.Models.VEU;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
-    public interface IBatterySystemService
+    public interface IBatterySystemService : ICrudService<BatterySystem>
     {
-        Task<BatterySystem> CreateBatterySystem(BatterySystem batterySystem);
-        Task<BatterySystem> GetBatterySystem(Guid Id);
     }
 }

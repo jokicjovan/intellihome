@@ -1,5 +1,4 @@
 ﻿using Data.Models.SPU;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 
@@ -8,24 +7,42 @@ namespace IntelliHome_Backend.Features.SPU.Services
     public class SprinklerService : ISprinklerService
     {
         private readonly ISprinklerRepository _sprinklerRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public SprinklerService(ISprinklerRepository sprinklerRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public SprinklerService(ISprinklerRepository sprinklerRepository)
         {
             _sprinklerRepository = sprinklerRepository;
-            _deviceConnectionService = deviceConnectionService;
         }
 
-        public async Task<Sprinkler> CreateSprinkler(Sprinkler sprinkler)
+        public async Task<Sprinkler> Create(Sprinkler entity)
         {
-            sprinkler = await _sprinklerRepository.Create(sprinkler);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(sprinkler);
-            if (success)
-            {
-                sprinkler.IsConnected = true;
-                await _sprinklerRepository.Update(sprinkler);
-            }
-            return sprinkler;
+            entity = await _sprinklerRepository.Create(entity);
+            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
+            //if (success)
+            //{
+            //    entity.IsConnected = true;
+            //    await _sprinklerRepository.Update(entity);
+            //}
+            return entity;
+        }
+
+        public Task<Sprinkler> Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Sprinkler> Get(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Sprinkler>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Sprinkler> Update(Sprinkler entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

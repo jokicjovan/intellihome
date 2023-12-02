@@ -1,7 +1,5 @@
 ﻿using Data.Models.VEU;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
-using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 
@@ -10,34 +8,47 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class SolarPanelSystemService : ISolarPanelSystemService
     {
         private readonly ISolarPanelSystemRepository _solarPanelSystemRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository)
         {
             _solarPanelSystemRepository = solarPanelSystemRepository;
-            _deviceConnectionService = deviceConnectionService;
         }
 
-        public async Task<SolarPanelSystem> CreateSolarPanelSystem(SolarPanelSystem solarPanelSystem)
+        public async Task<SolarPanelSystem> Create(SolarPanelSystem entity)
         {
-            solarPanelSystem = await _solarPanelSystemRepository.Create(solarPanelSystem);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(solarPanelSystem);
-            if (success)
-            {
-                solarPanelSystem.IsConnected = true;
-                await _solarPanelSystemRepository.Update(solarPanelSystem);
-            }
-            return solarPanelSystem;
+            entity = await _solarPanelSystemRepository.Create(entity);
+            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
+            //if (success)
+            //{
+            //    entity.IsConnected = true;
+            //    await _solarPanelSystemRepository.Update(entity);
+            //}
+            return entity;
         }
 
-        public async Task<SolarPanelSystem> GetSolarPanelSystem(Guid Id)
+        public Task<SolarPanelSystem> Delete(Guid id)
         {
-            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.Read(Id);
+            throw new NotImplementedException();
+        }
+
+        public async Task<SolarPanelSystem> Get(Guid id)
+        {
+            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.Read(id);
             if (solarPanelSystem == null)
             {
                 throw new ResourceNotFoundException("Solar panel system with provided Id not found!");
             }
             return solarPanelSystem;
+        }
+
+        public Task<IEnumerable<SolarPanelSystem>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SolarPanelSystem> Update(SolarPanelSystem entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

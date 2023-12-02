@@ -1,12 +1,12 @@
 ﻿using Data.Models.PKA;
+using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.PKA
+namespace IntelliHome_Backend.Features.PKA.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -35,16 +35,17 @@ namespace IntelliHome_Backend.Features.PKA
         {
             AirConditioner airConditioner = new AirConditioner
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                Category = SmartDeviceCategory.PKA,
+                Type = SmartDeviceType.AIRCONDITIONER,
                 PowerPerHour = dto.PowerPerHour,
                 MinTemperature = dto.MinTemperature,
                 MaxTemperature = dto.MaxTemperature,
                 Modes = dto.Modes,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            airConditioner = await _airConditionerService.CreateAirConditioner(airConditioner);
+            airConditioner = await _airConditionerService.Create(airConditioner);
             return Ok(airConditioner);
         }
 
@@ -54,13 +55,14 @@ namespace IntelliHome_Backend.Features.PKA
         {
             AmbientSensor ambientSensor = new AmbientSensor
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                Category = SmartDeviceCategory.PKA,
+                Type = SmartDeviceType.AMBIENTSENSOR,
                 PowerPerHour = dto.PowerPerHour,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            ambientSensor = await _ambientSensorService.CreateAmbientSensor(ambientSensor);
+            ambientSensor = await _ambientSensorService.Create(ambientSensor);
             return Ok(ambientSensor);
         }
 
@@ -70,14 +72,15 @@ namespace IntelliHome_Backend.Features.PKA
         {
             WashingMachine washingMachine = new WashingMachine
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.PKA,
+                Category = SmartDeviceCategory.PKA,
+                Type = SmartDeviceType.WASHINGMACHINE,
                 PowerPerHour = dto.PowerPerHour,
                 Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds),
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            washingMachine = await _washingMachineService.CreateWashingMachine(washingMachine);
+            washingMachine = await _washingMachineService.Create(washingMachine);
             return Ok(washingMachine);
         }
 

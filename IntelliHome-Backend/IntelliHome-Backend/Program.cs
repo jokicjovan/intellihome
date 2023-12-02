@@ -1,5 +1,9 @@
 using Data.Context;
 using MQTTnet;
+using MQTTnet.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.FileProviders;
+using IntelliHome_Backend.Features.Security;
 using IntelliHome_Backend.Features.Home.Repositories;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services;
@@ -8,28 +12,31 @@ using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
-using IntelliHome_Backend.Features.Security;
-using IntelliHome_Backend.Features.Shared.Infrastructure;
+using IntelliHome_Backend.Features.PKA.Handlers;
+using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
-using IntelliHome_Backend.Features.Users.Repositories;
-using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
-using IntelliHome_Backend.Features.Users.Services;
-using IntelliHome_Backend.Features.Users.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
-using IntelliHome_Backend.Features.Communications.Services;
-using IntelliHome_Backend.Features.Communications.HostedServices;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using IntelliHome_Backend.Features.Users.Repositories;
+using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using IntelliHome_Backend.Features.Users.Services;
+using IntelliHome_Backend.Features.Users.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.Shared.Services;
-using Microsoft.Extensions.FileProviders;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
-using MQTTnet.Client;
+using IntelliHome_Backend.Features.Shared.Handlers;
+using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.BackgroundServices;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
+using IntelliHome_Backend.Features.SPU.Handlers;
+using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
+using IntelliHome_Backend.Features.VEU.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,7 +86,6 @@ builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
-//Communications
 builder.Services.AddSingleton(provider =>
 {
     var factory = new MqttFactory();
@@ -93,9 +99,19 @@ builder.Services.AddSingleton<IMqttService>(provider =>
     mqttService.ConnectAsync("localhost", 1883).Wait();
     return mqttService;
 });
-builder.Services.AddSingleton<ISmartDeviceConnectionService, SmartDeviceConnectionService>();
-builder.Services.AddSingleton<ISimulationService, SimulationService>();
 builder.Services.AddHostedService<StartupHostedService>();
+//Handlers
+builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();
+builder.Services.AddSingleton<ILastWillHandler, LastWillHandler>();
+builder.Services.AddSingleton<IAmbientSensorHandler, AmbientSensorHandler>();
+builder.Services.AddSingleton<IAirConditionerHandler, AirConditionerHandler>();
+builder.Services.AddSingleton<IWashingMachineHandler, WashingMachineHandler>();
+builder.Services.AddSingleton<ILampHandler, LampHandler>();
+builder.Services.AddSingleton<ISprinklerHandler, SprinklerHandler>();
+builder.Services.AddSingleton<IVehicleGate, VehicleGateHandler>();
+builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
+builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
+builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");

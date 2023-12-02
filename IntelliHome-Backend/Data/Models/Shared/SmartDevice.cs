@@ -10,6 +10,7 @@ namespace Data.Models.Shared
         public String Name { get; set; }
         public String? Image { get; set; }
         public SmartDeviceCategory Category { get; set; }
+        public SmartDeviceType Type { get; set; }
         public Boolean IsConnected { get; set; }
         public Boolean IsOn { get; set; }
         [JsonIgnore]

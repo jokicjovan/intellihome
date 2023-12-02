@@ -1,11 +1,12 @@
-﻿using Data.Models.SPU;
+﻿using Data.Models.Shared;
+using Data.Models.SPU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.SPU
+namespace IntelliHome_Backend.Features.SPU.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -34,14 +35,15 @@ namespace IntelliHome_Backend.Features.SPU
         {
             Lamp lamp = new Lamp
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                Category = SmartDeviceCategory.SPU,
+                Type = SmartDeviceType.LAMP,
                 PowerPerHour = dto.PowerPerHour,
                 BrightnessLimit = dto.BrightnessLimit,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            lamp = await _lampService.CreateLamp(lamp);
+            lamp = await _lampService.Create(lamp);
             return Ok(lamp);
 
         }
@@ -52,13 +54,14 @@ namespace IntelliHome_Backend.Features.SPU
         {
             Sprinkler sprinkler = new Sprinkler
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                Category = SmartDeviceCategory.SPU,
+                Type = SmartDeviceType.SPRINKLER,
                 PowerPerHour = dto.PowerPerHour,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            sprinkler = await _sprinklerService.CreateSprinkler(sprinkler);
+            sprinkler = await _sprinklerService.Create(sprinkler);
             return Ok(sprinkler);
 
         }
@@ -69,14 +72,15 @@ namespace IntelliHome_Backend.Features.SPU
         {
             VehicleGate vehicleGate = new VehicleGate
             {
-                SmartHome = await _smartHomeService.GetSmartHome(smartHomeId),
+                SmartHome = await _smartHomeService.Get(smartHomeId),
                 Name = dto.Name,
-                Category = Data.Models.Shared.SmartDeviceCategory.SPU,
+                Category = SmartDeviceCategory.SPU,
+                Type = SmartDeviceType.VEHICLEGATE,
                 PowerPerHour = dto.PowerPerHour,
                 AllowedLicencePlates = dto.AllowedLicencePlates,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
-            vehicleGate = await _vehicleGateService.CreateVehicleGate(vehicleGate);
+            vehicleGate = await _vehicleGateService.Create(vehicleGate);
             return Ok(vehicleGate);
 
         }

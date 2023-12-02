@@ -1,5 +1,5 @@
 ﻿using Data.Models.PKA;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
@@ -8,24 +8,50 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AmbientSensorService : IAmbientSensorService
     {
         private readonly IAmbientSensorRepository _ambientSensorRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
+        private readonly IAmbientSensorHandler _ambientSensorHandler;
 
-        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IAmbientSensorHandler ambientSensorHandler)
         {
             _ambientSensorRepository = ambientSensorRepository;
-            _deviceConnectionService = deviceConnectionService;
+            _ambientSensorHandler = ambientSensorHandler;
         }
 
-        public async Task<AmbientSensor> CreateAmbientSensor(AmbientSensor ambientSensor)
+        public async Task<AmbientSensor> Create(AmbientSensor entity)
         {
-            ambientSensor = await _ambientSensorRepository.Create(ambientSensor);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(ambientSensor);
+            entity = await _ambientSensorRepository.Create(entity);
+            bool success = await _ambientSensorHandler.AddSmartDeviceToSimulator(entity, new Dictionary<string, object>());
             if (success)
             {
-                ambientSensor.IsConnected = true;
-                await _ambientSensorRepository.Update(ambientSensor);
+                entity.IsConnected = true;
+                await _ambientSensorRepository.Update(entity);
+                _ambientSensorHandler.SubscribeToSmartDevice(entity);
             }
-            return ambientSensor;
+            return entity;
+        }
+
+        public Task<AmbientSensor> Delete(Guid id)
+        {
+            return _ambientSensorRepository.Delete(id);
+        }
+
+        public Task<AmbientSensor> Get(Guid id)
+        {
+            return _ambientSensorRepository.Read(id);
+        }
+
+        public Task<IEnumerable<AmbientSensor>> GetAll()
+        {
+            return _ambientSensorRepository.ReadAll();
+        }
+
+        public IEnumerable<AmbientSensor> GetAllWithHome()
+        {
+            return _ambientSensorRepository.FindAllWIthHome();
+        }
+
+        public Task<AmbientSensor> Update(AmbientSensor entity)
+        {
+            return _ambientSensorRepository.Update(entity);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Data.Models.PKA;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
@@ -8,23 +7,42 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository)
         {
             _airConditionerRepository = airConditionerRepository;
-            _deviceConnectionService = deviceConnectionService;
         }
 
-        public async Task<AirConditioner> CreateAirConditioner(AirConditioner airConditioner) {
-            airConditioner = await _airConditionerRepository.Create(airConditioner);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(airConditioner);
-            if (success)
-            {
-                airConditioner.IsConnected = true;
-                await _airConditionerRepository.Update(airConditioner);
-            }
-            return airConditioner;
+        public async Task<AirConditioner> Create(AirConditioner entity)
+        {
+            entity = await _airConditionerRepository.Create(entity);
+            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
+            //if (success)
+            //{
+            //    entity.IsConnected = true;
+            //    await _airConditionerRepository.Update(entity);
+            //}
+            return entity;
+        }
+
+        public Task<AirConditioner> Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AirConditioner> Get(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AirConditioner>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AirConditioner> Update(AirConditioner entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

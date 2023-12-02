@@ -1,5 +1,4 @@
 ﻿using Data.Models.VEU;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
@@ -9,34 +8,47 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class BatterySystemService : IBatterySystemService
     {
         private readonly IBatterySystemRepository _batterySystemRepository;
-        private readonly ISmartDeviceConnectionService _deviceConnectionService;
 
-        public BatterySystemService(IBatterySystemRepository batterySystemRepository, ISmartDeviceConnectionService deviceConnectionService)
+        public BatterySystemService(IBatterySystemRepository batterySystemRepository)
         {
             _batterySystemRepository = batterySystemRepository;
-            _deviceConnectionService = deviceConnectionService;
         }
 
-        public async Task<BatterySystem> CreateBatterySystem(BatterySystem batterySystem)
+        public async Task<BatterySystem> Create(BatterySystem entity)
         {
-            batterySystem = await _batterySystemRepository.Create(batterySystem);
-            bool success = await _deviceConnectionService.ConnectWithSmartDevice(batterySystem);
-            if (success)
-            {
-                batterySystem.IsConnected = true;
-                await _batterySystemRepository.Update(batterySystem);
-            }
-            return batterySystem;
+            entity = await _batterySystemRepository.Create(entity);
+            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
+            //if (success)
+            //{
+            //    entity.IsConnected = true;
+            //    await _batterySystemRepository.Update(entity);
+            //}
+            return entity;
         }
-        
-        public async Task<BatterySystem> GetBatterySystem(Guid Id)
+
+        public Task<BatterySystem> Delete(Guid id)
         {
-            BatterySystem batterySystem = await _batterySystemRepository.Read(Id);
+            throw new NotImplementedException();
+        }
+
+        public async Task<BatterySystem> Get(Guid id)
+        {
+            BatterySystem batterySystem = await _batterySystemRepository.Read(id);
             if (batterySystem == null)
             {
                 throw new ResourceNotFoundException("Battery system with provided Id not found!");
             }
             return batterySystem;
+        }
+
+        public Task<IEnumerable<BatterySystem>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BatterySystem> Update(BatterySystem entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
