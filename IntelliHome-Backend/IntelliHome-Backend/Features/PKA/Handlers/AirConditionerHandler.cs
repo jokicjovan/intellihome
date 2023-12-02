@@ -1,7 +1,7 @@
-﻿using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 
-namespace IntelliHome_Backend.Features.Communications.Handlers.PKA
+namespace IntelliHome_Backend.Features.PKA.Handlers
 {
     public class AirConditionerHandler
     {

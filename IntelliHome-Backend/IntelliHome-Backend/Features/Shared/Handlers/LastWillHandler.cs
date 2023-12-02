@@ -1,11 +1,11 @@
 ﻿using Data.Models.Shared;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using MQTTnet;
 using MQTTnet.Client;
 
-namespace IntelliHome_Backend.Features.Communications.Handlers.Common
+namespace IntelliHome_Backend.Features.Shared.Handlers
 {
     public class LastWillHandler : ILastWillHandler
     {

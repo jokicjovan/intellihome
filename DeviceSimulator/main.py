@@ -23,7 +23,7 @@ async def turn_on_device(device_id: str):
     return {"message": f"Smart device turned off: {device_id}"}
 
 
-@app.post("/add-device/")
+@app.post("/add-device")
 async def add_device(smartDeviceDTO: SmartDeviceDTO):
     devices_manager.add_device(smartDeviceDTO)
     return {"message": f"Smart device added: {smartDeviceDTO.device_id}"}

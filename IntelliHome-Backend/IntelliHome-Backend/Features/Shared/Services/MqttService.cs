@@ -1,9 +1,9 @@
 ﻿using MQTTnet.Client;
 using MQTTnet;
 using MQTTnet.Packets;
-using IntelliHome_Backend.Features.Communications.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 
-namespace IntelliHome_Backend.Features.Communications.Services
+namespace IntelliHome_Backend.Features.Shared.Services
 {
     public class MqttService : IMqttService
     {
@@ -33,7 +33,8 @@ namespace IntelliHome_Backend.Features.Communications.Services
             {
                 try
                 {
-                    if (_topicHandlers.TryGetValue(e.ApplicationMessage.Topic, out var handler)){
+                    if (_topicHandlers.TryGetValue(e.ApplicationMessage.Topic, out var handler))
+                    {
                         await handler(e);
                     }
                 }

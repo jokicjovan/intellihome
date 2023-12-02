@@ -1,6 +1,6 @@
 ﻿using Data.Models.Shared;
 
-namespace IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces
+namespace IntelliHome_Backend.Features.Shared.Handlers.Interfaces
 {
     public interface ILastWillHandler
     {

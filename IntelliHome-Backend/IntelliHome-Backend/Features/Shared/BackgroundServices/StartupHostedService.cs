@@ -1,10 +1,10 @@
 ﻿using Data.Context;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
-using IntelliHome_Backend.Features.Communications.Handlers.PKA.Interfaces;
+using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Users.Services.Interfaces;
 
-namespace IntelliHome_Backend.Features.Communications.HostedServices
+namespace IntelliHome_Backend.Features.Shared.BackgroundServices
 {
     public class StartupHostedService : IHostedService
     {
@@ -24,7 +24,7 @@ namespace IntelliHome_Backend.Features.Communications.HostedServices
 
                 Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
-                Task.Run(() => ambientSensorHandler.RegisterAmbientSensorsListeners());
+                Task.Run(() => ambientSensorHandler.SubscribeToAmbientSensorsFromDatabase());
                 return Task.CompletedTask;
             }
         }

@@ -1,6 +1,6 @@
 ﻿using MQTTnet.Client;
 
-namespace IntelliHome_Backend.Features.Communications.Services.Interfaces
+namespace IntelliHome_Backend.Features.Shared.Services.Interfaces
 {
     public interface IMqttService
     {
