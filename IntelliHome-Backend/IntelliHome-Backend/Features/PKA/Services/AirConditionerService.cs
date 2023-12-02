@@ -1,5 +1,4 @@
 ﻿using Data.Models.PKA;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 

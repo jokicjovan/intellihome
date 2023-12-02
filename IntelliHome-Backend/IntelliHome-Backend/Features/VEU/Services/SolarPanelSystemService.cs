@@ -1,7 +1,5 @@
 ﻿using Data.Models.VEU;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
-using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 

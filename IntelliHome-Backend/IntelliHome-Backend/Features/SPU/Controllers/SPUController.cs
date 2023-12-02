@@ -6,7 +6,7 @@ using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.SPU
+namespace IntelliHome_Backend.Features.SPU.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -41,7 +41,7 @@ namespace IntelliHome_Backend.Features.SPU
                 Type = SmartDeviceType.LAMP,
                 PowerPerHour = dto.PowerPerHour,
                 BrightnessLimit = dto.BrightnessLimit,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             lamp = await _lampService.Create(lamp);
             return Ok(lamp);
@@ -59,7 +59,7 @@ namespace IntelliHome_Backend.Features.SPU
                 Category = SmartDeviceCategory.SPU,
                 Type = SmartDeviceType.SPRINKLER,
                 PowerPerHour = dto.PowerPerHour,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             sprinkler = await _sprinklerService.Create(sprinkler);
             return Ok(sprinkler);
@@ -78,7 +78,7 @@ namespace IntelliHome_Backend.Features.SPU
                 Type = SmartDeviceType.VEHICLEGATE,
                 PowerPerHour = dto.PowerPerHour,
                 AllowedLicencePlates = dto.AllowedLicencePlates,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleGate = await _vehicleGateService.Create(vehicleGate);
             return Ok(vehicleGate);

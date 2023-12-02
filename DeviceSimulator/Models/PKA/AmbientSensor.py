@@ -14,4 +14,4 @@ class AmbientSensor(SmartDevice):
             topic = (f"FromDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/"
                      f"{self.device_id}")
             self.client.publish(topic, str({"temperature": 10, "humidity": 60}), retain=False)
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)

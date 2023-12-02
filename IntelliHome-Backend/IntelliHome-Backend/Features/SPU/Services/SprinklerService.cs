@@ -1,5 +1,4 @@
 ﻿using Data.Models.SPU;
-using IntelliHome_Backend.Features.Communications.Handlers.Common.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 

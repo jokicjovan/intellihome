@@ -6,7 +6,7 @@ using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.VEU
+namespace IntelliHome_Backend.Features.VEU.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -18,7 +18,7 @@ namespace IntelliHome_Backend.Features.VEU
         private readonly IVehicleChargerService _vehicleChargerService;
         private readonly IImageService _imageService;
 
-        public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService, 
+        public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService,
                 ISolarPanelSystemService solarPanelSystemService, IVehicleChargerService vehicleChargerService,
                 IImageService imageService)
         {
@@ -40,7 +40,7 @@ namespace IntelliHome_Backend.Features.VEU
                 Category = SmartDeviceCategory.VEU,
                 Type = SmartDeviceType.BATTERYSYSTEM,
                 Capacity = dto.Capacity,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             batterySystem = await _batterySystemService.Create(batterySystem);
             return Ok(batterySystem);
@@ -58,7 +58,7 @@ namespace IntelliHome_Backend.Features.VEU
                 Type = SmartDeviceType.SOLARPANELSYSTEM,
                 Area = dto.Area,
                 Efficiency = dto.Efficiency,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             solarPanelSystem = await _solarPanelSystemService.Create(solarPanelSystem);
             return Ok(solarPanelSystem);
@@ -76,7 +76,7 @@ namespace IntelliHome_Backend.Features.VEU
                 Type = SmartDeviceType.VEHICLECHARGER,
                 Power = dto.Power,
                 ChargingPoints = Enumerable.Range(0, dto.NumberOfChargingPoints).Select(_ => new VehicleChargingPoint { IsFree = true }).ToList(),
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleCharger = await _vehicleChargerService.Create(vehicleCharger);
             return Ok(vehicleCharger);

@@ -6,7 +6,7 @@ using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.PKA
+namespace IntelliHome_Backend.Features.PKA.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -43,7 +43,7 @@ namespace IntelliHome_Backend.Features.PKA
                 MinTemperature = dto.MinTemperature,
                 MaxTemperature = dto.MaxTemperature,
                 Modes = dto.Modes,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             airConditioner = await _airConditionerService.Create(airConditioner);
             return Ok(airConditioner);
@@ -60,7 +60,7 @@ namespace IntelliHome_Backend.Features.PKA
                 Category = SmartDeviceCategory.PKA,
                 Type = SmartDeviceType.AMBIENTSENSOR,
                 PowerPerHour = dto.PowerPerHour,
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             ambientSensor = await _ambientSensorService.Create(ambientSensor);
             return Ok(ambientSensor);
@@ -78,7 +78,7 @@ namespace IntelliHome_Backend.Features.PKA
                 Type = SmartDeviceType.WASHINGMACHINE,
                 PowerPerHour = dto.PowerPerHour,
                 Modes = _washingMachineService.GetWashingMachineModes(dto.ModesIds),
-                Image = (dto.Image != null && dto.Image.Length > 0) ? _imageService.SaveDeviceImage(dto.Image) : null
+                Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             washingMachine = await _washingMachineService.Create(washingMachine);
             return Ok(washingMachine);

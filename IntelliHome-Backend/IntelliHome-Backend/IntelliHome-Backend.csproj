@@ -46,6 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\SPU\Handlers\Interfaces\" />
+    <Folder Include="Features\VEU\Handlers\Interfaces\" />
     <Folder Include="static\smartDevices\" />
     <Folder Include="static\smartHomes\" />
   </ItemGroup>
