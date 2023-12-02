@@ -20,11 +20,9 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
             {
                 ILastWillHandler heartbeatService = scope.ServiceProvider.GetRequiredService<ILastWillHandler>();
                 ISimulationsHandler simulationService = scope.ServiceProvider.GetRequiredService<ISimulationsHandler>();
-                IAmbientSensorHandler ambientSensorHandler = scope.ServiceProvider.GetRequiredService<IAmbientSensorHandler>();
 
-                Task.Run(() => simulationService.AddDevicesFromDatabaseToSimulator());
+                Task.Run(() => simulationService.SetupDevicesFromDatabase());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
-                Task.Run(() => ambientSensorHandler.SubscribeToAmbientSensorsFromDatabase());
                 return Task.CompletedTask;
             }
         }

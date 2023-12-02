@@ -33,6 +33,10 @@ using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.BackgroundServices;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
+using IntelliHome_Backend.Features.SPU.Handlers;
+using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
+using IntelliHome_Backend.Features.VEU.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,7 +86,6 @@ builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
-//Communications
 builder.Services.AddSingleton(provider =>
 {
     var factory = new MqttFactory();
@@ -96,11 +99,19 @@ builder.Services.AddSingleton<IMqttService>(provider =>
     mqttService.ConnectAsync("localhost", 1883).Wait();
     return mqttService;
 });
-builder.Services.AddSingleton<ILastWillHandler, LastWillHandler>();
-builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();
 builder.Services.AddHostedService<StartupHostedService>();
 //Handlers
+builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();
+builder.Services.AddSingleton<ILastWillHandler, LastWillHandler>();
 builder.Services.AddSingleton<IAmbientSensorHandler, AmbientSensorHandler>();
+builder.Services.AddSingleton<IAirConditionerHandler, AirConditionerHandler>();
+builder.Services.AddSingleton<IWashingMachineHandler, WashingMachineHandler>();
+builder.Services.AddSingleton<ILampHandler, LampHandler>();
+builder.Services.AddSingleton<ISprinklerHandler, SprinklerHandler>();
+builder.Services.AddSingleton<IVehicleGate, VehicleGateHandler>();
+builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
+builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
+builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
