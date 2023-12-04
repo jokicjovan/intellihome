@@ -4,6 +4,7 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
+using Data.Models.Shared;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
@@ -12,7 +13,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         public LampHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/SPU/LAMP/+", HandleMessageFromDevice);
+            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.LAMP}/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

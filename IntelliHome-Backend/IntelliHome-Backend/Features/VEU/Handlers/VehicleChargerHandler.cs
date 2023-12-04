@@ -4,6 +4,7 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
+using Data.Models.Shared;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -12,7 +13,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
         public VehicleChargerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/VEU/VEHICLECHARGER/+", HandleMessageFromDevice);
+            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.VEHICLECHARGER}/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
