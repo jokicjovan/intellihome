@@ -12,7 +12,7 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
         public WashingMachineHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-
+            this.mqttService.SubscribeAsync($"FromDevice/+/PKA/WASHINGMACHINE/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

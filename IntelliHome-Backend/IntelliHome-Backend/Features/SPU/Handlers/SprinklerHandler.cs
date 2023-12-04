@@ -12,7 +12,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         public SprinklerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-
+            this.mqttService.SubscribeAsync($"FromDevice/+/SPU/SPRINKLER/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

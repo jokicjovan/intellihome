@@ -12,7 +12,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         public LampHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-
+            this.mqttService.SubscribeAsync($"FromDevice/+/SPU/LAMP/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

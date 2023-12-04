@@ -12,7 +12,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
         public VehicleChargerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-
+            this.mqttService.SubscribeAsync($"FromDevice/+/VEU/VEHICLECHARGER/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

@@ -24,7 +24,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
             {
                 entity.IsConnected = true;
                 await _ambientSensorRepository.Update(entity);
-                _ambientSensorHandler.SubscribeToSmartDevice(entity);
             }
             return entity;
         }

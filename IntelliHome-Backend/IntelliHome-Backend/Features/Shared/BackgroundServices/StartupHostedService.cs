@@ -61,17 +61,14 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                     if (smartDevice.Type == SmartDeviceType.AMBIENTSENSOR)
                     {
                         smartDevice.IsConnected = await ambientSensorHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) ambientSensorHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.AIRCONDITIONER)
                     {
                         smartDevice.IsConnected = await airConditionerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) airConditionerHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.WASHINGMACHINE)
                     {
                         smartDevice.IsConnected = await washingMachineHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) washingMachineHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.LAMP)
                     {
@@ -81,7 +78,6 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                             { "brightness_limit", lamp.BrightnessLimit },
                         };
                         smartDevice.IsConnected = await lampHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
-                        if (smartDevice.IsConnected) lampHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.VEHICLEGATE)
                     {
@@ -92,17 +88,14 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                             { "allowed_licence_plates", vehicleGate.AllowedLicencePlates }
                         };
                         smartDevice.IsConnected = await vehicleGateHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
-                        if (smartDevice.IsConnected) vehicleGateHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.SPRINKLER)
                     {
                         smartDevice.IsConnected = await sprinklerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) sprinklerHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.BATTERYSYSTEM)
                     {
                         smartDevice.IsConnected = await batterySystemHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) batterySystemHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.SOLARPANELSYSTEM)
                     {
@@ -113,12 +106,10 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                             { "efficiency", solarPanelSystem.Efficiency }
                         };
                         smartDevice.IsConnected = await solarPanelSystemHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
-                        if (smartDevice.IsConnected) solarPanelSystemHandler.SubscribeToSmartDevice(smartDevice);
                     }
                     else if (smartDevice.Type == SmartDeviceType.VEHICLECHARGER)
                     {
                         smartDevice.IsConnected = await vehicleChargerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
-                        if (smartDevice.IsConnected) vehicleChargerHandler.SubscribeToSmartDevice(smartDevice);
                     }
                 }
                 smartDeviceService.UpdateAll(smartDevices);

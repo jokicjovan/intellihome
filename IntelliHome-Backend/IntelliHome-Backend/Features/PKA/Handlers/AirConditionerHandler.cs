@@ -12,7 +12,7 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
         public AirConditionerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
             : base(mqttService, serviceProvider, simualtionsHandler)
         {
-
+            this.mqttService.SubscribeAsync($"FromDevice/+/PKA/AIRCONDITIONER/+", HandleMessageFromDevice);
         }
 
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
