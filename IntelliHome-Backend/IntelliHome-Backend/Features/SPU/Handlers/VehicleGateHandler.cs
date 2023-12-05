@@ -5,13 +5,16 @@ using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
 using Data.Models.Shared;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
     public class VehicleGateHandler : SmartDeviceHandler, IVehicleGate
     {
-        public VehicleGateHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
-            : base(mqttService, serviceProvider, simualtionsHandler)
+        public VehicleGateHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.VEHICLEGATE}/+", HandleMessageFromDevice);
         }
