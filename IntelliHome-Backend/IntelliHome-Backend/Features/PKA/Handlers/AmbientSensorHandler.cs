@@ -54,28 +54,6 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
                     ambientSensorService.Update(ambientSensor);
 
-                    string query =
-                        "from(bucket: \"intellihome_influx\") |> range(start: 1970-01-01T00:00:00.000000001Z, stop: now()) |> filter(fn: (r) => r._measurement == \"ambient_sensor\")";
-
-                    var result = await influxDbContext.QueryFromInfluxAsync(query);
-
-                    foreach (var table in result)
-                    {
-                        Console.WriteLine($"Name: {table.Columns}");
-                        foreach (var row in table.Records)
-                        {
-                            Console.WriteLine("     " + row.ToString());
-                            // Access and print individual field values
-                            foreach (var field in row.Values)
-                            {
-                                Console.WriteLine($"          {field.Key}: {field.Value}");
-                            }
-
-                            Console.WriteLine(); // Add a newline between rows for better readability
-                        }
-                    }
-
-
                 }
             }
         }
