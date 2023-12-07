@@ -7,7 +7,10 @@ using MQTTnet;
 using Data.Models.Shared;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
+using IntelliHome_Backend.Features.SPU.DTOs;
+using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
@@ -22,6 +25,30 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
+            _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+
+            using var scope = serviceProvider.CreateScope();
+
+            var lampService = scope.ServiceProvider.GetRequiredService<ILampService>();
+
+            var lamp = lampService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
+
+            if (lamp != null)
+            {
+                var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString());
+                var lampDataInflux = new Dictionary<string, object>
+                {
+                        { "currentBrightness", lampData.CurrentBrightness }
+                };
+                var lampDataTags = new Dictionary<string, string>
+                {
+                        { "deviceId", lamp.Id.ToString() }
+                };
+                lampService.AddPoint(lampDataInflux, lampDataTags);
+            }
+
+            
+            
             return Task.CompletedTask;
         }
     }

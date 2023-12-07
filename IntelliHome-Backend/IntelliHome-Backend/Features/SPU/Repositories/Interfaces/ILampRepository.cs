@@ -1,5 +1,6 @@
 ﻿using Data.Models.SPU;
 using IntelliHome_Backend.Features.Shared.Repositories.Interfaces;
+using IntelliHome_Backend.Features.SPU.DTOs;
 
 namespace IntelliHome_Backend.Features.SPU.Repositories.Interfaces
 {

@@ -43,6 +43,8 @@ using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DataRepositories;
 using IntelliHome_Backend.Features.Shared.Repositories;
+using IntelliHome_Backend.Features.SPU.DataRepositories;
+using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +66,8 @@ builder.Services.AddScoped<InfluxRepository>();
 //Data repositories
 builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
 builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
+
+builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
