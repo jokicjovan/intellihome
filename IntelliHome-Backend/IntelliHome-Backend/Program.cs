@@ -8,6 +8,9 @@ using IntelliHome_Backend.Features.Home.Repositories;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.PKA.DataRepositories;
+using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services;
@@ -52,6 +55,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PostgreSqlDbContext>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+//InfluxDB context
+builder.Services.AddScoped<InfluxRepository>();
+
+
+//Data repositories
+builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

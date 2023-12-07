@@ -1,5 +1,9 @@
-﻿using Data.Models.Shared;
+﻿using Data.Context;
+using Data.Models.PKA;
+using Data.Models.Shared;
+using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
+using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
@@ -8,6 +12,7 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Client;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.PKA.Handlers
 {
@@ -19,11 +24,31 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.AMBIENTSENSOR}/+", HandleMessageFromDevice);
         }
 
-        protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
+        protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
+            Console.WriteLine($"{e.ApplicationMessage.ConvertPayloadToString()}");
             _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
-            return Task.CompletedTask;
+
+            using var scope = serviceProvider.CreateScope();
+
+            var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
+
+            var ambientSensor = await ambientSensorService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
+
+            if (ambientSensor != null)
+            {
+                var ambientSensorData = JsonConvert.DeserializeObject<AmbientSensorData>(e.ApplicationMessage.ConvertPayloadToString());
+                var ambientSensorDataInflux = new Dictionary<string, object>
+                    {
+                        { "temperature", ambientSensorData.Temperature },
+                        { "humidity", ambientSensorData.Humidity },
+                    };
+                var ambientSensorDataTags = new Dictionary<string, string>
+                    {
+                        { "deviceId", ambientSensor.Id.ToString() }
+                    };
+                ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
+            }
         }
     }
 }
