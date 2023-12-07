@@ -32,6 +32,7 @@ interface VehicleGateRegistrationFormProps {
 }
 
 const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [error, setError] = useState<string | null>(null);
 
     const [additionalFormData, setAdditionalFormData] = useState<VehicleGateAdditionalFields>({
@@ -93,7 +94,7 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
         }
         setError(null);
 
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VehicleGate)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VehicleGate)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

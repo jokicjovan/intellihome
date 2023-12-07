@@ -22,6 +22,7 @@ interface AmbientSensorRegistrationFormProps {
 }
 
 const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
         PowerPerHour: 1
     });
@@ -44,7 +45,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
 
     const handleAmbientSensorSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

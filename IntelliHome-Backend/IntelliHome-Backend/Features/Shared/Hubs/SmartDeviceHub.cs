@@ -18,7 +18,7 @@ namespace IntelliHome_Backend.Features.Shared.Hubs
             _smartDeviceService = smartDeviceService;
         }
 
-        public async Task SubscribeToDevice(Guid smartDeviceId)
+        public async Task SubscribeToSmartDevice(Guid smartDeviceId)
         {
             var userFromContext = Context.User;
             if (userFromContext == null 
