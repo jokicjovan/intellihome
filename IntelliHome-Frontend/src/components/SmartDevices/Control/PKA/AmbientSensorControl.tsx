@@ -1,10 +1,35 @@
 import {Box, Container, CssBaseline, Typography} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {LineChart} from "@mui/x-charts";
+import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
-const AmbientSensorControl = () => {
+const AmbientSensorControl = ({smartDeviceId}) => {
     const [temperature,setTemperature]=useState(25)
     const [humidity,setHumidity]=useState(86)
+
+    useEffect(() => {
+        const signalRSmartDeviceService = new SignalRSmartDeviceService();
+        const dataCallback = (data) => {
+            console.log('Received data:', data);
+        };
+        const resultCallback = (result) => {
+            console.log('Subscription result:', result);
+        };
+
+        signalRSmartDeviceService.startConnection().then(() =>
+            {
+                signalRSmartDeviceService.subscribeToSmartDevice(smartDeviceId)
+                signalRSmartDeviceService.receiveSmartDeviceSubscriptionResult(resultCallback);
+                signalRSmartDeviceService.receiveSmartDeviceData(dataCallback);
+            }
+        );
+
+        return () => {
+            console.log('Cleaning up SignalR connections...');
+            signalRSmartDeviceService.stopConnection();
+        }
+    }, []);
+
     return <Box display="flex" flexDirection="column"><Box m={3} display="flex" flexDirection="row">
         <Box mx={3} display="flex" justifyContent="center" flexDirection="column" alignItems="center" bgcolor="white" width="350px" height="350px" borderRadius="25px">
             <Typography fontSize="30px" fontWeight="600"> TEMPERATURE</Typography>

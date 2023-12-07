@@ -1,14 +1,14 @@
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { environment } from '../../utils/Environment.ts';
 
-class SignalRSmartDeviceService {
+class SignalRSmartHomeService {
     private connection: HubConnection | null = null;
 
     constructor() {
     }
 
     public startConnection(): Promise<void> {
-        const connectionUrl = `${environment}/hub/SmartDeviceHub`;
+        const connectionUrl = `${environment}/hub/SmartHomeHub`;
 
         this.connection = new HubConnectionBuilder()
             .withUrl(connectionUrl, { withCredentials: true })
@@ -24,25 +24,17 @@ class SignalRSmartDeviceService {
             });
     }
 
-    public receiveSmartDeviceData(callback: (data: any) => void): void {
+    public receiveSmartHomeSubscriptionResult(callback: (data: any) => void): void {
         if (this.connection) {
-            this.connection.on('ReceiveSmartDeviceData', (data: any) => {
+            this.connection.on('ReceiveSmartHomeSubscriptionResult', (data: any) => {
                 callback(data);
             });
         }
     }
 
-    public receiveSmartDeviceSubscriptionResult(callback: (data: any) => void): void {
+    public subscribeToSmartHome(smartHomeId: string): void {
         if (this.connection) {
-            this.connection.on('ReceiveSmartDeviceSubscriptionResult', (data: any) => {
-                callback(data);
-            });
-        }
-    }
-
-    public subscribeToSmartDevice(smartDeviceId: string): void {
-        if (this.connection) {
-            this.connection.invoke('SubscribeToSmartDevice', smartDeviceId);
+            this.connection.invoke('SubscribeToSmartHome', smartHomeId);
         }
     }
 
@@ -61,4 +53,4 @@ class SignalRSmartDeviceService {
     }
 }
 
-export default SignalRSmartDeviceService;
+export default SignalRSmartHomeService;

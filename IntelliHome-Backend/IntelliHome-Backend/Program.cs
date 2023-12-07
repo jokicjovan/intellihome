@@ -188,6 +188,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 //Hubs
-app.MapHub<SmartDeviceHub>("/Hub/smartDeviceHub");
+app.MapHub<SmartDeviceHub>("/hub/SmartDeviceHub");
+app.MapHub<SmartHomeHub>("/hub/SmartHomeHub");
 
 app.Run();

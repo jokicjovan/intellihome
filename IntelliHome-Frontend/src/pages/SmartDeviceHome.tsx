@@ -7,7 +7,8 @@ const SmartDeviceHome = () => {
     const { id } = useParams();
     return (
         <><Box
-            sx={{display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#DBDDEB", padding: "20px"}}><SmartDeviceMain /*smartDeviceId={id}*//></Box></>
+            sx={{display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#DBDDEB", padding: "20px"}}><SmartDeviceMain smartDeviceId={id}/>
+        </Box></>
     )
 }
 

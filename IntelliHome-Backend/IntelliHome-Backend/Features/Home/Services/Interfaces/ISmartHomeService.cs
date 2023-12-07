@@ -13,5 +13,6 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task ApproveSmartHome(Guid id);
         Task DeleteSmartHome(Guid id, Guid userId, String reason);
         Task<SmartHomePaginatedDTO> GetSmartHomesForApproval(PageParametersDTO pageParameters);
+        Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId);
     }
 }

@@ -6,7 +6,8 @@ export const AuthContext = createContext({
     isAuthenticated: false,
     role: null,
     changedPassword:null,
-    isLoading: true
+    isLoading: true,
+    id: null
 });
 
 export const AuthProvider = ({ children } : any) => {
@@ -20,7 +21,6 @@ export const AuthProvider = ({ children } : any) => {
         setIsLoading(true);
         axios.get(environment + `/api/User/whoAmI`)
             .then(res => {
-                console.log(res.data.id)
                 if (res.status === 200){
                     setIsAuthenticated(true);
                     setRole(res.data.role);
