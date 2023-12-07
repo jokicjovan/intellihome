@@ -5,13 +5,16 @@ using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
 using Data.Models.Shared;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
     public class SolarPanelSystemHandler : SmartDeviceHandler, ISolarPanelSystemHandler
     {
-        public SolarPanelSystemHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
-            : base(mqttService, serviceProvider, simualtionsHandler)
+        public SolarPanelSystemHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.SOLARPANELSYSTEM}/+", HandleMessageFromDevice);
         }

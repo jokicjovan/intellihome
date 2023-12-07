@@ -8,6 +8,9 @@ using IntelliHome_Backend.Features.Home.Repositories;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.PKA.DataRepositories;
+using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services;
@@ -37,6 +40,7 @@ using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers;
+using IntelliHome_Backend.Features.Shared.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +55,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PostgreSqlDbContext>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+//InfluxDB context
+builder.Services.AddScoped<InfluxRepository>();
+
+
+//Data repositories
+builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -99,7 +109,7 @@ builder.Services.AddSingleton<IMqttService>(provider =>
     mqttService.ConnectAsync("localhost", 1883).Wait();
     return mqttService;
 });
-builder.Services.AddHostedService<StartupHostedService>();
+
 //Handlers
 builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();
 builder.Services.AddSingleton<ILastWillHandler, LastWillHandler>();
@@ -108,10 +118,16 @@ builder.Services.AddSingleton<IAirConditionerHandler, AirConditionerHandler>();
 builder.Services.AddSingleton<IWashingMachineHandler, WashingMachineHandler>();
 builder.Services.AddSingleton<ILampHandler, LampHandler>();
 builder.Services.AddSingleton<ISprinklerHandler, SprinklerHandler>();
-builder.Services.AddSingleton<IVehicleGate, VehicleGateHandler>();
+builder.Services.AddSingleton<IVehicleGateHandler, VehicleGateHandler>();
 builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
 builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
 builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
+
+//Hosted services
+builder.Services.AddHostedService<StartupHostedService>();
+
+//SignalR
+builder.Services.AddSignalR();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
@@ -153,10 +169,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 
-
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -183,5 +196,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+//Hubs
+app.MapHub<SmartDeviceHub>("/Hub/smartDeviceHub");
 
 app.Run();

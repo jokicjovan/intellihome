@@ -21,6 +21,7 @@ interface LampRegistrationFormProps {
 
 
 const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<LampAdditionalFields>({
         BrightnessLimit: 100,
         PowerPerHour: 1,
@@ -51,7 +52,7 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
 
     const handleLampSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

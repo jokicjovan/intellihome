@@ -6,7 +6,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers.Interfaces
     public interface ISmartDeviceHandler
     {
         void PublishMessageToSmartDevice(SmartDevice smartDevice, String payload);
-        Task<bool> AddSmartDeviceToSimulator(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes);
+        Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes);
         void SubscribeToSmartDevice(SmartDevice smartDevice);
     }
 }

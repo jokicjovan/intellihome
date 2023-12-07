@@ -1,6 +1,9 @@
 ﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
 
 namespace IntelliHome_Backend.Features.Shared.Handlers
@@ -10,12 +13,14 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         protected readonly ISimulationsHandler simualtionsHandler;
         protected readonly IMqttService mqttService;
         protected readonly IServiceProvider serviceProvider;
+        protected readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
 
-        public SmartDeviceHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
+        public SmartDeviceHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             this.simualtionsHandler = simualtionsHandler;
             this.mqttService = mqttService;
             this.serviceProvider = serviceProvider;
+            this._smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async void SubscribeToSmartDevice(SmartDevice smartDevice)
@@ -30,7 +35,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             await mqttService.PublishAsync(topic, payload);
         }
 
-        public async Task<bool> AddSmartDeviceToSimulator(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes)
+        public async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes)
         {
             var requestBody = new
             {

@@ -2,7 +2,7 @@
 
 namespace IntelliHome_Backend.Features.SPU.Handlers.Interfaces
 {
-    public interface IVehicleGate : ISmartDeviceHandler
+    public interface IVehicleGateHandler : ISmartDeviceHandler
     {
     }
 }

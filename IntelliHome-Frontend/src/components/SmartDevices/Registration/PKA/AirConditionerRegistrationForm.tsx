@@ -30,6 +30,7 @@ interface AirConditionerRegistrationFormProps {
 
 
 const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [error, setError] = useState<string | null>(null);
 
     const [additionalFormData, setAdditionalFormData] = useState<AirConditionerAdditionalFields>({
@@ -81,7 +82,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
         }
         setError(null);
 
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();
