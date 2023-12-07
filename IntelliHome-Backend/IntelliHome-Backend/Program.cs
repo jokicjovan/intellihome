@@ -109,7 +109,7 @@ builder.Services.AddSingleton<IAirConditionerHandler, AirConditionerHandler>();
 builder.Services.AddSingleton<IWashingMachineHandler, WashingMachineHandler>();
 builder.Services.AddSingleton<ILampHandler, LampHandler>();
 builder.Services.AddSingleton<ISprinklerHandler, SprinklerHandler>();
-builder.Services.AddSingleton<IVehicleGate, VehicleGateHandler>();
+builder.Services.AddSingleton<IVehicleGateHandler, VehicleGateHandler>();
 builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
 builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
 builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();

@@ -49,7 +49,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 IAirConditionerHandler airConditionerHandler = scope.ServiceProvider.GetRequiredService<IAirConditionerHandler>();
                 IWashingMachineHandler washingMachineHandler = scope.ServiceProvider.GetRequiredService<IWashingMachineHandler>();
                 ILampHandler lampHandler = scope.ServiceProvider.GetRequiredService<ILampHandler>();
-                IVehicleGate vehicleGateHandler = scope.ServiceProvider.GetRequiredService<IVehicleGate>();
+                IVehicleGateHandler vehicleGateHandler = scope.ServiceProvider.GetRequiredService<IVehicleGateHandler>();
                 ISprinklerHandler sprinklerHandler = scope.ServiceProvider.GetRequiredService<ISprinklerHandler>();
                 IBatterySystemHandler batterySystemHandler = scope.ServiceProvider.GetRequiredService<IBatterySystemHandler>();
                 ISolarPanelSystemHandler solarPanelSystemHandler = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemHandler>();
@@ -60,15 +60,15 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 {
                     if (smartDevice.Type == SmartDeviceType.AMBIENTSENSOR)
                     {
-                        smartDevice.IsConnected = await ambientSensorHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await ambientSensorHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                     else if (smartDevice.Type == SmartDeviceType.AIRCONDITIONER)
                     {
-                        smartDevice.IsConnected = await airConditionerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                     else if (smartDevice.Type == SmartDeviceType.WASHINGMACHINE)
                     {
-                        smartDevice.IsConnected = await washingMachineHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await washingMachineHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                     else if (smartDevice.Type == SmartDeviceType.LAMP)
                     {
@@ -77,7 +77,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                         {
                             { "brightness_limit", lamp.BrightnessLimit },
                         };
-                        smartDevice.IsConnected = await lampHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
+                        smartDevice.IsConnected = await lampHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.VEHICLEGATE)
                     {
@@ -87,15 +87,15 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                             { "is_public", vehicleGate.IsPublic },
                             { "allowed_licence_plates", vehicleGate.AllowedLicencePlates }
                         };
-                        smartDevice.IsConnected = await vehicleGateHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
+                        smartDevice.IsConnected = await vehicleGateHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.SPRINKLER)
                     {
-                        smartDevice.IsConnected = await sprinklerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await sprinklerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                     else if (smartDevice.Type == SmartDeviceType.BATTERYSYSTEM)
                     {
-                        smartDevice.IsConnected = await batterySystemHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await batterySystemHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                     else if (smartDevice.Type == SmartDeviceType.SOLARPANELSYSTEM)
                     {
@@ -105,11 +105,11 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                             { "area", solarPanelSystem.Area },
                             { "efficiency", solarPanelSystem.Efficiency }
                         };
-                        smartDevice.IsConnected = await solarPanelSystemHandler.AddSmartDeviceToSimulator(smartDevice, additionalAttributes);
+                        smartDevice.IsConnected = await solarPanelSystemHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.VEHICLECHARGER)
                     {
-                        smartDevice.IsConnected = await vehicleChargerHandler.AddSmartDeviceToSimulator(smartDevice, new Dictionary<string, object>());
+                        smartDevice.IsConnected = await vehicleChargerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
                     }
                 }
                 smartDeviceService.UpdateAll(smartDevices);

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
-    public class VehicleGateHandler : SmartDeviceHandler, IVehicleGate
+    public class VehicleGateHandler : SmartDeviceHandler, IVehicleGateHandler
     {
         public VehicleGateHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
             : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)

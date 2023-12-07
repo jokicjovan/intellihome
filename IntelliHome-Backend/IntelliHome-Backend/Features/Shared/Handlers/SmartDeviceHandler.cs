@@ -35,7 +35,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             await mqttService.PublishAsync(topic, payload);
         }
 
-        public async Task<bool> AddSmartDeviceToSimulator(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes)
+        public async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes)
         {
             var requestBody = new
             {

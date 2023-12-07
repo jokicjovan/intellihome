@@ -11,7 +11,5 @@ class AmbientSensor(SmartDevice):
         while True:
             if not self.is_on:
                 break
-            topic = (f"FromDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/"
-                     f"{self.device_id}")
-            self.client.publish(topic, str({"temperature": 10, "humidity": 60}), retain=False)
+            self.client.publish(self.from_device_topic, str({"temperature": 10, "humidity": 60}), retain=False)
             await asyncio.sleep(60)
