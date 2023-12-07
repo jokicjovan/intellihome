@@ -58,9 +58,7 @@ const UserHome=()=>{
     };
 
     const getSmartHomes = () => {
-        console.log(search == "")
         axios.get(environment + `/api/SmartHome/GetSmartHomesForUser?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
-            console.log(res.data);
             setTotalCount(res.data.totalCount);
             setSmartHomes(res.data.smartHomes);
         }).catch(err => {

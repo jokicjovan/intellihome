@@ -3,6 +3,6 @@
     public interface ISmartDeviceClient
     {
         Task ReceiveSmartDeviceData(object data);
-        Task ReceiveSubscriptionResult(string result);
+        Task ReceiveSmartDeviceSubscriptionResult(string result);
     }
 }

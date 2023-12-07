@@ -6,10 +6,10 @@ import LampControl from "../SPU/LampControl";
 import SolarPanelsControl from "../VEU/SolarPanelsControl";
 import GateControl from "../SPU/GateControl";
 
-const SmartDeviceMain = () => {
+const SmartDeviceMain = ({smartDeviceId}) => {
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [deviceType, setDeviceType] = useState("SolarPanel");
+    const [deviceType, setDeviceType] = useState("AmbientSensor");
     return <>
         <Box display="flex" flexDirection="row" alignItems="center">
             <Typography fontSize="40px" fontWeight="650">Smart Device Name</Typography>
@@ -38,7 +38,7 @@ const SmartDeviceMain = () => {
                 ':hover': {backgroundColor: selectedTab == 2 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(2)} fontSize="25px" fontWeight="500">Reports</Typography>
         </Box>
-        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl/> :
+        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl/> :
                         deviceType == "SolarPanel" ? <SolarPanelsControl/> :

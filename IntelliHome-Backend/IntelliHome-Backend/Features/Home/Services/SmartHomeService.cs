@@ -165,5 +165,9 @@ namespace IntelliHome_Backend.Features.Home.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId) {
+            return _smartHomeRepository.IsUserAllowed(smartHomeId, userId);
+        }
     }
 }

@@ -23,8 +23,8 @@ import VehicleChargerRegistrationForm from "../SmartDevices/Registration/VEU/Veh
 import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/VehicleGateRegistrationForm.tsx";
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
-import useSignalRSmartDeviceService from "../../services/smartDevices/SignalRSmartDeviceService.ts";
 import SignalRSmartDeviceService from "../../services/smartDevices/SignalRSmartDeviceService.ts";
+import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
 
 
 const SmartHomeMain = ( {smartHomeId} ) => {
@@ -45,31 +45,24 @@ const SmartHomeMain = ( {smartHomeId} ) => {
         if (smartHomeId) {
             getSmartHome();
         }
-    }, []);
 
-    // SHOULD BE TRANSFERRED TO SMART DEVICE COMPONENT
-    // useEffect(() => {
-    //     const signalRSmartDeviceService = new SignalRSmartDeviceService();
-    //     const dataCallback = (data) => {
-    //         console.log('Received data:', data);
-    //     };
-    //     const resultCallback = (result) => {
-    //         console.log('Subscription result:', result);
-    //     };
-    //
-    //     signalRSmartDeviceService.startConnection().then(() =>
-    //         {
-    //             signalRSmartDeviceService.subscribeToSmartDevice("d047456e-e109-4140-9ca7-5feffda6874c")
-    //             signalRSmartDeviceService.receiveSubscriptionResult(resultCallback);
-    //             signalRSmartDeviceService.receiveSmartDeviceData(dataCallback);
-    //         }
-    //     );
-    //
-    //     return () => {
-    //         console.log('Cleaning up SignalR connections...');
-    //         signalRSmartDeviceService.stopConnection();
-    //     }
-    // }, []);
+        const signalRSmartHomeService = new SignalRSmartHomeService();
+        const subscriptionResultCallback = (result) => {
+            console.log('Subscription result:', result);
+        };
+
+        signalRSmartHomeService.startConnection().then(() =>
+            {
+                signalRSmartHomeService.subscribeToSmartHome(smartHomeId)
+                signalRSmartHomeService.receiveSmartHomeSubscriptionResult(subscriptionResultCallback);
+            }
+        );
+
+        return () => {
+            console.log('Cleaning up SignalR connections...');
+            signalRSmartHomeService.stopConnection();
+        }
+    }, []);
 
     const getSmartHome = () => {
         axios.get(environment + `/api/SmartHome/GetSmartHome?Id=${smartHomeId}`).then(res => {
