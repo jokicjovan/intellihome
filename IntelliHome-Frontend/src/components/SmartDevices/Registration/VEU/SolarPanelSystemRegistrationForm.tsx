@@ -19,6 +19,7 @@ interface SolarPanelSystemRegistrationFormProps {
 }
 
 const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<SolarPanelSystemAdditionalFields>({
         Area: 5,
         Efficiency: 1
@@ -42,7 +43,7 @@ const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFo
 
     const handleSolarPanelSystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SolarPanelSystem)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SolarPanelSystem)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

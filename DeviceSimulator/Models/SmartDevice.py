@@ -10,6 +10,8 @@ class SmartDevice:
         self.device_type = device_type
         self.is_on = False
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
+        self.from_device_topic = (f"FromDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/"
+                             f"{self.device_id}")
 
     async def send_data(self):
         pass

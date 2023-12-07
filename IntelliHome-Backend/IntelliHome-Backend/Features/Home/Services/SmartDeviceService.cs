@@ -61,5 +61,9 @@ namespace IntelliHome_Backend.Features.Home.Services
         public IEnumerable<SmartDevice> GetSmartDevicesForSmartHome(Guid smartHomeId) {
             return _smartDeviceRepository.FindSmartDevicesForSmartHome(smartHomeId);
         }
+
+        public Task<bool> IsUserAllowed(Guid smartDeviceId, Guid userId) {
+            return _smartDeviceRepository.IsUserAllowed(smartDeviceId, userId);
+        }
     }
 }

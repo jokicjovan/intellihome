@@ -34,6 +34,7 @@ interface ModeCheckbox{
 
 
 const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [error, setError] = useState<string | null>(null);
 
     const [additionalFormData, setAdditionalFormData] = useState<WashingMachineAdditionalFields>({
@@ -77,7 +78,7 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         }
         setError(null);
 
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();
