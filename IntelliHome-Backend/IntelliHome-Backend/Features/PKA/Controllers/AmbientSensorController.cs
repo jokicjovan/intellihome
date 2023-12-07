@@ -18,14 +18,14 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            List<AmbientSensorHistoricalDataDTO> result = _ambientSensorService.GetHistoricalData(id, from, to);
+            List<AmbientSensorData> result = _ambientSensorService.GetHistoricalData(id, from, to);
             return Ok(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(Guid id)
         {
-            AmbientSensorDTO result = await _ambientSensorService.GetById(id);
+            AmbientSensorDTO result = await _ambientSensorService.GetWithData(id);
             return Ok(result);
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Context
 {
-    public class InfluxDbContext : IDisposable
+    public class InfluxRepository : IDisposable
     {
         private readonly IConfiguration _configuration;
         private readonly InfluxDBClient _influxDbClient;
@@ -19,7 +19,7 @@ namespace Data.Context
         private readonly string _organization = "IntelliHome";
         private readonly string _bucket = "intellihome_influx";
 
-        public InfluxDbContext(IConfiguration configuration)
+        public InfluxRepository(IConfiguration configuration)
         {
             _configuration = configuration;
 
@@ -76,10 +76,8 @@ namespace Data.Context
                 }
             }
 
-            using (var writeApi = _influxDbClient.GetWriteApi())
-            {
-                writeApi.WritePoint(point, _database);
-            }
+            using var writeApi = _influxDbClient.GetWriteApi();
+            writeApi.WritePoint(point, _database);
 
         }
 
@@ -104,7 +102,7 @@ namespace Data.Context
 
         public async Task<IEnumerable<FluxTable>> GetHistoricalData(Guid deviceId, DateTime from, DateTime to)
         {
-            var query = $"from(bucket: \"intellihome_influx\") " +
+            var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
                         $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
@@ -115,7 +113,7 @@ namespace Data.Context
 
         public async Task<FluxTable> GetLastData(Guid deviceId)
         {
-            var query = $"from(bucket: \"intellihome_influx\") " +
+            var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: -1d) " +
                         $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
                         $"|> last()" +
@@ -123,14 +121,7 @@ namespace Data.Context
 
             var result = await QueryFromInfluxAsync(query);
 
-            FluxTable data = new FluxTable();
-
-            foreach (var table in result)
-            {
-                data = table;
-            }
-
-            return data;
+            return result.FirstOrDefault();
         }
 
 

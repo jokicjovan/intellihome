@@ -7,9 +7,9 @@ namespace IntelliHome_Backend.Features.PKA.Services.Interfaces
     public interface IAmbientSensorService : ICrudService<AmbientSensor>
     {
         IEnumerable<AmbientSensor> GetAllWithHome();
-        List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to);
+        List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
 
-        Task<AmbientSensorDTO> GetById(Guid id);
+        Task<AmbientSensorDTO> GetWithData(Guid id);
     }
 }

@@ -26,37 +26,29 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            using (var scope = serviceProvider.CreateScope())
+            Console.WriteLine($"{e.ApplicationMessage.ConvertPayloadToString()}");
+            _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+
+            using var scope = serviceProvider.CreateScope();
+
+            var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
+
+            var ambientSensor = await ambientSensorService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
+
+            if (ambientSensor != null)
             {
-                var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
-
-                var ambientSensor = await ambientSensorService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
-
-                if (ambientSensor != null)
-                {
-                    var ambientSensorData = JsonConvert.DeserializeObject<AmbientSensorData>(e.ApplicationMessage.ConvertPayloadToString());
-
-                    var ambientSensorDataInflux = new Dictionary<string, object>
+                var ambientSensorData = JsonConvert.DeserializeObject<AmbientSensorData>(e.ApplicationMessage.ConvertPayloadToString());
+                var ambientSensorDataInflux = new Dictionary<string, object>
                     {
                         { "temperature", ambientSensorData.Temperature },
                         { "humidity", ambientSensorData.Humidity },
                     };
-
-                    var ambientSensorDataTags = new Dictionary<string, string>
+                var ambientSensorDataTags = new Dictionary<string, string>
                     {
                         { "deviceId", ambientSensor.Id.ToString() }
                     };
-
-                    ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
-
-                    ambientSensor.Temperature = ambientSensorData.Temperature;
-                    ambientSensor.Humidity = ambientSensorData.Humidity;
-                   
-                    ambientSensorService.Update(ambientSensor);
-
-                }
+                ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
             }
-            _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
         }
     }
 }

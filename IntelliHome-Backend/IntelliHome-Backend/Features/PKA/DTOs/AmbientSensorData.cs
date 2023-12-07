@@ -2,7 +2,8 @@
 {
     public class AmbientSensorData
     {
-        public Double Temperature { get; set; }
-        public Double Humidity { get; set; }
+        public DateTime? Timestamp { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
     }
 }

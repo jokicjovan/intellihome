@@ -11,25 +11,17 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
 {
     public class AmbientSensorDataRepository : IAmbientSensorDataRepository
     {
-        private readonly InfluxDbContext _context;
+        private readonly InfluxRepository _context;
 
-        public AmbientSensorDataRepository(InfluxDbContext context)
+        public AmbientSensorDataRepository(InfluxRepository context)
         {
             _context = context;
         }
 
-        public List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        public List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
             var result = _context.GetHistoricalData(id, from, to).Result;
-
-            List<AmbientSensorHistoricalDataDTO> list = new List<AmbientSensorHistoricalDataDTO>();
-
-            foreach (var table in result)
-            {
-               list.Add(ConvertToAmbientSensorData(table));
-            }
-
-            return list;
+            return result.Select(ConvertToAmbientSensorData).ToList();
         }
 
 
@@ -43,7 +35,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
            
             var table = _context.GetLastData(id).Result;
 
-            AmbientSensorHistoricalDataDTO data = ConvertToAmbientSensorData(table);
+            AmbientSensorData data = ConvertToAmbientSensorData(table);
 
             return new AmbientSensorData
             {
@@ -53,33 +45,25 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
         }
 
 
-        private AmbientSensorHistoricalDataDTO ConvertToAmbientSensorData(FluxTable table)
+        private AmbientSensorData ConvertToAmbientSensorData(FluxTable table)
         {
             var rows = table.Records;
             DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
-            double temperature = 0;
-            double humidity = 0;
-            if (rows[0].Row.Contains("temperature"))
-            {
-                temperature = Convert.ToDouble(rows[0].GetValueByKey("_value"));
-                humidity = Convert.ToDouble(rows[1].GetValueByKey("_value"));
-            }
-            else
-            {
-                temperature = Convert.ToDouble(rows[1].GetValueByKey("_value"));
-                humidity = Convert.ToDouble(rows[0].GetValueByKey("_value"));
-            }
 
-            AmbientSensorHistoricalDataDTO dto = new AmbientSensorHistoricalDataDTO
+            var temperatureRecord = rows.FirstOrDefault(r => r.Row.Contains("temperature"));
+            var humidityRecord = rows.FirstOrDefault(r => r.Row.Contains("humidity"));
+
+            double temperature = temperatureRecord != null ? Convert.ToDouble(temperatureRecord.GetValueByKey("_value")) : 0.0;
+            double humidity = humidityRecord != null ? Convert.ToDouble(humidityRecord.GetValueByKey("_value")) : 0.0;
+
+            return new AmbientSensorData
             {
                 Timestamp = timestamp,
                 Temperature = temperature,
                 Humidity = humidity
             };
-
-            return dto;
         }
     }
 

@@ -56,7 +56,7 @@ builder.Services.AddDbContext<PostgreSqlDbContext>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 //InfluxDB context
-builder.Services.AddScoped<InfluxDbContext>();
+builder.Services.AddScoped<InfluxRepository>();
 
 
 //Data repositories

@@ -38,7 +38,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
         }
 
 
-        public async Task<AmbientSensorDTO> GetById(Guid id)
+        public async Task<AmbientSensorDTO> GetWithData(Guid id)
         {
             AmbientSensor ambientSensor = await _ambientSensorRepository.Read(id);
             AmbientSensorDTO ambientSensorDTO = new AmbientSensorDTO
@@ -69,7 +69,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return _ambientSensorDataRepository.GetLastData(id);
         }
 
-        public List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        public List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
             return _ambientSensorDataRepository.GetHistoricalData(id, from, to);
         }

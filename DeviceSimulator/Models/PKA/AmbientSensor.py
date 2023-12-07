@@ -14,4 +14,4 @@ class AmbientSensor(SmartDevice):
                 break
             self.client.publish(self.from_device_topic, str({"temperature": i, "humidity": 60}), retain=False)
             i += 1
-            await asyncio.sleep(60)
+            await asyncio.sleep(10)
