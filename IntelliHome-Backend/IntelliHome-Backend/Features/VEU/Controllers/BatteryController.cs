@@ -25,7 +25,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(Guid id)
         {
-            BatterySystemDataDTO result = await _batterySystemService.GetWithData(id);
+            BatterySystemDTO result = await _batterySystemService.GetWithData(id);
             return Ok(result);
         }
     }

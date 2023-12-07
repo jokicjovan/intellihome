@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using InfluxDB.Client;
+﻿using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Core.Flux.Domain;
 using InfluxDB.Client.Writes;
-using Microsoft.Extensions.Configuration;
 
-namespace Data.Context
+namespace IntelliHome_Backend.Features.Shared.Repositories
 {
     public class InfluxRepository : IDisposable
     {

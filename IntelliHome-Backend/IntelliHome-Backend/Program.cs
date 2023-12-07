@@ -10,7 +10,6 @@ using IntelliHome_Backend.Features.Home.Services;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DataRepositories;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services;
@@ -41,6 +40,9 @@ using IntelliHome_Backend.Features.SPU.Handlers;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers;
 using IntelliHome_Backend.Features.Shared.Hubs;
+using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.VEU.DataRepositories;
+using IntelliHome_Backend.Features.Shared.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +63,7 @@ builder.Services.AddScoped<InfluxRepository>();
 
 //Data repositories
 builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
+builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
