@@ -1,5 +1,6 @@
 ﻿using Data.Context;
 using Data.Models.PKA;
+using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
@@ -14,13 +15,14 @@ namespace IntelliHome_Backend.Features.PKA.Services
     {
         private readonly IAmbientSensorRepository _ambientSensorRepository;
         private readonly IAmbientSensorHandler _ambientSensorHandler;
-        private readonly InfluxDbContext _influxDbContext;
+        private readonly IAmbientSensorDataRepository _ambientSensorDataRepository;
 
-        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IAmbientSensorHandler ambientSensorHandler, InfluxDbContext influxDbContext)
+        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IAmbientSensorHandler ambientSensorHandler, IAmbientSensorDataRepository ambientSensorDataRepository)
         {
             _ambientSensorRepository = ambientSensorRepository;
             _ambientSensorHandler = ambientSensorHandler;
-            _influxDbContext = influxDbContext;
+            _ambientSensorDataRepository = ambientSensorDataRepository;
+            
         }
 
         public async Task<AmbientSensor> Create(AmbientSensor entity)
@@ -60,50 +62,14 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return _ambientSensorRepository.Update(entity);
         }
 
-
         public List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            //TODO: timezones
-            var query = $"from(bucket: \"intellihome_influx\") " +
-                        $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
-                        $"|> filter(fn: (r) => r._measurement == \"ambient_sensor\" and r.deviceId == \"{id}\") " +
-                        $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+            return _ambientSensorDataRepository.GetHistoricalData(id, from, to);
+        }
 
-
-            var result = _influxDbContext.QueryFromInfluxAsync(query).Result;
-
-            List<AmbientSensorHistoricalDataDTO> list = new List<AmbientSensorHistoricalDataDTO>();
-
-            foreach (var table in result)
-            {
-                var rows = table.Records;
-                DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
-                TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
-                timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
-                double temperature = 0;
-                double humidity = 0;
-                if (rows[0].Row.Contains("temperature"))
-                {
-                    temperature = Convert.ToDouble(rows[0].GetValueByKey("_value"));
-                    humidity = Convert.ToDouble(rows[1].GetValueByKey("_value"));
-                }
-                else
-                {
-                    temperature = Convert.ToDouble(rows[1].GetValueByKey("_value"));
-                    humidity = Convert.ToDouble(rows[0].GetValueByKey("_value"));
-                }
-
-                AmbientSensorHistoricalDataDTO dto = new AmbientSensorHistoricalDataDTO
-                {
-                    Timestamp = timestamp,
-                    Temperature = temperature,
-                    Humidity = humidity
-                };
-
-                list.Add(dto);
-            }
-
-            return list;
+        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _ambientSensorDataRepository.AddPoint(fields, tags);
         }
     }
 }

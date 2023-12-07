@@ -37,21 +37,6 @@ namespace Data.Context
                     throw;
                 }
 
-                // try
-                // {
-                //     // Construct InfluxDB connection string
-                //     string influxDbConnectionString = $"http://localhost:8086?org=IntelliHome&token={_token}";
-                //
-                //     // Pass the connection string to InfluxDBClientFactory
-                //     _influxDbClient = InfluxDBClientFactory.Create(influxDbConnectionString);
-                //     _database = _configuration.GetConnectionString("IntelliHomeInfluxDatabase");
-                // }
-                // catch (Exception ex)
-                // {
-                //     Console.WriteLine($"Error reading token file: {ex.Message}");
-                //     throw;
-                //
-                // }
                 InfluxDBClientOptions options = InfluxDBClientOptions.Builder
                     .CreateNew()
                     .Url(_url)
@@ -73,7 +58,7 @@ namespace Data.Context
 
         public async Task WriteToInfluxAsync(string measurement, IDictionary<string, object> fields, IDictionary<string, string> tags = null)
         {
-            var point = PointData.Measurement(measurement).Timestamp(DateTime.UtcNow, WritePrecision.Ns);
+            var point = PointData.Measurement(measurement).Timestamp(DateTime.Now, WritePrecision.Ns);
             
             if (fields != null)
             {

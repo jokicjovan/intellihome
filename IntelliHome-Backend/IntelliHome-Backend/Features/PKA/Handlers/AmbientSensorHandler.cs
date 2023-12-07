@@ -27,7 +27,6 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
             using (var scope = serviceProvider.CreateScope())
             {
-                var influxDbContext = scope.ServiceProvider.GetRequiredService<InfluxDbContext>();
                 var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
 
                 var ambientSensor = await ambientSensorService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
@@ -47,11 +46,10 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
                         { "deviceId", ambientSensor.Id.ToString() }
                     };
 
-                    influxDbContext.WriteToInfluxAsync("ambient_sensor", ambientSensorDataInflux, ambientSensorDataTags).Wait();
+                    ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
 
                     ambientSensor.Temperature = ambientSensorData.Temperature;
                     ambientSensor.Humidity = ambientSensorData.Humidity;
-
                     ambientSensorService.Update(ambientSensor);
 
                 }
