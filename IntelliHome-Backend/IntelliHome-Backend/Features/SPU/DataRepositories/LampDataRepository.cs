@@ -1,5 +1,6 @@
 ﻿using Data.Context;
 using InfluxDB.Client.Core.Flux.Domain;
+using IntelliHome_Backend.Features.Shared.Repositories;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using Microsoft.VisualBasic;
