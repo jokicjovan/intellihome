@@ -1,13 +1,9 @@
-﻿using Data.Context;
-using Data.Models.PKA;
+﻿using Data.Models.PKA;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using SendGrid.Helpers.Mail;
 
 namespace IntelliHome_Backend.Features.PKA.Services
 {
@@ -37,7 +33,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return entity;
         }
 
-
         public async Task<AmbientSensorDTO> GetWithData(Guid id)
         {
             AmbientSensor ambientSensor = await _ambientSensorRepository.Read(id);
@@ -62,7 +57,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
 
             return ambientSensorDTO;
         }
-
 
         private AmbientSensorData GetLastData(Guid id)
         {

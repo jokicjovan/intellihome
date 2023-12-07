@@ -2,10 +2,6 @@
 using InfluxDB.Client.Core.Flux.Domain;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace IntelliHome_Backend.Features.PKA.DataRepositories
 {

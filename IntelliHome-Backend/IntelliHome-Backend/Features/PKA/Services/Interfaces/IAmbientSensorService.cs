@@ -9,7 +9,6 @@ namespace IntelliHome_Backend.Features.PKA.Services.Interfaces
         IEnumerable<AmbientSensor> GetAllWithHome();
         List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
-
         Task<AmbientSensorDTO> GetWithData(Guid id);
     }
 }

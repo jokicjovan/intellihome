@@ -45,7 +45,7 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
                     };
                 var ambientSensorDataTags = new Dictionary<string, string>
                     {
-                        { "deviceId", ambientSensor.Id.ToString() }
+                        { "device_id", ambientSensor.Id.ToString() }
                     };
                 ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
             }

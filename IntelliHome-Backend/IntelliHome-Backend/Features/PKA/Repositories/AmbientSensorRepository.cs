@@ -1,6 +1,5 @@
 ﻿using Data.Context;
 using Data.Models.PKA;
-using Data.Models.Shared;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
