@@ -19,6 +19,7 @@ import {AdminRoute} from "./security/AdminRoute";
 import PasswordChange from "./pages/PasswordChange";
 import {AdminFirstTimeRoute} from "./security/AdminFirstTimeRoute";
 import SmartHome from "./pages/SmartHome.tsx";
+import SmartDeviceHome from "./pages/SmartDeviceHome";
 
 axios.defaults.withCredentials = true
 
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
     {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdmin/></Layout></AdminRoute></AuthenticatedRoute>},
     {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChange/></AdminFirstTimeRoute></AuthenticatedRoute>},
     {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHome/></Layout></AuthenticatedRoute>},
+    {path:"/smartDevice/:id", element: <AuthenticatedRoute><Layout><SmartDeviceHome/></Layout></AuthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])
 const queryClient = new QueryClient()
