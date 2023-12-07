@@ -102,6 +102,37 @@ namespace Data.Context
             }
         }
 
+        public async Task<IEnumerable<FluxTable>> GetHistoricalData(Guid deviceId, DateTime from, DateTime to)
+        {
+            var query = $"from(bucket: \"intellihome_influx\") " +
+                        $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
+                        $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
+                        $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+
+
+            return await QueryFromInfluxAsync(query);
+        }
+
+        public async Task<FluxTable> GetLastData(Guid deviceId)
+        {
+            var query = $"from(bucket: \"intellihome_influx\") " +
+                        $"|> range(start: -1d) " +
+                        $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
+                        $"|> last()" +
+                        $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+
+            var result = await QueryFromInfluxAsync(query);
+
+            FluxTable data = new FluxTable();
+
+            foreach (var table in result)
+            {
+                data = table;
+            }
+
+            return data;
+        }
+
 
         public void Dispose()
         {

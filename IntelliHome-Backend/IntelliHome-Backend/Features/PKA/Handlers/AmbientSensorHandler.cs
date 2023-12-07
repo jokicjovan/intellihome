@@ -26,8 +26,6 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
-
             using (var scope = serviceProvider.CreateScope())
             {
                 var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
@@ -53,12 +51,12 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
                     ambientSensor.Temperature = ambientSensorData.Temperature;
                     ambientSensor.Humidity = ambientSensorData.Humidity;
+                   
                     ambientSensorService.Update(ambientSensor);
 
                 }
             }
             _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
-            return Task.CompletedTask;
         }
     }
 }

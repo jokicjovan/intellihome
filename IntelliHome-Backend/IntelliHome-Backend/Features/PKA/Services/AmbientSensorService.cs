@@ -37,6 +37,48 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return entity;
         }
 
+
+        public async Task<AmbientSensorDTO> GetById(Guid id)
+        {
+            AmbientSensor ambientSensor = await _ambientSensorRepository.Read(id);
+            AmbientSensorDTO ambientSensorDTO = new AmbientSensorDTO
+            {
+                Id = ambientSensor.Id,
+                Name = ambientSensor.Name,
+                IsConnected = ambientSensor.IsConnected,
+                IsOn = ambientSensor.IsOn,
+                Category = ambientSensor.Category,
+                Type = ambientSensor.Type,
+                PowerPerHour = ambientSensor.PowerPerHour,
+            };
+
+            AmbientSensorData ambientSensorData = GetLastData(id);
+
+            if (ambientSensorData != null)
+            {
+                ambientSensorDTO.Temperature = ambientSensorData.Temperature;
+                ambientSensorDTO.Humidity = ambientSensorData.Humidity;
+            }
+
+            return ambientSensorDTO;
+        }
+
+
+        private AmbientSensorData GetLastData(Guid id)
+        {
+            return _ambientSensorDataRepository.GetLastData(id);
+        }
+
+        public List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _ambientSensorDataRepository.GetHistoricalData(id, from, to);
+        }
+
+        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _ambientSensorDataRepository.AddPoint(fields, tags);
+        }
+
         public Task<AmbientSensor> Delete(Guid id)
         {
             return _ambientSensorRepository.Delete(id);
@@ -60,16 +102,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public Task<AmbientSensor> Update(AmbientSensor entity)
         {
             return _ambientSensorRepository.Update(entity);
-        }
-
-        public List<AmbientSensorHistoricalDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
-        {
-            return _ambientSensorDataRepository.GetHistoricalData(id, from, to);
-        }
-
-        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
-        {
-            _ambientSensorDataRepository.AddPoint(fields, tags);
         }
     }
 }
