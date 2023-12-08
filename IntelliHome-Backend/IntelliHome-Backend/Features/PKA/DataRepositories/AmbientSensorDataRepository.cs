@@ -1,7 +1,7 @@
 ﻿using InfluxDB.Client.Core.Flux.Domain;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
-using IntelliHome_Backend.Features.Shared.Repositories;
+using IntelliHome_Backend.Features.Shared.Influx;
 
 namespace IntelliHome_Backend.Features.PKA.DataRepositories
 {
