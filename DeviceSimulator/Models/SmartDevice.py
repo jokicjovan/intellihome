@@ -10,10 +10,15 @@ class SmartDevice:
         self.device_type = device_type
         self.is_on = False
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
-        self.from_device_topic = (f"FromDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/"
-                             f"{self.device_id}")
+        self.send_topic = (
+            f"FromDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/{self.device_id}")
+        self.receive_topic = (
+            f"ToDevice/{self.smart_home_id}/{self.device_category.value}/{self.device_type.value}/{self.device_id}")
 
     async def send_data(self):
+        pass
+
+    def on_data_receive(self, client, user_data, msg):
         pass
 
     def turn_on(self):
@@ -23,10 +28,12 @@ class SmartDevice:
     def turn_off(self):
         self.is_on = False
 
-    def connect(self, host, port, keepalive):
+    def setup_connection(self, host, port, keepalive):
         self.client.will_set("will", payload=f"{self.device_id}", qos=1, retain=False)
+        self.client.on_message = self.on_data_receive
         self.client.connect(host, port, keepalive=keepalive)
         self.client.loop_start()
+        self.client.subscribe(topic=self.receive_topic)
 
     def disconnect(self):
         self.client.loop_stop()

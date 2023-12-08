@@ -34,7 +34,7 @@ class SmartDeviceManager:
         device = device_class(deviceDTO.device_id, deviceDTO.smart_home_id, deviceDTO.device_category,
                               deviceDTO.device_type, **deviceDTO.kwargs)
 
-        device.connect(deviceDTO.host, deviceDTO.port, deviceDTO.keepalive)
+        device.setup_connection(deviceDTO.host, deviceDTO.port, deviceDTO.keepalive)
         self.smart_devices[device.device_id] = device
 
     def remove_device(self, device_id):
