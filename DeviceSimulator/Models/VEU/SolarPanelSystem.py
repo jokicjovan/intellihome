@@ -38,4 +38,5 @@ class SolarPanelSystem(SmartDevice):
             if not self.is_on:
                 break
             self.client.publish(self.send_topic, str({"created_power": energy_per_minute}), retain=False)
+            print(energy_per_minute)
             await asyncio.sleep(60)
