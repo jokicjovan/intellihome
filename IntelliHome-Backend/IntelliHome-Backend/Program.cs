@@ -42,9 +42,10 @@ using IntelliHome_Backend.Features.VEU.Handlers;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DataRepositories;
-using IntelliHome_Backend.Features.Shared.Repositories;
 using IntelliHome_Backend.Features.SPU.DataRepositories;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.Shared.Influx;
+using Microsoft.Extensions.ObjectPool;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +61,35 @@ builder.Services.AddDbContext<PostgreSqlDbContext>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 //InfluxDB context
-builder.Services.AddScoped<InfluxRepository>();
+// builder.Services.AddScoped<InfluxRepository>();
+builder.Services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
+builder.Services.AddSingleton(provider =>
+{
+    var objectPoolProvider = provider.GetRequiredService<ObjectPoolProvider>();
+    var configuration = provider.GetRequiredService<IConfiguration>();
+
+    var url = configuration["InfluxDB:Url"];
+    // var token = configuration["InfluxDB:Token"];
+    var organization = configuration["InfluxDB:Organization"];
+    var bucket = configuration["InfluxDB:Bucket"];
+
+    //read token from file
+    StreamReader sr = new("InfluxDBToken.txt");
+    string token = sr.ReadLine();
+
+
+    return new InfluxDbConnectionPool(objectPoolProvider, url, token, organization, bucket);
+});
+
+builder.Services.AddScoped(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var connectionPool = provider.GetRequiredService<InfluxDbConnectionPool>();
+    var database = configuration["InfluxDB:Database"];
+    var bucket = configuration["InfluxDB:Bucket"];
+
+    return new InfluxRepository(connectionPool, bucket, database);
+});
 
 
 //Data repositories
