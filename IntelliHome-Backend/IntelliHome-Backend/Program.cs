@@ -81,7 +81,7 @@ builder.Services.AddSingleton(provider =>
     return new InfluxDbConnectionPool(objectPoolProvider, url, token, organization, bucket);
 });
 
-builder.Services.AddSingleton(provider =>
+builder.Services.AddScoped(provider =>
 {
     var configuration = provider.GetRequiredService<IConfiguration>();
     var connectionPool = provider.GetRequiredService<InfluxDbConnectionPool>();
