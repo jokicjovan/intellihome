@@ -28,15 +28,8 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
 
         public BatterySystemDataDTO GetLastData(Guid id)
         {
-
             var table = _context.GetLastData(id).Result;
-
-            BatterySystemDataDTO data = ConvertToBatterySystemDataDTO(table);
-
-            return new BatterySystemDataDTO
-            {
-                CurrentCapacity = data.CurrentCapacity,
-            };
+            return ConvertToBatterySystemDataDTO(table);
         }
 
         private BatterySystemDataDTO ConvertToBatterySystemDataDTO(FluxTable table)
@@ -49,10 +42,18 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             var currentCapacityRecord = rows.FirstOrDefault(r => r.Row.Contains("current_capacity"));
             double currentCapacity = currentCapacityRecord != null ? Convert.ToDouble(currentCapacityRecord.GetValueByKey("_value")) : 0.0;
 
+            var consumptionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("consumption_per_minute"));
+            double consumptionPerMinut = consumptionPerMinuteRecord != null ? Convert.ToDouble(consumptionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
+
+            var gridPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("grid_per_minute"));
+            double gridPerMinute = gridPerMinuteRecord != null ? Convert.ToDouble(gridPerMinuteRecord.GetValueByKey("_value")) : 0.0;
+
             return new BatterySystemDataDTO
             {
                 Timestamp = timestamp,
-                CurrentCapacity = currentCapacity
+                CurrentCapacity = currentCapacity,
+                ConsumptionPerMinute = consumptionPerMinut,
+                GridPerMinute = gridPerMinute
             };
         }
     }

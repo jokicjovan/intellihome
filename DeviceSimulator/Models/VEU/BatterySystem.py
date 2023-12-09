@@ -19,22 +19,21 @@ class BatterySystem(SmartDevice):
                 break
             async with self.lock:
                 difference = self.current_production - self.current_consumption
-                grid = 0
+                grid_per_minute = 0
                 if self.current_capacity + difference > self.capacity:
-                    grid = self.current_capacity + difference - self.capacity
+                    grid_per_minute = self.current_capacity + difference - self.capacity
                     self.current_capacity = self.capacity
                 elif self.current_capacity + difference < 0:
-                    grid = self.current_capacity + difference
+                    grid_per_minute = self.current_capacity + difference
                     self.current_capacity = 0
                 else:
                     self.current_capacity += difference
-                print({"current_capacity": self.current_capacity,
-                                                                 "current_consumption": self.current_consumption,
-                                                                 "grid": grid
-                                                                 })
-                self.client.publish(self.send_topic, json.dumps({"current_capacity": self.current_capacity,
-                                                                 "current_consumption": self.current_consumption,
-                                                                 "grid": grid
+
+                # grid negativan, preuzeto iz elektrodistribucije
+                # grud pozitivan, vraceno elektrodistribuciji
+                self.client.publish(self.send_topic, json.dumps({"current_capacity": round(self.current_capacity, 4),
+                                                                 "consumption_per_minute": round(self.current_consumption, 4),
+                                                                 "grid_per_minute": grid_per_minute
                                                                  }), retain=False)
                 self.current_production = 0
                 self.current_consumption = 0

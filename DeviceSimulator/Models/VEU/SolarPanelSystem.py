@@ -39,5 +39,6 @@ class SolarPanelSystem(SmartDevice):
                 power_per_minute = solar_irradiance['poa_global'].mean() * self.area * self.efficiency / 100 / 60
             if not self.is_on:
                 break
-            self.client.publish(self.send_topic, json.dumps({"production_per_minute": power_per_minute}), retain=False)
+            self.client.publish(self.send_topic, json.dumps({"production_per_minute": round(power_per_minute, 4)}),
+                                retain=False)
             await asyncio.sleep(10)

@@ -24,7 +24,11 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public async Task<AmbientSensor> Create(AmbientSensor entity)
         {
             entity = await _ambientSensorRepository.Create(entity);
-            bool success = await _ambientSensorHandler.ConnectToSmartDevice(entity, new Dictionary<string, object>());
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+            {
+                { "power_per_hour", entity.PowerPerHour},
+            };
+            bool success = await _ambientSensorHandler.ConnectToSmartDevice(entity, additionalAttributes);
             if (success)
             {
                 entity.IsConnected = true;

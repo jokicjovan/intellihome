@@ -24,9 +24,10 @@ namespace IntelliHome_Backend.Features.SPU.Services
         {
             entity = await _lampRepository.Create(entity);
             Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-            {
-                { "brightness_limit", entity.BrightnessLimit },
-            };
+                        {
+                            { "brightness_limit", entity.BrightnessLimit },
+                            { "power_per_hour", entity.PowerPerHour},
+                        };
             bool success = await _lampHandler.ConnectToSmartDevice(entity, additionalAttributes);
             if (success)
             {
