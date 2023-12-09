@@ -20,6 +20,12 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
             return result.Select(ConvertToAmbientSensorData).ToList();
         }
 
+        public List<AmbientSensorData> GetLastHourData(Guid id)
+        {
+            var result = _context.GetLastHourData(id).Result;
+            return result.Select(ConvertToAmbientSensorData).ToList();
+        }
+
 
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {

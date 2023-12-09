@@ -28,5 +28,12 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
             AmbientSensorDTO result = await _ambientSensorService.GetWithData(id);
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLastHourData(Guid id)
+        {
+            List<AmbientSensorData> result = _ambientSensorService.GetLastHourData(id);
+            return Ok(result);
+        }
     }
 }
