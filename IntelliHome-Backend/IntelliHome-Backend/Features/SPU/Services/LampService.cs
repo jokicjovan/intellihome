@@ -13,11 +13,11 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly ILampDataRepository _lampDataRepository;
         private readonly ILampHandler _lampHandler;
 
-        public LampService(ILampRepository lampRepository, ILampHandler lampHandler, ILampDataRepository _lampDataRepository)
+        public LampService(ILampRepository lampRepository, ILampHandler lampHandler, ILampDataRepository lampDataRepository)
         {
             _lampRepository = lampRepository;
             _lampHandler = lampHandler;
-            _lampDataRepository = _lampDataRepository;
+            _lampDataRepository = lampDataRepository;
         }
 
         public async Task<Lamp> Create(Lamp entity)
@@ -79,24 +79,24 @@ namespace IntelliHome_Backend.Features.SPU.Services
         }
 
 
-        public Task<Lamp> Delete(Guid id)
+        public async Task<Lamp> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            return await _lampRepository.Delete(id);
         }
 
-        public Task<Lamp> Get(Guid id)
+        public async Task<Lamp> Get(Guid id)
         {
-            throw new NotImplementedException();
+            return await _lampRepository.Read(id);
         }
 
-        public Task<IEnumerable<Lamp>> GetAll()
+        public async Task<IEnumerable<Lamp>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _lampRepository.ReadAll();
         }
 
-        public Task<Lamp> Update(Lamp entity)
+        public async Task<Lamp> Update(Lamp entity)
         {
-            throw new NotImplementedException();
+            return await _lampRepository.Update(entity);
         }
     }
 }

@@ -1,16 +1,23 @@
 import {Box, Typography} from "@mui/material";
 import React from "react";
 import {environment} from "../../security/Environment.tsx";
+import {useNavigate} from "react-router-dom";
 
 
 const SmartDeviceCard = (props) => {
 
     const smartDevice = props.smartDevice;
     const colors = ["#676E79", "#F43F5E", "#2691D9"]
+    const navigate = useNavigate();
+
+
+    function navigateToSmartDevice() {
+        navigate(`/smartDevice/${smartDevice.id}`);
+    }
 
 
     return (
-        <Box sx={{ background: "white", width: "25vw", height: "12vh", borderRadius: "15px", mt: "10px", display: "flex", position: "relative" }}>
+        <Box sx={{ background: "white", width: "25vw", height: "12vh", borderRadius: "15px", mt: "10px", display: "flex", position: "relative" }} onClick={navigateToSmartDevice}>
             {/* Rounded left edge */}
             <div style={{ height: "100%", width: "10px", position: "absolute", left: 0, top: 0, backgroundColor:`${colors[smartDevice.category]}`, borderTopLeftRadius: "15px", borderBottomLeftRadius: "15px" }}></div>
 

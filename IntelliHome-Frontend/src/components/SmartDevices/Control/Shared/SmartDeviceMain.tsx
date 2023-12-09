@@ -9,7 +9,14 @@ import GateControl from "../SPU/GateControl";
 const SmartDeviceMain = ({smartDeviceId}) => {
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [deviceType, setDeviceType] = useState("AmbientSensor");
+    const [deviceType, setDeviceType] = useState("Lamp");
+
+
+
+
+
+
+
     return <>
         <Box display="flex" flexDirection="row" alignItems="center">
             <Typography fontSize="40px" fontWeight="650">Smart Device Name</Typography>

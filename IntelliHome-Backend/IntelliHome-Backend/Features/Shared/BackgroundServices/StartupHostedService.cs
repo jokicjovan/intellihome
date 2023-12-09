@@ -93,6 +93,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                         Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
                         {
                             { "brightness_limit", lamp.BrightnessLimit },
+                            { "is_auto", lamp.IsAuto},
                             { "power_per_hour", lamp.PowerPerHour},
                         };
                         smartDevice.IsConnected = await lampHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);

@@ -22,34 +22,35 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.LAMP}/+", HandleMessageFromDevice);
         }
 
-        protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
+        protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
             smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
-
+            
             var lampService = scope.ServiceProvider.GetRequiredService<ILampService>();
-
-            var lamp = lampService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
-
+            
+            var lamp = await lampService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
+            
             if (lamp != null)
             {
                 var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString());
                 var lampDataInflux = new Dictionary<string, object>
                 {
-                        { "currentBrightness", lampData.CurrentBrightness }
+                        { "current_brightness", lampData.CurrentBrightness },
+                        { "is_working", lampData.IsWorking ? 1f : 0f },
+                        { "consumption_per_minute", lampData.ConsumptionPerMinute }
+            
                 };
                 var lampDataTags = new Dictionary<string, string>
                 {
-                        { "deviceId", lamp.Id.ToString() }
+                        { "device_id", lamp.Id.ToString() }
                 };
                 lampService.AddPoint(lampDataInflux, lampDataTags);
             }
 
-            
-            
-            return Task.CompletedTask;
+
         }
     }
 }

@@ -20,7 +20,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
         {
             var table = _influxRepository.GetLastData(id).Result;
 
-            LampData lampData = new LampData();
+            LampData lampData = ConvertToLampData(table);
 
             return new LampData
             {
