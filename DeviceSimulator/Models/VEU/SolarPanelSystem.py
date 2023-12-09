@@ -1,9 +1,11 @@
 import asyncio
+import json
+
 import pandas as pd
 import pvlib
 
 from Models.SmartDevice import SmartDevice
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class SolarPanelSystem(SmartDevice):
@@ -37,6 +39,5 @@ class SolarPanelSystem(SmartDevice):
                 energy_per_minute = solar_irradiance['poa_global'].mean() * self.area * self.efficiency / 100 / 60
             if not self.is_on:
                 break
-            self.client.publish(self.send_topic, str({"created_power": energy_per_minute}), retain=False)
-            print(energy_per_minute)
-            await asyncio.sleep(60)
+            self.client.publish(self.send_topic, json.dumps({"created_power": energy_per_minute}), retain=False)
+            await asyncio.sleep(10)

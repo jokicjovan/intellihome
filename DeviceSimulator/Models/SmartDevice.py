@@ -21,19 +21,22 @@ class SmartDevice:
     def on_data_receive(self, client, user_data, msg):
         pass
 
+    def on_device_connect(self, client, userdata, flags, rc):
+        self.client.subscribe(topic=self.receive_topic)
+
+    def setup_connection(self, host, port, keepalive):
+        self.client.will_set("will", payload=f"{self.device_id}", qos=1, retain=False)
+        self.client.on_message = self.on_data_receive
+        self.client.on_connect = self.on_device_connect
+        self.client.connect(host, port, keepalive=keepalive)
+        self.client.loop_start()
+
     def turn_on(self):
         self.is_on = True
         asyncio.create_task(self.send_data())
 
     def turn_off(self):
         self.is_on = False
-
-    def setup_connection(self, host, port, keepalive):
-        self.client.will_set("will", payload=f"{self.device_id}", qos=1, retain=False)
-        self.client.on_message = self.on_data_receive
-        self.client.connect(host, port, keepalive=keepalive)
-        self.client.loop_start()
-        self.client.subscribe(topic=self.receive_topic)
 
     def disconnect(self):
         self.client.loop_stop()

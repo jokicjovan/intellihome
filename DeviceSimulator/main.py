@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from DTOs.SmartDeviceDTO import SmartDeviceDTO
 from DTOs.SmartDeviceShortDTO import SmartDeviceShortDTO
-from Models.SmartHomeManager import SmartHomeManager
+from Models.SmartHomesManager import SmartHomesManager
 
 app = FastAPI()
-smart_home_manager = SmartHomeManager()
+smart_home_manager = SmartHomesManager()
 
 
 @app.on_event("startup")

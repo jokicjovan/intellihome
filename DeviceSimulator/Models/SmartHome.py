@@ -1,4 +1,8 @@
+import json
+
+import paho.mqtt.client as mqtt
 from DTOs.SmartDeviceDTO import SmartDeviceDTO
+from Enums.DeviceCategory import DeviceCategory
 from Enums.DeviceType import DeviceType
 from Models.PKA.AirConditioner import AirConditioner
 from Models.PKA.AmbientSensor import AmbientSensor
@@ -12,10 +16,12 @@ from Models.VEU.SolarPanelSystem import SolarPanelSystem
 from Models.VEU.VehicleCharger import VehicleCharger
 
 
-class SmartDeviceManager:
-    def __init__(self):
+class SmartHome:
+    def __init__(self, smart_home_id):
         self.smart_devices = {}
         self.battery_systems = []
+        self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
+        self.client = mqtt.Client(client_id=smart_home_id, clean_session=True)
 
     def add_device(self, device_dto: SmartDeviceDTO):
         device_type_mapping = {
@@ -57,3 +63,31 @@ class SmartDeviceManager:
         if smart_device:
             smart_device.turn_off()
 
+    def setup_connection(self, host, port, keepalive):
+        self.client.on_message = self.on_device_data_receive
+        self.client.on_connect = self.on_home_connect
+        self.client.connect(host, port, keepalive=keepalive)
+        self.client.loop_start()
+
+    def on_home_connect(self, client, userdata, flags, rc):
+        self.client.subscribe(topic=self.device_topic)
+
+    def on_device_data_receive(self, client, user_data, msg):
+        topic_parts = msg.topic.split("/")
+        data = json.loads(msg.payload.decode())
+        if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
+            total_created_power = data.get("created_power")
+            power_by_battery = total_created_power/len(self.battery_systems)
+            for battery_system in self.battery_systems:
+                if battery_system.current_capacity + power_by_battery > battery_system.capacity:
+                    battery_system.grid += power_by_battery
+                else:
+                    battery_system.current_capacity += power_by_battery
+        elif topic_parts[3] != DeviceType.BatterySystem:
+            total_consumption = data.get("consumption_per_minute")
+            consumption_by_battery = total_consumption/len(self.battery_systems)
+            for battery_system in self.battery_systems:
+                if battery_system.current_capacity - consumption_by_battery < 0:
+                    battery_system.grid -= consumption_by_battery
+                else:
+                    battery_system.current_capacity -= consumption_by_battery
