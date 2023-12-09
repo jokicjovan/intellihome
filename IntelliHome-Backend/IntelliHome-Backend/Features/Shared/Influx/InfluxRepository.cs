@@ -17,9 +17,6 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             _bucket = bucket;
             _database = database;
         }
-
-
-
         public async Task WriteToInfluxAsync(string measurement, IDictionary<string, object> fields, IDictionary<string, string> tags)
         {
             using var client = _connectionPool.Get();
@@ -39,9 +36,6 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             writeApi.WritePoint(point, _database);
 
         }
-
-
-
 
         public async Task<IEnumerable<FluxTable>> QueryFromInfluxAsync(string query)
         {
@@ -64,7 +58,7 @@ namespace IntelliHome_Backend.Features.Shared.Influx
         {
             var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
-                        $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
+                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\") " +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
 
 
@@ -75,7 +69,7 @@ namespace IntelliHome_Backend.Features.Shared.Influx
         {
             var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: -1d) " +
-                        $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\") " +
+                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\") " +
                         $"|> last()" +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
 
@@ -83,6 +77,18 @@ namespace IntelliHome_Backend.Features.Shared.Influx
 
             return result.FirstOrDefault();
         }
+
+        public async Task<IEnumerable<FluxTable>> GetLastHourData(Guid deviceId)
+        {
+            var query = $"from(bucket: \"{_bucket}\") " +
+                        $"|> range(start: -1h) " +
+                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\") " +
+                        $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+
+
+            return await QueryFromInfluxAsync(query); ;
+        }
+
 
         public void Dispose()
         {

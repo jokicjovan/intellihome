@@ -68,6 +68,11 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return _ambientSensorDataRepository.GetHistoricalData(id, from, to);
         }
 
+        public List<AmbientSensorData> GetLastHourData(Guid id)
+        {
+            return _ambientSensorDataRepository.GetLastHourData(id);
+        }
+
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _ambientSensorDataRepository.AddPoint(fields, tags);
