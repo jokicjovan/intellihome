@@ -30,7 +30,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 Console.WriteLine("Error handling topic");
                 return;
             }
-            _ = _smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+            _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             //using var scope = serviceProvider.CreateScope();
             //var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();

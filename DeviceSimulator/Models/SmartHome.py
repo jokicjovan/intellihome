@@ -19,6 +19,7 @@ from Models.VEU.VehicleCharger import VehicleCharger
 
 class SmartHome:
     def __init__(self, smart_home_id):
+        self.smart_home_id = smart_home_id
         self.smart_devices = {}
         self.battery_systems = []
         self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
@@ -39,11 +40,11 @@ class SmartHome:
         }
 
         device_class = device_type_mapping.get(device_dto.device_type, SmartDevice)
-        smart_device = device_class(device_dto.device_id, device_dto.smart_home_id, device_dto.device_category,
+        smart_device = device_class(device_dto.device_id, self, device_dto.device_category,
                                     device_dto.device_type, **device_dto.kwargs)
 
         smart_device.setup_connection(device_dto.host, device_dto.port, device_dto.keepalive)
-        smart_device.turn_on()
+        # smart_device.turn_on()
         self.smart_devices[smart_device.device_id] = smart_device
         if device_dto.device_type == DeviceType.BatterySystem:
             self.battery_systems.append(smart_device)
@@ -59,12 +60,12 @@ class SmartHome:
     def turn_on_device(self, device_id):
         smart_device = self.smart_devices.get(device_id, None)
         if smart_device:
-            smart_device.turn_on()
+            self.event_loop.create_task(smart_device.turn_on())
 
     def turn_off_device(self, device_id):
         smart_device = self.smart_devices.get(device_id, None)
         if smart_device:
-            smart_device.turn_off()
+            self.event_loop.create_task(smart_device.turn_off())
 
     def setup_connection(self, host, port, keepalive):
         self.client.on_message = self.on_device_data_receive
@@ -76,7 +77,8 @@ class SmartHome:
         self.client.subscribe(topic=self.device_topic)
 
     def on_device_data_receive(self, client, user_data, msg):
-        asyncio.run_coroutine_threadsafe(self.handle_message_from_device(msg), loop=self.event_loop)
+        # asyncio.run_coroutine_threadsafe(self.handle_message_from_device(msg), loop=self.event_loop)
+        self.event_loop.create_task(self.handle_message_from_device(msg))
 
     async def handle_message_from_device(self, msg):
         topic_parts = msg.topic.split("/")
