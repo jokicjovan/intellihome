@@ -1,4 +1,5 @@
-﻿using Data.Models.Shared;
+﻿using Data.Models.PKA;
+using Data.Models.Shared;
 using Data.Models.SPU;
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
@@ -60,22 +61,39 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 {
                     if (smartDevice.Type == SmartDeviceType.AMBIENTSENSOR)
                     {
-                        smartDevice.IsConnected = await ambientSensorHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
+                        AmbientSensor ambientSensor = (AmbientSensor)smartDevice;
+                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", ambientSensor.PowerPerHour},
+                        };
+                        smartDevice.IsConnected = await ambientSensorHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.AIRCONDITIONER)
                     {
-                        smartDevice.IsConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
+                        AirConditioner airConditioner = (AirConditioner)smartDevice;
+                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", airConditioner.PowerPerHour},
+                        };
+                        smartDevice.IsConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.WASHINGMACHINE)
                     {
-                        smartDevice.IsConnected = await washingMachineHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
+                        WashingMachine washingMachine = (WashingMachine)smartDevice;
+                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", washingMachine.PowerPerHour},
+                        };
+                        smartDevice.IsConnected = await washingMachineHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
+
                     else if (smartDevice.Type == SmartDeviceType.LAMP)
                     {
                         Lamp lamp = (Lamp)smartDevice;
                         Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
                         {
                             { "brightness_limit", lamp.BrightnessLimit },
+                            { "power_per_hour", lamp.PowerPerHour},
                         };
                         smartDevice.IsConnected = await lampHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
@@ -85,17 +103,29 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                         Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
                         {
                             { "is_public", vehicleGate.IsPublic },
-                            { "allowed_licence_plates", vehicleGate.AllowedLicencePlates }
+                            { "allowed_licence_plates", vehicleGate.AllowedLicencePlates },
+                            { "power_per_hour", vehicleGate.PowerPerHour }
                         };
                         smartDevice.IsConnected = await vehicleGateHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.SPRINKLER)
                     {
-                        smartDevice.IsConnected = await sprinklerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
+                        Sprinkler sprinkler = (Sprinkler)smartDevice;
+                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", sprinkler.PowerPerHour},
+                        };
+                        smartDevice.IsConnected = await sprinklerHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
+
                     else if (smartDevice.Type == SmartDeviceType.BATTERYSYSTEM)
                     {
-                        smartDevice.IsConnected = await batterySystemHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
+                        BatterySystem batterySystem = (BatterySystem)smartDevice;
+                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "capacity", batterySystem.Capacity }
+                        };
+                        smartDevice.IsConnected = await batterySystemHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
                     else if (smartDevice.Type == SmartDeviceType.SOLARPANELSYSTEM)
                     {

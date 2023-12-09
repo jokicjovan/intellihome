@@ -13,14 +13,14 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         protected readonly ISimulationsHandler simualtionsHandler;
         protected readonly IMqttService mqttService;
         protected readonly IServiceProvider serviceProvider;
-        protected readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
+        protected readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext;
 
         public SmartDeviceHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             this.simualtionsHandler = simualtionsHandler;
             this.mqttService = mqttService;
             this.serviceProvider = serviceProvider;
-            this._smartDeviceHubContext = smartDeviceHubContext;
+            this.smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async void SubscribeToSmartDevice(SmartDevice smartDevice)

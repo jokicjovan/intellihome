@@ -4,7 +4,7 @@ namespace IntelliHome_Backend.Features.VEU.DTOs
 {
     public class SolarPanelSystemDTO : SmartDeviceDTO
     {
-        public Double CreatedPower { get; set; }
+        public Double ProductionPerMinute { get; set; }
         public SolarPanelSystemDTO() { }
     }
 }

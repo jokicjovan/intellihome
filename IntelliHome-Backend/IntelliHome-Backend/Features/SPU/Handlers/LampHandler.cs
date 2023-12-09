@@ -25,7 +25,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
-            _smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+            smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
 

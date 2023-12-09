@@ -33,7 +33,11 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public async Task<WashingMachine> Create(WashingMachine entity)
         {
             entity = await _washingMachineRepository.Create(entity);
-            bool success = await _washingMachineHandler.ConnectToSmartDevice(entity, new Dictionary<string, object>());
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+            {
+                { "power_per_hour", entity.PowerPerHour},
+            };
+            bool success = await _washingMachineHandler.ConnectToSmartDevice(entity, additionalAttributes);
             if (success)
             {
                 entity.IsConnected = true;

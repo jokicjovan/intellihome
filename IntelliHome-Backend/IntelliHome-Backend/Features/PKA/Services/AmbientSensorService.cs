@@ -18,19 +18,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
             _ambientSensorRepository = ambientSensorRepository;
             _ambientSensorHandler = ambientSensorHandler;
             _ambientSensorDataRepository = ambientSensorDataRepository;
-            
-        }
-
-        public async Task<AmbientSensor> Create(AmbientSensor entity)
-        {
-            entity = await _ambientSensorRepository.Create(entity);
-            bool success = await _ambientSensorHandler.ConnectToSmartDevice(entity, new Dictionary<string, object>());
-            if (success)
-            {
-                entity.IsConnected = true;
-                await _ambientSensorRepository.Update(entity);
-            }
-            return entity;
         }
 
         public async Task<AmbientSensorDTO> GetWithData(Guid id)
@@ -58,6 +45,8 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return ambientSensorDTO;
         }
 
+        #region DataHistory
+
         private AmbientSensorData GetLastData(Guid id)
         {
             return _ambientSensorDataRepository.GetLastData(id);
@@ -76,6 +65,25 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _ambientSensorDataRepository.AddPoint(fields, tags);
+        }
+
+        #endregion
+
+        #region CRUD
+        public async Task<AmbientSensor> Create(AmbientSensor entity)
+        {
+            entity = await _ambientSensorRepository.Create(entity);
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+            {
+                { "power_per_hour", entity.PowerPerHour},
+            };
+            bool success = await _ambientSensorHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            if (success)
+            {
+                entity.IsConnected = true;
+                await _ambientSensorRepository.Update(entity);
+            }
+            return entity;
         }
 
         public Task<AmbientSensor> Delete(Guid id)
@@ -102,5 +110,6 @@ namespace IntelliHome_Backend.Features.PKA.Services
         {
             return _ambientSensorRepository.Update(entity);
         }
+        #endregion
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
+using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Handlers;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories;
@@ -11,11 +13,13 @@ namespace IntelliHome_Backend.Features.VEU.Services
     public class SolarPanelSystemService : ISolarPanelSystemService
     {
         private readonly ISolarPanelSystemRepository _solarPanelSystemRepository;
+        private readonly ISolarPanelSystemDataRepository _solarPanelSystemDataRepository;
         private readonly ISolarPanelSystemHandler _solarPanelSystemHandler;
 
-        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, ISolarPanelSystemHandler solarPanelSystemHandler)
+        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, ISolarPanelSystemDataRepository solarPanelSystemDataRepository, ISolarPanelSystemHandler solarPanelSystemHandler)
         {
             _solarPanelSystemRepository = solarPanelSystemRepository;
+            _solarPanelSystemDataRepository = solarPanelSystemDataRepository;
             _solarPanelSystemHandler = solarPanelSystemHandler;
         }
 
@@ -59,6 +63,38 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public Task<SolarPanelSystem> Update(SolarPanelSystem entity)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<SolarPanelSystemDTO> GetWithData(Guid id)
+        {
+            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.Read(id);
+            SolarPanelSystemDTO solarPanelSystemDTO = new SolarPanelSystemDTO
+            {
+                Id = solarPanelSystem.Id,
+                Name = solarPanelSystem.Name,
+                IsConnected = solarPanelSystem.IsConnected,
+                IsOn = solarPanelSystem.IsOn,
+                Category = solarPanelSystem.Category,
+                Type = solarPanelSystem.Type
+            };
+
+            SolarPanelSystemDataDTO solarPanelSystemDataDTO = _solarPanelSystemDataRepository.GetLastData(id);
+            if (solarPanelSystemDTO != null)
+            {
+                solarPanelSystemDTO.ProductionPerMinute = solarPanelSystemDataDTO.ProductionPerMinute;
+            }
+
+            return solarPanelSystemDTO;
+        }
+
+        public List<SolarPanelSystemDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _solarPanelSystemDataRepository.GetHistoricalData(id, from, to);
+        }
+
+        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _solarPanelSystemDataRepository.AddPoint(fields, tags);
         }
     }
 }
