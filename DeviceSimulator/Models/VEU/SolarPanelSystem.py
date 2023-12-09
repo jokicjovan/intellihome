@@ -22,7 +22,7 @@ class SolarPanelSystem(SmartDevice):
             solar_zenith = solar_position['apparent_zenith']
             solar_azimuth = solar_position['azimuth']
 
-            energy_per_minute = 0
+            power_per_minute = 0
             # Check if it's daytime (Sun is above the horizon)
             if solar_zenith.values < 90:
                 solar_irradiance = pvlib.irradiance.get_total_irradiance(
@@ -36,8 +36,8 @@ class SolarPanelSystem(SmartDevice):
                 )
 
                 # Calculate energy produced per minute
-                energy_per_minute = solar_irradiance['poa_global'].mean() * self.area * self.efficiency / 100 / 60
+                power_per_minute = solar_irradiance['poa_global'].mean() * self.area * self.efficiency / 100 / 60
             if not self.is_on:
                 break
-            self.client.publish(self.send_topic, json.dumps({"created_power": energy_per_minute}), retain=False)
+            self.client.publish(self.send_topic, json.dumps({"production_per_minute": power_per_minute}), retain=False)
             await asyncio.sleep(10)

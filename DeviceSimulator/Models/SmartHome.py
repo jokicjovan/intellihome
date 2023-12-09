@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 import paho.mqtt.client as mqtt
@@ -22,6 +23,7 @@ class SmartHome:
         self.battery_systems = []
         self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
         self.client = mqtt.Client(client_id=smart_home_id, clean_session=True)
+        self.event_loop = asyncio.get_event_loop()
 
     def add_device(self, device_dto: SmartDeviceDTO):
         device_type_mapping = {
@@ -37,14 +39,15 @@ class SmartHome:
         }
 
         device_class = device_type_mapping.get(device_dto.device_type, SmartDevice)
-        device = device_class(device_dto.device_id, device_dto.smart_home_id, device_dto.device_category,
-                              device_dto.device_type, **device_dto.kwargs)
+        smart_device = device_class(device_dto.device_id, device_dto.smart_home_id, device_dto.device_category,
+                                    device_dto.device_type, **device_dto.kwargs)
 
-        device.setup_connection(device_dto.host, device_dto.port, device_dto.keepalive)
-        self.smart_devices[device.device_id] = device
+        smart_device.setup_connection(device_dto.host, device_dto.port, device_dto.keepalive)
+        smart_device.turn_on()
+        self.smart_devices[smart_device.device_id] = smart_device
         if device_dto.device_type == DeviceType.BatterySystem:
-            self.battery_systems.append(device)
-        return device
+            self.battery_systems.append(smart_device)
+        return smart_device
 
     def remove_device(self, device_id):
         smart_device = self.smart_devices.pop(device_id, None)
@@ -73,21 +76,22 @@ class SmartHome:
         self.client.subscribe(topic=self.device_topic)
 
     def on_device_data_receive(self, client, user_data, msg):
+        asyncio.run_coroutine_threadsafe(self.handle_message_from_device(msg), loop=self.event_loop)
+
+    async def handle_message_from_device(self, msg):
         topic_parts = msg.topic.split("/")
         data = json.loads(msg.payload.decode())
-        if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
-            total_created_power = data.get("created_power")
-            power_by_battery = total_created_power/len(self.battery_systems)
-            for battery_system in self.battery_systems:
-                if battery_system.current_capacity + power_by_battery > battery_system.capacity:
-                    battery_system.grid += power_by_battery
-                else:
-                    battery_system.current_capacity += power_by_battery
-        elif topic_parts[3] != DeviceType.BatterySystem:
-            total_consumption = data.get("consumption_per_minute")
-            consumption_by_battery = total_consumption/len(self.battery_systems)
-            for battery_system in self.battery_systems:
-                if battery_system.current_capacity - consumption_by_battery < 0:
-                    battery_system.grid -= consumption_by_battery
-                else:
-                    battery_system.current_capacity -= consumption_by_battery
+        if self.battery_systems:
+            if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
+                total_production = data.get("production_per_minute")
+                production_by_battery = total_production / len(self.battery_systems)
+                for battery_system in self.battery_systems:
+                    async with battery_system.lock:
+                        battery_system.current_production += production_by_battery
+
+            elif topic_parts[3] != DeviceType.BatterySystem:
+                total_consumption = data.get("consumption_per_minute")
+                consumption_by_battery = total_consumption / len(self.battery_systems)
+                for battery_system in self.battery_systems:
+                    async with battery_system.lock:
+                        battery_system.current_consumption += consumption_by_battery
