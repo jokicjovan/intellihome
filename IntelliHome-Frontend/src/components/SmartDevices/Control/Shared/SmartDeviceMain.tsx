@@ -1,25 +1,34 @@
 import {Box, Container, CssBaseline, Typography} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import AmbientSensorControl from "../PKA/AmbientSensorControl";
 import AirConditionerControl from "../PKA/AirConditionerControl";
 import LampControl from "../SPU/LampControl";
 import SolarPanelsControl from "../VEU/SolarPanelsControl";
 import GateControl from "../SPU/GateControl";
+import axios from "axios";
+import {environment} from "../../../../security/Environment.tsx";
+import {useParams} from "react-router-dom";
 
-const SmartDeviceMain = ({smartDeviceId}) => {
+const SmartDeviceMain = () => {
+    const params = useParams();
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [deviceType, setDeviceType] = useState("Lamp");
+    const [deviceType, setDeviceType] = useState(params.type);
+    const [smartDeviceId, setSmartDeviceId] = useState(params.id);
+    const [smartDevice, setSmartDevice] = useState({});
 
-
-
-
-
-
+    useEffect(() => {
+        axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
+            setSmartDevice(res.data)
+            setIsConnected(res.data.isConnected)
+        }).catch(err => {
+            console.log(err)
+        });
+    }, []);
 
     return <>
         <Box display="flex" flexDirection="row" alignItems="center">
-            <Typography fontSize="40px" fontWeight="650">Smart Device Name</Typography>
+            <Typography fontSize="40px" fontWeight="650">{smartDevice.name}</Typography>
             <Box mx={1} ml={4} sx={{marginTop: "3px"}} width="15px" height="15px" borderRadius="50px"
                  bgcolor={isConnected ? "green" : "red"}/>
             <Typography fontSize="30px" sx={{marginTop: "3px"}} color={isConnected ? "green" : "red"}
@@ -47,7 +56,7 @@ const SmartDeviceMain = ({smartDeviceId}) => {
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
-                    deviceType == "Lamp" ? <LampControl/> :
+                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDevice={setSmartDevice}/> :
                         deviceType == "SolarPanel" ? <SolarPanelsControl/> :
                             deviceType=="Gate"?<GateControl/>:
                                 /*deviceType=="Battery"?<BatteryControl/>:

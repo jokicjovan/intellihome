@@ -36,5 +36,12 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
             await _lampService.ChangeMode(id, isAuto);
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeBrightnessLimit(Guid id, Double brightness)
+        {
+            await _lampService.ChangeBrightnessLimit(id, brightness);
+            return Ok();
+        }
     }
 }

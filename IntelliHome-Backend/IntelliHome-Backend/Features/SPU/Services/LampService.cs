@@ -86,6 +86,14 @@ namespace IntelliHome_Backend.Features.SPU.Services
             await _lampRepository.Update(lamp);
         }
 
+        public async Task ChangeBrightnessLimit(Guid id, double brightness)
+        {
+            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            _lampHandler.ChangeBrightnessLimit(lamp, brightness);
+            lamp.BrightnessLimit = brightness;
+            await _lampRepository.Update(lamp);
+        }
+
 
         public async Task<Lamp> Delete(Guid id)
         {

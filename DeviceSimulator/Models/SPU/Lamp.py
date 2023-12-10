@@ -38,6 +38,8 @@ class Lamp(SmartDevice):
                 self.is_auto = True
             elif data.get("action", None) == "manual":
                 self.is_auto = False
+            elif "set_brightness_limit" in data.get("action", None):
+                self.brightness_limit = eval(data["action"].split("=")[1])
 
     async def send_data(self):
         while True:
@@ -45,7 +47,7 @@ class Lamp(SmartDevice):
                 break
 
             lumens = generate_lumens()
-            print(f"Is auto: {self.is_auto}, lumens: {lumens}")
+            print(f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}")
             if self.is_auto:
                 is_working = lumens < self.brightness_limit
             else:

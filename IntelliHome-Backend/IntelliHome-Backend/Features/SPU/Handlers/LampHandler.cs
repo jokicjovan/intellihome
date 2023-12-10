@@ -62,5 +62,12 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 
             PublishMessageToSmartDevice(lamp, payload);
         }
+
+        public void ChangeBrightnessLimit(Lamp lamp, double brightness)
+        {
+            string action = $"set_brightness_limit={brightness}";
+            string payload = JsonConvert.SerializeObject(new { action });
+            PublishMessageToSmartDevice(lamp, payload);
+        }
     }
 }

@@ -6,5 +6,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers.Interfaces
     public interface ILampHandler : ISmartDeviceHandler
     {
         void ChangeMode(Lamp lamp, bool isAuto);
+        void ChangeBrightnessLimit(Lamp lamp, double brightness);
+
     }
 }
