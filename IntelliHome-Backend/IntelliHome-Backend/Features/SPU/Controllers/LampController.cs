@@ -29,5 +29,19 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
             LampDTO result = await _lampService.GetWithData(id);
             return Ok(result);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeMode(Guid id, Boolean isAuto)
+        {
+            await _lampService.ChangeMode(id, isAuto);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeBrightnessLimit(Guid id, Double brightness)
+        {
+            await _lampService.ChangeBrightnessLimit(id, brightness);
+            return Ok();
+        }
     }
 }

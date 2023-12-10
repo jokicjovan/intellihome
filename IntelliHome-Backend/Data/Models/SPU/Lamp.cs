@@ -6,5 +6,7 @@ namespace Data.Models.SPU
     {
         public Double BrightnessLimit { get; set; }
         public Double PowerPerHour { get; set; }
+
+        public Boolean IsAuto { get; set; }
     }
 }

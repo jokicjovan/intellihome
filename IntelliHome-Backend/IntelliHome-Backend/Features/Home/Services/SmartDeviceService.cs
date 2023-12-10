@@ -1,6 +1,7 @@
 ﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntelliHome_Backend.Features.Home.Services
@@ -8,10 +9,12 @@ namespace IntelliHome_Backend.Features.Home.Services
     public class SmartDeviceService : ISmartDeviceService
     {
         private readonly ISmartDeviceRepository _smartDeviceRepository;
+        private readonly ISmartDeviceHandler _smartDeviceHandler;
 
-        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository)
+        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler)
         {
             _smartDeviceRepository = smartDeviceRepository;
+            _smartDeviceHandler = smartDeviceHandler;
         }
 
         public Task<SmartDevice> Create(SmartDevice entity)
@@ -64,6 +67,16 @@ namespace IntelliHome_Backend.Features.Home.Services
 
         public Task<bool> IsUserAllowed(Guid smartDeviceId, Guid userId) {
             return _smartDeviceRepository.IsUserAllowed(smartDeviceId, userId);
+        }
+
+        public async Task TurnOnSmartDevice(Guid id, bool turnOn)
+        {
+            SmartDevice smartDevice = await _smartDeviceRepository.FindWithSmartHome(id);
+            await _smartDeviceHandler.TurnOnSmartDevice(smartDevice, turnOn);
+
+            smartDevice.IsOn = turnOn;
+            _ = _smartDeviceRepository.Update(smartDevice);
+
         }
     }
 }

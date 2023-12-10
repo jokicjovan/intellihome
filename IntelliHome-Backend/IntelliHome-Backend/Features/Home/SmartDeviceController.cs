@@ -31,5 +31,12 @@ namespace IntelliHome_Backend.Features.Home
             return Ok(dto);
         }
 
+        [HttpPut]
+        public async Task<ActionResult> TurnOnSmartDevice(Guid id, Boolean turnOn)
+        {
+            await _smartDeviceService.TurnOnSmartDevice(id, turnOn);
+            return Ok();
+        }
+
     }
 }

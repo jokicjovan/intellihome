@@ -13,11 +13,11 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly ILampDataRepository _lampDataRepository;
         private readonly ILampHandler _lampHandler;
 
-        public LampService(ILampRepository lampRepository, ILampHandler lampHandler, ILampDataRepository _lampDataRepository)
+        public LampService(ILampRepository lampRepository, ILampHandler lampHandler, ILampDataRepository lampDataRepository)
         {
             _lampRepository = lampRepository;
             _lampHandler = lampHandler;
-            _lampDataRepository = _lampDataRepository;
+            _lampDataRepository = lampDataRepository;
         }
 
         public async Task<Lamp> Create(Lamp entity)
@@ -78,25 +78,41 @@ namespace IntelliHome_Backend.Features.SPU.Services
             _lampDataRepository.AddPoint(fields, tags);
         }
 
-
-        public Task<Lamp> Delete(Guid id)
-        {
-            throw new NotImplementedException();
+        public async Task ChangeMode(Guid id, bool isAuto)
+        { 
+            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            _lampHandler.ChangeMode(lamp, isAuto);
+            lamp.IsAuto = isAuto;
+            await _lampRepository.Update(lamp);
         }
 
-        public Task<Lamp> Get(Guid id)
+        public async Task ChangeBrightnessLimit(Guid id, double brightness)
         {
-            throw new NotImplementedException();
+            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            _lampHandler.ChangeBrightnessLimit(lamp, brightness);
+            lamp.BrightnessLimit = brightness;
+            await _lampRepository.Update(lamp);
         }
 
-        public Task<IEnumerable<Lamp>> GetAll()
+
+        public async Task<Lamp> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            return await _lampRepository.Delete(id);
         }
 
-        public Task<Lamp> Update(Lamp entity)
+        public async Task<Lamp> Get(Guid id)
         {
-            throw new NotImplementedException();
+            return await _lampRepository.Read(id);
+        }
+
+        public async Task<IEnumerable<Lamp>> GetAll()
+        {
+            return await _lampRepository.ReadAll();
+        }
+
+        public async Task<Lamp> Update(Lamp entity)
+        {
+            return await _lampRepository.Update(entity);
         }
     }
 }
