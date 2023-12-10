@@ -8,5 +8,6 @@ namespace IntelliHome_Backend.Features.Shared.Handlers.Interfaces
         void PublishMessageToSmartDevice(SmartDevice smartDevice, String payload);
         Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes);
         void SubscribeToSmartDevice(SmartDevice smartDevice);
+        Task TurnOnSmartDevice(SmartDevice smartDevice, bool turnOn);
     }
 }

@@ -29,6 +29,13 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             await mqttService.SubscribeAsync(topic, HandleMessageFromDevice);
         }
 
+        public async Task TurnOnSmartDevice(SmartDevice smartDevice, bool turnOn)
+        {
+            string action = turnOn ? "turn_on" : "turn_off";
+            string payload = $"{{\"action\": \"{action}\"}}";
+            PublishMessageToSmartDevice(smartDevice, payload);
+        }
+
         public async void PublishMessageToSmartDevice(SmartDevice smartDevice, string payload)
         {
             string topic = $"ToDevice/{smartDevice.SmartHome.Id}/{smartDevice.Category}/{smartDevice.Type}/{smartDevice.Id}";
@@ -55,5 +62,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         {
             return Task.CompletedTask;
         }
+
+
     }
 }

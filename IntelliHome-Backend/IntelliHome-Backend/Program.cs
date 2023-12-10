@@ -159,6 +159,7 @@ builder.Services.AddSingleton<IVehicleGateHandler, VehicleGateHandler>();
 builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
 builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
 builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
+builder.Services.AddSingleton<ISmartDeviceHandler, SmartDeviceHandler>();
 
 //Hosted services
 builder.Services.AddHostedService<StartupHostedService>();
