@@ -78,6 +78,14 @@ namespace IntelliHome_Backend.Features.SPU.Services
             _lampDataRepository.AddPoint(fields, tags);
         }
 
+        public async Task ChangeMode(Guid id, bool isAuto)
+        { 
+            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            _lampHandler.ChangeMode(lamp, isAuto);
+            lamp.IsAuto = isAuto;
+            await _lampRepository.Update(lamp);
+        }
+
 
         public async Task<Lamp> Delete(Guid id)
         {

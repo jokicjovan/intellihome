@@ -30,6 +30,14 @@ class Lamp(SmartDevice):
         self.power_per_hour = power_per_hour
         self.is_auto = is_auto
 
+    def on_data_receive(self, client, user_data, msg):
+        super().on_data_receive(client, user_data, msg)
+        if msg.topic == self.receive_topic:
+            data = json.loads(msg.payload.decode())
+            if data.get("action", None) == "auto":
+                self.is_auto = True
+            elif data.get("action", None) == "manual":
+                self.is_auto = False
 
     async def send_data(self):
         while True:
@@ -37,7 +45,7 @@ class Lamp(SmartDevice):
                 break
 
             lumens = generate_lumens()
-
+            print(f"Is auto: {self.is_auto}, lumens: {lumens}")
             if self.is_auto:
                 is_working = lumens < self.brightness_limit
             else:

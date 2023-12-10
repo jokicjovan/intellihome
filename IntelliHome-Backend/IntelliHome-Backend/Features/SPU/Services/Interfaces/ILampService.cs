@@ -10,5 +10,6 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         Task<LampDTO> GetWithData(Guid id);
         List<LampData> GetHistoricalData(Guid id, DateTime from, DateTime to);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        Task ChangeMode(Guid id, bool isAuto);
     }
 }

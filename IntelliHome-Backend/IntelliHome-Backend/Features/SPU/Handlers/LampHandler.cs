@@ -5,12 +5,14 @@ using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
 using Data.Models.Shared;
+using Data.Models.SPU;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using SendGrid.Helpers.Errors.Model;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
@@ -51,6 +53,14 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
             }
 
 
+        }
+
+        public void ChangeMode(Lamp lamp, bool isAuto)
+        {
+            string action = isAuto ? "auto" : "manual";
+            string payload = JsonConvert.SerializeObject(new { action });
+
+            PublishMessageToSmartDevice(lamp, payload);
         }
     }
 }
