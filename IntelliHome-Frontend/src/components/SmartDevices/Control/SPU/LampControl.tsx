@@ -26,6 +26,7 @@ const LampControl = ({device, setSmartDeviceParent}) => {
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked);
+            setIsWorking(e.target.checked);
             turnOnDevice(e.target.checked);
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
