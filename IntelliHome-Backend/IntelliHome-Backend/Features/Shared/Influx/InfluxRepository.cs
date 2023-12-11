@@ -54,22 +54,22 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             }
         }
 
-        public async Task<IEnumerable<FluxTable>> GetHistoricalData(Guid deviceId, DateTime from, DateTime to)
+        public async Task<IEnumerable<FluxTable>> GetHistoricalData(string measurement, Guid deviceId, DateTime from, DateTime to)
         {
             var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
-                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\") " +
+                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\" and r._measurement == \"{measurement}\") " +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"device_id\"])";
 
 
             return await QueryFromInfluxAsync(query);
         }
 
-        public async Task<FluxTable> GetLastData(Guid deviceId)
+        public async Task<FluxTable> GetLastData(string measurement, Guid deviceId)
         {
             var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: -1d) " +
-                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\") " +
+                        $"|> filter(fn: (r) => r.device_id == \"{deviceId}\" and r._measurement == \"{measurement}\") " +
                         $"|> last()" +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"device_id\"])";
 

@@ -18,7 +18,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
 
         public LampData GetLastData(Guid id)
         {
-            var table = _influxRepository.GetLastData(id).Result;
+            var table = _influxRepository.GetLastData("lamp", id).Result;
 
             LampData lampData = ConvertToLampData(table);
 
@@ -36,7 +36,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
 
         public List<LampData> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _influxRepository.GetHistoricalData(id, from, to).Result;
+            var result = _influxRepository.GetHistoricalData("lamp", id, from, to).Result;
             return result.Select(ConvertToLampData).ToList();
         }
 

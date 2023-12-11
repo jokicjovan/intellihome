@@ -2,7 +2,7 @@
 {
     public interface ISmartDeviceClient
     {
-        Task ReceiveSmartDeviceData(object data);
         Task ReceiveSmartDeviceSubscriptionResult(string result);
+        Task ReceiveSmartDeviceData(object data);
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Data.Models.Shared;
-using Data.Models.SPU;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
-using Newtonsoft.Json;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
-namespace IntelliHome_Backend.Features.Shared.Handlers
+namespace IntelliHome_Backend.Features.Home.Handlers
 {
     public class SmartDeviceHandler : ISmartDeviceHandler
     {
@@ -27,7 +26,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
 
         public async void SubscribeToSmartDevice(SmartDevice smartDevice)
         {
-            String topic = $"FromDevice/{smartDevice.SmartHome.Id}/{smartDevice.Category}/{smartDevice.Type}/{smartDevice.Id}";
+            string topic = $"FromDevice/{smartDevice.SmartHome.Id}/{smartDevice.Category}/{smartDevice.Type}/{smartDevice.Id}";
             await mqttService.SubscribeAsync(topic, HandleMessageFromDevice);
         }
 
@@ -44,7 +43,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             await mqttService.PublishAsync(topic, payload);
         }
 
-        public async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<String, object> additionalAttributes)
+        public async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<string, object> additionalAttributes)
         {
             var requestBody = new
             {
@@ -63,14 +62,6 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         protected virtual Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             return Task.CompletedTask;
-        }
-
-
-        public void ChangeBrightnessLimit(Lamp lamp, double brightness)
-        {
-            string payload = JsonConvert.SerializeObject(new { brightness_limit = brightness });
-
-            PublishMessageToSmartDevice(lamp, payload);
         }
     }
 }

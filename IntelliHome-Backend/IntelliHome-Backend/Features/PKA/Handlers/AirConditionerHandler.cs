@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using MQTTnet.Client;
@@ -10,6 +9,7 @@ using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.PKA.Handlers
 {

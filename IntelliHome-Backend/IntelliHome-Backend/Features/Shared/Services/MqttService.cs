@@ -41,6 +41,12 @@ namespace IntelliHome_Backend.Features.Shared.Services
                         topicSplitted[4] = "+";
                         topic = string.Join("/", topicSplitted);
                     }
+                    else if (topic.Split("/")[0] == "FromHome") {
+                        string[] topicSplitted = topic.Split('/');
+                        topicSplitted[1] = "+";
+                        topicSplitted[2] = "+";
+                        topic = string.Join("/", topicSplitted);
+                    }
                     if (_topicHandlers.TryGetValue(topic, out var handler))
                     {
                         await handler(e);

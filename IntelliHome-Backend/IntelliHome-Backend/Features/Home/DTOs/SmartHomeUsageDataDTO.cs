@@ -1,9 +1,9 @@
-﻿namespace IntelliHome_Backend.Features.VEU.DTOs
+﻿namespace IntelliHome_Backend.Features.Home.DTOs
 {
-    public class BatterySystemDataDTO
+    public class SmartHomeUsageDataDTO
     {
         public DateTime? Timestamp { get; set; }
-        public Double CurrentCapacity { get; set; }
+        public Double ProductionPerMinute { get; set; }
         public Double ConsumptionPerMinute { get; set; }
         public Double GridPerMinute { get; set; }
     }

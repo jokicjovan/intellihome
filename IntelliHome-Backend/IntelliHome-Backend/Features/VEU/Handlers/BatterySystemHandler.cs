@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
@@ -11,12 +10,14 @@ using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
     public class BatterySystemHandler : SmartDeviceHandler, IBatterySystemHandler
     {
-        public BatterySystemHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public BatterySystemHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, 
+            IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
             : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.BATTERYSYSTEM}/+", HandleMessageFromDevice);
@@ -30,26 +31,25 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 Console.WriteLine("Error handling topic");
                 return;
             }
-            _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+            string batterySystemId = topic_parts.Last();
+            _ = smartDeviceHubContext.Clients.Group(batterySystemId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
-            //using var scope = serviceProvider.CreateScope();
-            //var batterySystemService = scope.ServiceProvider.GetRequiredService<IBatterySystemService>();
-            //var batterySystem = await batterySystemService.Get(Guid.Parse(topic_parts[4]));
-            //if (batterySystem != null)
-            //{
-            //    var batterySystemData = JsonConvert.DeserializeObject<BatterySystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            //    var batterySystemDataInflux = new Dictionary<string, object>
-            //        {
-            //            { "current_capacity", batterySystemData.CurrentCapacity },
-            //            { "consumption_per_minute", batterySystemData.ConsumptionPerMinute },
-            //            { "grid_per_minute", batterySystemData.GridPerMinute }
-            //        };
-            //    var batterySystemDataTags = new Dictionary<string, string>
-            //        {
-            //            { "device_id", batterySystem.Id.ToString() }
-            //        };
-            //    batterySystemService.AddPoint(batterySystemDataInflux, batterySystemDataTags);
-            //}
+            using var scope = serviceProvider.CreateScope();
+            var batterySystemService = scope.ServiceProvider.GetRequiredService<IBatterySystemService>();
+            var batterySystem = await batterySystemService.Get(Guid.Parse(batterySystemId));
+            if (batterySystem != null)
+            {
+                var batterySystemData = JsonConvert.DeserializeObject<BatterySystemCapacityDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+                var batterySystemDataInflux = new Dictionary<string, object>
+                    {
+                        { "current_capacity", batterySystemData.CurrentCapacity }
+                    };
+                var batterySystemDataTags = new Dictionary<string, string>
+                    {
+                        { "device_id", batterySystem.Id.ToString() }
+                    };
+                //batterySystemService.AddCapacityMeasurement(batterySystemDataInflux, batterySystemDataTags);
+            }
         }
     }
 }

@@ -3,5 +3,6 @@
     public interface ISmartHomeClient
     {
         Task ReceiveSmartHomeSubscriptionResult(string result);
+        Task ReceiveSmartHomeUsageData(object data);
     }
 }

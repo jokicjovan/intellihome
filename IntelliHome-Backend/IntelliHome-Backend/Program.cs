@@ -46,6 +46,10 @@ using IntelliHome_Backend.Features.SPU.DataRepositories;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.Shared.Influx;
 using Microsoft.Extensions.ObjectPool;
+using IntelliHome_Backend.Features.Home.Handlers;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using IntelliHome_Backend.Features.Home.DataRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +81,6 @@ builder.Services.AddSingleton(provider =>
     StreamReader sr = new("InfluxDBToken.txt");
     string token = sr.ReadLine();
 
-
     return new InfluxDbConnectionPool(objectPoolProvider, url, token, organization, bucket);
 });
 
@@ -96,6 +99,7 @@ builder.Services.AddScoped(provider =>
 builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
 builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
 builder.Services.AddScoped<ISolarPanelSystemDataRepository, SolarPanelSystemDataRepository>();
+builder.Services.AddScoped<ISmartHomeDataRepository, SmartHomeDataRepository>();
 
 builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 
@@ -160,6 +164,7 @@ builder.Services.AddSingleton<IBatterySystemHandler, BatterySystemHandler>();
 builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>();
 builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
 builder.Services.AddSingleton<ISmartDeviceHandler, SmartDeviceHandler>();
+builder.Services.AddSingleton<ISmartHomeHandler, SmartHomeHandler>();
 
 //Hosted services
 builder.Services.AddHostedService<StartupHostedService>();

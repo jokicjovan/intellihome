@@ -6,8 +6,8 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
     public interface IBatterySystemService : ICrudService<BatterySystem>
     {
-        List<BatterySystemDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to);
-        void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
-        Task<BatterySystemDTO> GetWithData(Guid id);
+        List<BatterySystemCapacityDataDTO> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to);
+        void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        Task<BatterySystemDTO> GetWithCapacityData(Guid id);
     }
 }
