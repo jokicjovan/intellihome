@@ -86,9 +86,9 @@ class SmartHome:
         topic_parts = msg.topic.split("/")
         data = json.loads(msg.payload.decode())
         if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
-            self.current_production += data.get("production_per_minute")
+            self.current_production += data.get("productionPerMinute")
         elif topic_parts[3] != DeviceType.BatterySystem:
-            self.current_consumption += data.get("consumption_per_minute")
+            self.current_consumption += data.get("consumptionPerMinute")
 
     async def send_house_usage(self):
         while True:

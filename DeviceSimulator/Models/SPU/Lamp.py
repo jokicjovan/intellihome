@@ -53,8 +53,8 @@ class Lamp(SmartDevice):
             else:
                 is_working = self.is_on
 
-            self.client.publish(self.send_topic, json.dumps({"CurrentBrightness": lumens,
-                                                             "IsWorking": is_working,
-                                                             "ConsumptionPerMinute": round(self.power_per_hour / 60,
+            self.client.publish(self.send_topic, json.dumps({"currentBrightness": lumens,
+                                                             "isWorking": is_working,
+                                                             "consumptionPerMinute": round(self.power_per_hour / 60,
                                                                                                 4)}), retain=False)
             await asyncio.sleep(10)

@@ -37,7 +37,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
             
             if (lamp != null)
             {
-                var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString());
+                var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString() );
                 var lampDataInflux = new Dictionary<string, object>
                 {
                         { "current_brightness", lampData.CurrentBrightness },

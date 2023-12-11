@@ -68,7 +68,7 @@ namespace IntelliHome_Backend.Features.Shared.Influx
         public async Task<FluxTable> GetLastData(string measurement, Guid deviceId)
         {
             var query = $"from(bucket: \"{_bucket}\") " +
-                        $"|> range(start: -1d) " +
+                        $"|> range(start: -10d) " +
                         $"|> filter(fn: (r) => r.device_id == \"{deviceId}\" and r._measurement == \"{measurement}\") " +
                         $"|> last()" +
                         $"|> group(columns: [\"_time\", \"_measurement\", \"device_id\"])";
