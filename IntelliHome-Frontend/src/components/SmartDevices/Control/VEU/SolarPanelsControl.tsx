@@ -12,11 +12,24 @@ import {
 import React, {useState} from "react";
 import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import {LineChart} from "@mui/x-charts";
+import {Chart} from "react-google-charts";
 
 const SolarPanelsControl = () => {
     const [area,setArea]=useState(800)
     const [efficiency,setEfficiency]=useState(85)
     const [isOn,setIsOn]=useState(false)
+    const [data1, setData1] = useState([["date", "dogs", "cats"],
+        [new Date().toDateString(), 1, 2],
+        [new Date().toDateString(), 2, 7]])
+
+    const options1 = {
+        hAxis: {
+            title: "XLABEL",
+        },
+        vAxis: {
+            title: "YLABEL",
+        }
+    };
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)
@@ -70,7 +83,7 @@ const SolarPanelsControl = () => {
         },
     }));
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
-                  gridTemplateRows="170px 170px 170px 170px">
+                  gridTemplateRows="170px 170px 170px">
 
         <Box gridColumn={1} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
              alignItems="center" bgcolor="white" borderRadius="25px">
@@ -95,24 +108,12 @@ const SolarPanelsControl = () => {
 
         </Box><Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
                    alignItems="center" bgcolor="white" borderRadius="25px">
-        <LineChart
-            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-            series={[
-                {
-                    data: [2, 5.5, 2, 8.5, 1.5, 5],
-                    area: true,
-                    showMark:false,
-                    color:"rgb(52,63,113)"
-
-                },
-            ]}
-            sx={{
-                '& .MuiAreaElement-series-Germany': {
-                    fill: "rgba(52,63,113,0.3)",
-                },
-            }}
-            width="600"
-            height="300"
+        <Chart
+            chartType="LineChart"
+            width="100%"
+            height="300px"
+            data={data1}
+            options={options1}
         />
 
     </Box>

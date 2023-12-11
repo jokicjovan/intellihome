@@ -122,7 +122,7 @@ const LampControl = () => {
         },
     }));
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
-                  gridTemplateRows="170px 170px 170px 170px">
+                  gridTemplateRows="170px 170px 170px">
 
         <Box gridColumn={1} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
              alignItems="center" bgcolor="white" borderRadius="25px">

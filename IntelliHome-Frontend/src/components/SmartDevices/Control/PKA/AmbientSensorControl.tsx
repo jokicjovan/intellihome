@@ -32,8 +32,8 @@ const AmbientSensorControl = () => {
                     fill: "rgba(52,63,113,0.3)",
                 },
                 }}
-                width="600"
-                height="300"
+                width={600}
+                height={300}
             />
         </Box>
     </Box></Box>

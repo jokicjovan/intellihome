@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdmin/></Layout></AdminRoute></AuthenticatedRoute>},
     {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChange/></AdminFirstTimeRoute></AuthenticatedRoute>},
     {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHome/></Layout></AuthenticatedRoute>},
-    {path:"/smartDevice/:id", element: <AuthenticatedRoute><Layout><SmartDeviceHome/></Layout></AuthenticatedRoute>},
+    {path:"/smartDevice/:id", element: <UnauthenticatedRoute><Layout><SmartDeviceHome/></Layout></UnauthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])
 const queryClient = new QueryClient()
