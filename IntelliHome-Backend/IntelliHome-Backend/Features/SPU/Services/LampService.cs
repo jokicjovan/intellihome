@@ -53,7 +53,16 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 BrightnessLimit = lamp.BrightnessLimit,
             };
 
-            LampData lampData = GetLastData(id);
+            LampData lampData = null;
+            try
+            {
+                lampData = GetLastData(id);
+            }
+            catch (Exception)
+            {
+                lampData = null;
+            }
+
 
             if (lampData != null)
             {

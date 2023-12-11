@@ -42,10 +42,11 @@ class Lamp(SmartDevice):
                 self.brightness_limit = eval(data["action"].split("=")[1])
 
     async def send_data(self):
+        i = 0
         while True:
             if not self.is_on:
                 break
-
+            i += 1
             lumens = generate_lumens()
             print(f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}")
             if self.is_auto:
@@ -53,7 +54,7 @@ class Lamp(SmartDevice):
             else:
                 is_working = self.is_on
 
-            self.client.publish(self.send_topic, json.dumps({"currentBrightness": lumens,
+            self.client.publish(self.send_topic, json.dumps({"currentBrightness": lumens + i,
                                                              "isWorking": is_working,
                                                              "consumptionPerMinute": round(self.power_per_hour / 60,
                                                                                                 4)}), retain=False)

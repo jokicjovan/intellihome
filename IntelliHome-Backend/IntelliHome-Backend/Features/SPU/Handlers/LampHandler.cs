@@ -27,6 +27,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
+            Console.WriteLine(e.ApplicationMessage.Topic.Split("/").Last());
             smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
@@ -40,9 +41,9 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString() );
                 var lampDataInflux = new Dictionary<string, object>
                 {
-                        { "current_brightness", lampData.CurrentBrightness },
-                        { "is_working", lampData.IsWorking ? 1f : 0f },
-                        { "consumption_per_minute", lampData.ConsumptionPerMinute }
+                        { "currentBrightness", lampData.CurrentBrightness },
+                        { "isWorking", lampData.IsWorking ? 1f : 0f },
+                        { "consumptionPerMinute", lampData.ConsumptionPerMinute }
             
                 };
                 var lampDataTags = new Dictionary<string, string>
