@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
@@ -8,6 +7,7 @@ using Data.Models.Shared;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {

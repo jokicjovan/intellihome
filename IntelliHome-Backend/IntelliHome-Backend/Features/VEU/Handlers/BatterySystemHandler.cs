@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {

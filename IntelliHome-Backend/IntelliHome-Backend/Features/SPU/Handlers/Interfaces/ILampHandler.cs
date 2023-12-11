@@ -1,5 +1,5 @@
 ﻿using Data.Models.SPU;
-using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers.Interfaces
 {

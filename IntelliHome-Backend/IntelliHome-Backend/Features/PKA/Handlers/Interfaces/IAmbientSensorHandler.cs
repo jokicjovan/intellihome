@@ -1,6 +1,6 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
-using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 namespace IntelliHome_Backend.Features.PKA.Handlers.Interfaces
 {

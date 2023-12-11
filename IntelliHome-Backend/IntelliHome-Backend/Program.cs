@@ -46,6 +46,8 @@ using IntelliHome_Backend.Features.SPU.DataRepositories;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.Shared.Influx;
 using Microsoft.Extensions.ObjectPool;
+using IntelliHome_Backend.Features.Home.Handlers;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

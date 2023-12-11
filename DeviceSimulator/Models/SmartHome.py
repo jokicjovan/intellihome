@@ -23,7 +23,7 @@ class SmartHome:
         self.smart_devices = {}
         self.battery_systems = []
         self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
-        self.home_usage_topic = f"FromSmartHouse/Consumption/{smart_home_id}"
+        self.home_usage_topic = f"FromSmartHouse/Usage/{smart_home_id}"
         self.client = mqtt.Client(client_id=smart_home_id, clean_session=True)
         self.event_loop = asyncio.get_event_loop()
         self.current_production = 0
