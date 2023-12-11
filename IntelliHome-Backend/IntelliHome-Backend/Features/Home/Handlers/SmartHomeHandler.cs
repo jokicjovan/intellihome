@@ -5,9 +5,6 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
 using Data.Models.Home;
-using Data.Models.Shared;
-using IntelliHome_Backend.Features.VEU.DTOs;
-using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using MQTTnet;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
@@ -60,13 +57,13 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                 var smartHomeUsageData = JsonConvert.DeserializeObject<SmartHomeUsageDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
                 var smartHomeUsageDataInflux = new Dictionary<string, object>
                     {
-                        { "production_per_minute", smartHomeUsageData.ProductionPerMinute },
-                        { "consumption_per_minute", smartHomeUsageData.ConsumptionPerMinute },
-                        { "grid_per_minute", smartHomeUsageData.GridPerMinute }
+                        { "productionPerMinute", smartHomeUsageData.ProductionPerMinute },
+                        { "consumptionPerMinute", smartHomeUsageData.ConsumptionPerMinute },
+                        { "gridPerMinute", smartHomeUsageData.GridPerMinute }
                     };
                 var smartHomeUsageDataTags = new Dictionary<string, string>
                     {
-                        { "device_id", smartHome.Id.ToString() }
+                        { "deviceId", smartHome.Id.ToString() }
                     };
                 //smartHomeService.AddUsageMeasurement(smartHomeUsageDataInflux, smartHomeUsageDataTags);
             }

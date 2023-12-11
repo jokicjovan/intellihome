@@ -34,18 +34,16 @@ namespace IntelliHome_Backend.Features.Shared.Services
                 try
                 {
                     String topic = e.ApplicationMessage.Topic;
-                    if (topic.Split("/")[0] == "FromDevice")
+                    String[] topicParts = topic.Split("/");
+                    if (topicParts[0] == "FromDevice")
                     {
-                        string[] topicSplitted = topic.Split('/');
-                        topicSplitted[1] = "+";
-                        topicSplitted[4] = "+";
-                        topic = string.Join("/", topicSplitted);
+                        topicParts[1] = "+";
+                        topicParts[4] = "+";
+                        topic = string.Join("/", topicParts);
                     }
-                    else if (topic.Split("/")[0] == "FromHome") {
-                        string[] topicSplitted = topic.Split('/');
-                        topicSplitted[1] = "+";
-                        topicSplitted[2] = "+";
-                        topic = string.Join("/", topicSplitted);
+                    else if (topicParts[0] == "FromSmartHome" && topicParts[2] == "Usage") {
+                        topicParts[1] = "+";
+                        topic = string.Join("/", topicParts);
                     }
                     if (_topicHandlers.TryGetValue(topic, out var handler))
                     {

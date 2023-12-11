@@ -42,11 +42,11 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 var batterySystemData = JsonConvert.DeserializeObject<BatterySystemCapacityDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
                 var batterySystemDataInflux = new Dictionary<string, object>
                     {
-                        { "current_capacity", batterySystemData.CurrentCapacity }
+                        { "currentCapacity", batterySystemData.CurrentCapacity }
                     };
                 var batterySystemDataTags = new Dictionary<string, string>
                     {
-                        { "device_id", batterySystem.Id.ToString() }
+                        { "deviceId", batterySystem.Id.ToString() }
                     };
                 //batterySystemService.AddCapacityMeasurement(batterySystemDataInflux, batterySystemDataTags);
             }

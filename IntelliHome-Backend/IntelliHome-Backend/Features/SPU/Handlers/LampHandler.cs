@@ -47,7 +47,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 };
                 var lampDataTags = new Dictionary<string, string>
                 {
-                        { "device_id", lamp.Id.ToString() }
+                        { "deviceId", lamp.Id.ToString() }
                 };
                 lampService.AddPoint(lampDataInflux, lampDataTags);
             }

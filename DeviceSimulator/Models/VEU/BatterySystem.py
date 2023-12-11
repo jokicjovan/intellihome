@@ -12,5 +12,7 @@ class BatterySystem(SmartDevice):
         self.lock = asyncio.Lock()
 
     async def send_data(self):
-        self.client.publish(self.send_topic, json.dumps({"current_capacity": round(self.current_capacity, 4)}),
+        if not self.is_on:
+            return
+        self.client.publish(self.send_topic, json.dumps({"currentCapacity": round(self.current_capacity, 4)}),
                             retain=False)

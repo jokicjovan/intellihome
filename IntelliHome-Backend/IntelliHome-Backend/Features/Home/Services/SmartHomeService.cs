@@ -11,6 +11,7 @@ using SendGrid.Helpers.Mail;
 using SendGrid;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 namespace IntelliHome_Backend.Features.Home.Services
 {
@@ -20,14 +21,16 @@ namespace IntelliHome_Backend.Features.Home.Services
         private readonly ISmartHomeDataRepository _smartHomeDataRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICityRepository _cityRepository;
+        private readonly ISmartHomeHandler _smartHomeHandler;
 
         public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
-            ISmartHomeDataRepository smartHomeDataRepository)
+            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler)
         {
             _smartHomeRepository = smartHomeRepository;
             _smartHomeDataRepository = smartHomeDataRepository;
             _userRepository = userRepository;
             _cityRepository = cityRepository;
+            _smartHomeHandler = smartHomeHandler;
         }
 
 
