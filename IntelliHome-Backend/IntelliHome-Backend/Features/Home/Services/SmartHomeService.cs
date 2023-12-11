@@ -180,7 +180,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             return _smartHomeDataRepository.GetUsageHistoricalData(id, from, to);
         }
 
-        public void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        public void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _smartHomeDataRepository.AddUsageMeasurement(fields, tags);
         }
