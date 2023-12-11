@@ -2,9 +2,7 @@
 using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Shared.Repositories;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing.Printing;
 
 namespace IntelliHome_Backend.Features.Home.Repositories
 {
@@ -26,6 +24,15 @@ namespace IntelliHome_Backend.Features.Home.Repositories
             _entities.UpdateRange(smartDevices);
             _context.SaveChanges();
             return _entities;
+        }
+
+        public Task<bool> IsUserAllowed(Guid smartDeviceId, Guid userId) {
+            return _entities.AnyAsync(e => e.Id == smartDeviceId && (e.AllowedUsers.Any(user => user.Id == userId) || e.SmartHome.Owner.Id == userId));
+        }
+
+        public Task<SmartDevice> FindWithSmartHome(Guid id)
+        {
+            return _entities.Include(e => e.SmartHome).FirstOrDefaultAsync(e => e.Id == id);
         }
     }
 }

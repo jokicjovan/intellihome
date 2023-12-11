@@ -18,6 +18,7 @@ interface SprinklerRegistrationFormProps {
 }
 
 const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<SprinklerAdditionalFields>({
         PowerPerHour: 1,
     });
@@ -39,7 +40,7 @@ const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({s
     };
     const handleSprinklerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

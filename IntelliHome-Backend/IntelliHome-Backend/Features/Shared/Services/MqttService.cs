@@ -33,7 +33,15 @@ namespace IntelliHome_Backend.Features.Shared.Services
             {
                 try
                 {
-                    if (_topicHandlers.TryGetValue(e.ApplicationMessage.Topic, out var handler))
+                    String topic = e.ApplicationMessage.Topic;
+                    if (topic.Split("/")[0] == "FromDevice")
+                    {
+                        string[] topicSplitted = topic.Split('/');
+                        topicSplitted[1] = "+";
+                        topicSplitted[4] = "+";
+                        topic = string.Join("/", topicSplitted);
+                    }
+                    if (_topicHandlers.TryGetValue(topic, out var handler))
                     {
                         await handler(e);
                     }

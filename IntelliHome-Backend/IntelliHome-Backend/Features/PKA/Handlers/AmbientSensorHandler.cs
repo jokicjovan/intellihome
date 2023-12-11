@@ -1,71 +1,54 @@
-﻿using Data.Models.PKA;
+﻿using Data.Context;
+using Data.Models.PKA;
 using Data.Models.Shared;
+using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Client;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.PKA.Handlers
 {
-    public class AmbientSensorHandler : IAmbientSensorHandler
+    public class AmbientSensorHandler : SmartDeviceHandler, IAmbientSensorHandler
     {
-        private readonly ISimulationsHandler _simualtionsHandler;
-        private readonly IMqttService _mqttService;
-        private readonly IServiceProvider _serviceProvider;
-
-        public AmbientSensorHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler)
+        public AmbientSensorHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext) 
+            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            _simualtionsHandler = simualtionsHandler;
-            _mqttService = mqttService;
-            _serviceProvider = serviceProvider;
+            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.AMBIENTSENSOR}/+", HandleMessageFromDevice);
         }
 
-        public void SubscribeToAmbientSensorsFromDatabase()
+        protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            Console.WriteLine($"{e.ApplicationMessage.ConvertPayloadToString()}");
+            smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+
+            using var scope = serviceProvider.CreateScope();
+
+            var ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
+
+            var ambientSensor = await ambientSensorService.Get(Guid.Parse(e.ApplicationMessage.Topic.Split('/')[4]));
+
+            if (ambientSensor != null)
             {
-                IAmbientSensorService ambientSensorService = scope.ServiceProvider.GetRequiredService<IAmbientSensorService>();
-                IEnumerable<AmbientSensor> ambientSensors = ambientSensorService.GetAllWithHome();
-                foreach (SmartDevice ambientSensor in ambientSensors)
-                {
-                    SubscribeToAmbientSensor($"FromDevice/{ambientSensor.SmartHome.Id}/{ambientSensor.Category}/{ambientSensor.Type}/{ambientSensor.Id}");
-                }
+                var ambientSensorData = JsonConvert.DeserializeObject<AmbientSensorData>(e.ApplicationMessage.ConvertPayloadToString());
+                var ambientSensorDataInflux = new Dictionary<string, object>
+                    {
+                        { "temperature", ambientSensorData.Temperature },
+                        { "humidity", ambientSensorData.Humidity },
+                    };
+                var ambientSensorDataTags = new Dictionary<string, string>
+                    {
+                        { "device_id", ambientSensor.Id.ToString() }
+                    };
+                ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
             }
         }
-
-        private Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
-        {
-            Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
-            return Task.CompletedTask;
-        }
-
-        public async void SubscribeToAmbientSensor(string topic)
-        {
-            await _mqttService.SubscribeAsync(topic, HandleMessageFromDevice);
-        }
-
-        public async void PublishMessageToAmbientSensor(AmbientSensor ambientSensor, string payload)
-        {
-            string topic = $"ToDevice/{ambientSensor.SmartHome.Id}/{ambientSensor.Category}/{ambientSensor.Type}/{ambientSensor.Id}";
-            await _mqttService.PublishAsync(topic, payload);
-        }
-
-        public async Task<bool> AddAmbientSensorToSimulator(AmbientSensor ambientSensor)
-        {
-            var requestBody = new
-            {
-                device_id = ambientSensor.Id,
-                smart_home_id = ambientSensor.SmartHome.Id,
-                device_category = ambientSensor.Category.ToString(),
-                device_type = ambientSensor.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30
-            };
-            return await _simualtionsHandler.AddDeviceToSimulator(requestBody);
-        }
-
     }
 }

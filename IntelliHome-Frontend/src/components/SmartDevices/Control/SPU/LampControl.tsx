@@ -9,17 +9,21 @@ import {
     SwitchProps,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
+import axios from "axios";
+import {environment} from "../../../../security/Environment.tsx";
+import {areDatesEqual} from "@mui/x-date-pickers/internals";
 
-const LampControl = () => {
-    const [brightness,setBrightness]=useState(800)
-    const [threshold,setThreshold]=useState(600)
-    const [isOn,setIsOn]=useState(false)
-    const [isAuto,setIsAuto]=useState(false)
+const LampControl = ({device, setSmartDevice}) => {
+    const [brightness, setBrightness]=useState(device.currentBrightness)
+    const [threshold, setThreshold]= useState(device.brightnessLimit)
+    const [isOn, setIsOn]=useState(device.isOn)
+    const [isAuto, setIsAuto]=useState(device.isAuto)
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
-            setIsOn(e.target.checked)
+            setIsOn(e.target.checked);
+            turnOnDevice(e.target.checked);
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
@@ -72,6 +76,7 @@ const LampControl = () => {
     const SwitchAuto = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isAuto} onChange={(e) => {
             setIsAuto(e.target.checked)
+            setAutoMode(e.target.checked);
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
@@ -121,6 +126,51 @@ const LampControl = () => {
             }),
         },
     }));
+
+    useEffect(() => {
+
+        device.isOn = isOn;
+        device.isAuto = isAuto;
+        device.brightnessLimit = threshold;
+        device.currentBrightness = brightness;
+
+        setSmartDevice(device);
+
+    }, [isOn, isAuto, threshold, brightness]);
+
+
+
+    function turnOnDevice(isOn){
+        console.log(isOn);
+        axios.put(environment + `/api/SmartDevice/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
+            console.log(res.data)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    function setAutoMode(isAuto) {
+        if (!isOn) return;
+        console.log(isAuto);
+        axios.put(environment + `/api/Lamp/ChangeMode?Id=${device.id}&IsAuto=${isAuto}`).then(res => {
+            console.log(res.data)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+
+    function setThresholdLimit(threshold) {
+        setThreshold(threshold)
+        axios.put(environment + `/api/Lamp/ChangeBrightnessLimit?Id=${device.id}&Brightness=${threshold}`).then(res => {
+            console.log(res.data)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+
+
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
                   gridTemplateRows="170px 170px 170px">
 
@@ -145,9 +195,9 @@ const LampControl = () => {
                     <Typography fontSize="40px" fontWeight="700" display="flex" alignItems="flex-end">{threshold}<Typography mb={1} fontSize="20px" >nit</Typography></Typography>
                     <Box display="flex" flexDirection="column">
                         <IconButton
-                            onClick={() => setThreshold(threshold + 50)}><KeyboardArrowUp/></IconButton>
+                            onClick={() => setThresholdLimit(threshold + 50)}><KeyboardArrowUp/></IconButton>
                         <IconButton
-                            onClick={() => setThreshold(threshold - 50)}><KeyboardArrowDown/></IconButton>
+                            onClick={() => setThresholdLimit(threshold - 50)}><KeyboardArrowDown/></IconButton>
                     </Box>
                 </Box>
             </Box>

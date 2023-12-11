@@ -18,6 +18,10 @@ services:
   influxdb:
     image: influxdb
     container_name: influxdb
+    environment:
+      - INFLUXDB_DB=intellihome_influx
+      - INFLUXDB_ADMIN_USER=intellihome_user
+      - INFLUXDB_ADMIN_PASSWORD=intellihome_password
     restart: always
     ports:
       - "8086:8086"
@@ -98,3 +102,6 @@ volumes:
 
 networks:
   mqtt:
+
+
+# FJTFewZ7tzBxZshYcbTOnesAFTAKStg2gGkiEfIBIEKTUooqAtavQtbqPigudIqZ_mBEifv_Q425XBIiBF1ByQ==

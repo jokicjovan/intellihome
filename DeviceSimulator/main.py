@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from DTOs.SmartDeviceDTO import SmartDeviceDTO
-from Models.SmartDeviceManager import SmartDeviceManager
+from DTOs.SmartDeviceShortDTO import SmartDeviceShortDTO
+from Models.SmartHomesManager import SmartHomesManager
 
 app = FastAPI()
-devices_manager = SmartDeviceManager()
+smart_home_manager = SmartHomesManager()
 
 
 @app.on_event("startup")
@@ -11,25 +12,25 @@ async def startup_event():
     pass
 
 
-@app.post("/turn-on-device/{device_id}")
-async def turn_on_device(device_id: str):
-    devices_manager.turn_on_device(device_id)
-    return {"message": f"Smart device turned on: {device_id}"}
+@app.post("/turn-on-device")
+async def turn_on_device(device_short_dto: SmartDeviceShortDTO):
+    smart_home_manager.turn_on_device_in_home(device_short_dto)
+    return {"message": f"Smart device turned on: {device_short_dto.device_id}"}
 
 
-@app.post("/turn-off-device/{device_id}")
-async def turn_on_device(device_id: str):
-    devices_manager.turn_off_device(device_id)
-    return {"message": f"Smart device turned off: {device_id}"}
+@app.post("/turn-off-device")
+async def turn_on_device(device_short_dto: SmartDeviceShortDTO):
+    smart_home_manager.turn_off_device_in_home(device_short_dto)
+    return {"message": f"Smart device turned off: {device_short_dto.device_id}"}
 
 
 @app.post("/add-device")
-async def add_device(smartDeviceDTO: SmartDeviceDTO):
-    devices_manager.add_device(smartDeviceDTO)
-    return {"message": f"Smart device added: {smartDeviceDTO.device_id}"}
+async def add_device(device_dto: SmartDeviceDTO):
+    smart_home_manager.add_device_to_home(device_dto)
+    return {"message": f"Smart device added: {device_dto.device_id}"}
 
 
-@app.post("/remove-device/{device_id}")
-async def remove_device(device_id: str):
-    devices_manager.remove_device(device_id)
-    return {"message": f"Smart device removed: {device_id}"}
+@app.post("/remove-device")
+async def remove_device(device_short_dto: SmartDeviceShortDTO):
+    smart_home_manager.remove_device_from_home(device_short_dto)
+    return {"message": f"Smart device removed: {device_short_dto.device_id}"}

@@ -19,6 +19,7 @@ interface VehicleChargerRegistrationFormProps {
 }
 
 const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<VehicleChargerAdditionalFields>({
         Power: 1,
         NumberOfChargingPoints: 2
@@ -42,7 +43,7 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
 
     const handleVehicleChargerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VehicleCharger)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VehicleCharger)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

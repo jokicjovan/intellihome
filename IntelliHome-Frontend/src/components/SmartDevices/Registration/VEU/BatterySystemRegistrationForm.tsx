@@ -18,6 +18,7 @@ interface BatterySystemRegistrationFormProps {
 }
 
 const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<BatterySystemAdditionalFields>({
         Capacity: 10,
     });
@@ -40,7 +41,7 @@ const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProp
 
     const handleBatterySystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        SmartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BatterySystem)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BatterySystem)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

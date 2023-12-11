@@ -4,6 +4,7 @@ using Data.Models.Users;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace IntelliHome_Backend.Features.Home.Repositories
 {
@@ -50,6 +51,13 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .Include(s => s.City)
                 .Where(s => s.IsApproved == false)
                 .ToListAsync();
+        }
+
+        public Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId)
+        {
+            return _entities
+                .Where(e => e.Id == smartHomeId && (e.Owner.Id == userId || e.SmartDevices.Any(device => device.AllowedUsers.Any(user => user.Id == userId))))
+                .AnyAsync();
         }
     }
 }

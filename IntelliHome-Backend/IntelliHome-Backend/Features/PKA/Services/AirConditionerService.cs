@@ -1,4 +1,6 @@
 ﻿using Data.Models.PKA;
+using Data.Models.Shared;
+using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 
@@ -7,21 +9,27 @@ namespace IntelliHome_Backend.Features.PKA.Services
     public class AirConditionerService : IAirConditionerService
     {
         private readonly IAirConditionerRepository _airConditionerRepository;
+        private readonly IAirConditionerHandler _airConditionerHandler;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository)
+        public AirConditionerService(IAirConditionerRepository airConditionerRepository, IAirConditionerHandler airConditionerHandler)
         {
             _airConditionerRepository = airConditionerRepository;
+            _airConditionerHandler = airConditionerHandler;
         }
 
         public async Task<AirConditioner> Create(AirConditioner entity)
         {
             entity = await _airConditionerRepository.Create(entity);
-            //bool success = await _deviceConnectionService.ConnectWithSmartDevice(entity);
-            //if (success)
-            //{
-            //    entity.IsConnected = true;
-            //    await _airConditionerRepository.Update(entity);
-            //}
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+            {
+                { "power_per_hour", entity.PowerPerHour},
+            };
+            bool success = await _airConditionerHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            if (success)
+            {
+                entity.IsConnected = true;
+                await _airConditionerRepository.Update(entity);
+            }
             return entity;
         }
 
