@@ -5,6 +5,10 @@ import AirConditionerControl from "../PKA/AirConditionerControl";
 import LampControl from "../SPU/LampControl";
 import SolarPanelsControl from "../VEU/SolarPanelsControl";
 import GateControl from "../SPU/GateControl";
+import SmartDeviceReportValues from "./SmartDeviceReportValues";
+import SmartDeviceReportAction from "./SmartDeviceReportAction";
+import dayjs from "dayjs";
+import BatteryControl from "../VEU/BatteryControl";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 import {useParams} from "react-router-dom";
@@ -59,12 +63,19 @@ const SmartDeviceMain = () => {
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDevice={setSmartDevice}/> :
                         deviceType == "SolarPanel" ? <SolarPanelsControl/> :
                             deviceType=="Gate"?<GateControl/>:
-                                /*deviceType=="Battery"?<BatteryControl/>:
-                                    <></>*/
+                                deviceType=="Battery"?<BatteryControl/>:
                             <></>
 
 
-            :/*selectedTab == 2?<SmartDeviceReport/>:*/ <></>}
+            :selectedTab == 2?<SmartDeviceReportAction inputData={[
+                {action: "some actino", by: "Vukasin", date: new Date(dayjs().subtract(1, "hour").toString())},
+                {action: "some actino", by: "Marko", date: new Date(dayjs().subtract(5, "hour").toString())},
+                {action: "some actino", by: "Vukasin", date: new Date(dayjs().subtract(1, "day").toString())},
+                {action: "some actino", by: "Vukasin", date: new Date(dayjs().subtract(3, "day").toString())},
+                {action: "some actino", by: "Dusan", date: new Date(dayjs().toString())},
+                {action: "some actino", by: "Vukasin", date: new Date(dayjs().toString())},
+                {action: "some actino", by: "Vukasin", date: new Date(dayjs().toString())},
+            ]}/>: <></>}
 
     </>
 }
