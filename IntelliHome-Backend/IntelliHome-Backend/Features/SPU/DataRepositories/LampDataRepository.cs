@@ -19,7 +19,13 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
         public LampData GetLastData(Guid id)
         {
             var table = _influxRepository.GetLastData("lamp", id).Result;
-
+            if (table.Records.Count == 0)
+            {
+                return new LampData
+                {
+                    CurrentBrightness = 0.0,
+                };
+            }
             LampData lampData = ConvertToLampData(table);
 
             return new LampData
@@ -47,7 +53,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
-            var currentBrightnessRecord = rows.FirstOrDefault(r => r.Row.Contains("current_brightness"));
+            var currentBrightnessRecord = rows.FirstOrDefault(r => r.Row.Contains("currentBrightness"));
 
             double currentBrightness = currentBrightnessRecord != null ? Convert.ToDouble(currentBrightnessRecord.GetValueByKey("_value")) : 0.0;
 
