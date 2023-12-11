@@ -2,6 +2,7 @@
 using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using IntelliHome_Backend.Features.VEU.DTOs;
 
 namespace IntelliHome_Backend.Features.Home.Services.Interfaces
 {
@@ -14,5 +15,7 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task DeleteSmartHome(Guid id, Guid userId, String reason);
         Task<SmartHomePaginatedDTO> GetSmartHomesForApproval(PageParametersDTO pageParameters);
         Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId);
+        List<SmartHomeUsageDataDTO> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to);
+        void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
     }
 }

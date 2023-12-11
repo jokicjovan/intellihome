@@ -11,7 +11,7 @@ using System.Security.Claims;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
-namespace IntelliHome_Backend.Features.Home
+namespace IntelliHome_Backend.Features.Home.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -34,7 +34,7 @@ namespace IntelliHome_Backend.Features.Home
                 return BadRequest("Cookie error");
             }
             ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
-            String username = identity.FindFirst(ClaimTypes.Name).Value;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             GetSmartHomeDTO smartHome;
             try
             {
@@ -65,7 +65,7 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters, [FromQuery] String search)
+        public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters, [FromQuery] string search)
         {
             // TODO: Get user from token
             AuthenticateResult result = await HttpContext.AuthenticateAsync();
@@ -74,7 +74,7 @@ namespace IntelliHome_Backend.Features.Home
                 return BadRequest("Cookie error");
             }
             ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
-            String username = identity.FindFirst(ClaimTypes.Name).Value;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             SmartHomePaginatedDTO smartHomes;
             try
             {
@@ -134,7 +134,7 @@ namespace IntelliHome_Backend.Features.Home
         // TODO: Add authorization, just admin can delete smart homes or owner of the smart home
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> DeleteSmartHome(Guid id, Guid userId, String reason)
+        public async Task<ActionResult> DeleteSmartHome(Guid id, Guid userId, string reason)
         {
             try
             {

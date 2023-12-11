@@ -7,32 +7,30 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
 {
     public class SolarPanelSystemDataRepository : ISolarPanelSystemDataRepository
     {
-        private readonly InfluxRepository _context;
+        private readonly InfluxRepository _influxRepository;
 
-        public SolarPanelSystemDataRepository(InfluxRepository context)
+        public SolarPanelSystemDataRepository(InfluxRepository influxRepository)
         {
-            _context = context;
+            _influxRepository = influxRepository;
+        }
+        public void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _influxRepository.WriteToInfluxAsync("solar_panel_system_production", fields, tags);
         }
 
-        public List<SolarPanelSystemDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        public List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _context.GetHistoricalData(id, from, to).Result;
-            return result.Select(ConvertToSolarPanelSystemDataDTO).ToList();
+            var result = _influxRepository.GetHistoricalData("solar_panel_system_production", id, from, to).Result;
+            return result.Select(ConvertToSolarPanelSystemProductionDataDTO).ToList();
         }
 
-
-        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        public SolarPanelSystemProductionDataDTO GetLastProductionData(Guid id)
         {
-            _context.WriteToInfluxAsync("battery_system", fields, tags);
+            var table = _influxRepository.GetLastData("solar_panel_system_production", id).Result;
+            return ConvertToSolarPanelSystemProductionDataDTO(table);
         }
 
-        public SolarPanelSystemDataDTO GetLastData(Guid id)
-        {
-            var table = _context.GetLastData(id).Result;
-            return ConvertToSolarPanelSystemDataDTO(table);
-        }
-
-        private SolarPanelSystemDataDTO ConvertToSolarPanelSystemDataDTO(FluxTable table)
+        private SolarPanelSystemProductionDataDTO ConvertToSolarPanelSystemProductionDataDTO(FluxTable table)
         {
             var rows = table.Records;
             DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
@@ -42,7 +40,7 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("production_per_minute"));
             double productionPerMinute = productionPerMinuteRecord != null ? Convert.ToDouble(productionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
-            return new SolarPanelSystemDataDTO
+            return new SolarPanelSystemProductionDataDTO
             {
                 Timestamp = timestamp,
                 ProductionPerMinute = productionPerMinute

@@ -79,7 +79,6 @@ builder.Services.AddSingleton(provider =>
     StreamReader sr = new("InfluxDBToken.txt");
     string token = sr.ReadLine();
 
-
     return new InfluxDbConnectionPool(objectPoolProvider, url, token, organization, bucket);
 });
 

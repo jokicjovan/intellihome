@@ -63,7 +63,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             throw new NotImplementedException();
         }
 
-        public async Task<BatterySystemDTO> GetWithData(Guid id)
+        public async Task<BatterySystemDTO> GetWithCapacityData(Guid id)
         {
             BatterySystem batterySystem = await _batterySystemRepository.Read(id);
             BatterySystemDTO batterySystemDTO = new BatterySystemDTO
@@ -76,25 +76,23 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 Type = batterySystem.Type
             };
 
-            BatterySystemDataDTO batterySystemDataDTO = _batterySystemDataRepository.GetLastData(id);
+            BatterySystemCapacityDataDTO batterySystemDataDTO = _batterySystemDataRepository.GetLastCapacityData(id);
             if (batterySystemDataDTO != null)
             {
                 batterySystemDTO.CurrentCapacity = batterySystemDataDTO.CurrentCapacity;
-                batterySystemDTO.ConsumptionPerMinute = batterySystemDataDTO.ConsumptionPerMinute;
-                batterySystemDTO.GridPerMinute = batterySystemDataDTO.GridPerMinute;
             }
 
             return batterySystemDTO;
         }
 
-        public List<BatterySystemDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        public List<BatterySystemCapacityDataDTO> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            return _batterySystemDataRepository.GetHistoricalData(id, from, to);
+            return _batterySystemDataRepository.GetCapacityHistoricalData(id, from, to);
         }
 
-        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        public void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _batterySystemDataRepository.AddPoint(fields, tags);
+            _batterySystemDataRepository.AddCapacityMeasurement(fields, tags);
         }
     }
 }

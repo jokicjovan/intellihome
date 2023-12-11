@@ -30,14 +30,15 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 Console.WriteLine("Error handling topic");
                 return;
             }
-            _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+            string solarPanelSystemId = topic_parts.Last();
+            _ = smartDeviceHubContext.Clients.Group(solarPanelSystemId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
             var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
-            var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(topic_parts[4]));
+            var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(solarPanelSystemId));
             if (solarPanelSystem != null)
             {
-                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
                 var solarPanelSystemDataInflux = new Dictionary<string, object>
                     {
                         { "production_per_minute", solarPanelSystemData.ProductionPerMinute}
@@ -46,7 +47,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     {
                         { "device_id", solarPanelSystem.Id.ToString() }
                     };
-                //solarPanelSystemService.AddPoint(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+                //solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
             }
         }
     }

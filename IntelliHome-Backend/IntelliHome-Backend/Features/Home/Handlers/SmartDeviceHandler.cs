@@ -1,12 +1,10 @@
 ﻿using Data.Models.Shared;
-using Data.Models.SPU;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
-using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 namespace IntelliHome_Backend.Features.Home.Handlers
@@ -64,14 +62,6 @@ namespace IntelliHome_Backend.Features.Home.Handlers
         protected virtual Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             return Task.CompletedTask;
-        }
-
-
-        public void ChangeBrightnessLimit(Lamp lamp, double brightness)
-        {
-            string payload = JsonConvert.SerializeObject(new { brightness_limit = brightness });
-
-            PublishMessageToSmartDevice(lamp, payload);
         }
     }
 }
