@@ -16,12 +16,6 @@ class SignalRSmartHomeService {
             .build();
 
         return this.connection.start()
-            .then(() => {
-                console.log('SignalR connection established');
-            })
-            .catch((error) => {
-                console.error('SignalR connection error: ', error);
-            });
     }
 
     public receiveSmartHomeSubscriptionResult(callback: (data: any) => void): void {
@@ -32,24 +26,16 @@ class SignalRSmartHomeService {
         }
     }
 
-    public subscribeToSmartHome(smartHomeId: string): void {
+    public subscribeToSmartHome(smartHomeId: string): Promise<void> {
         if (this.connection) {
-            this.connection.invoke('SubscribeToSmartHome', smartHomeId);
+            return this.connection.invoke('SubscribeToSmartHome', smartHomeId);
         }
     }
 
     public stopConnection(): Promise<void> {
         if (this.connection) {
             return this.connection.stop()
-                .then(() => {
-                    console.log('SignalR connection stopped');
-                })
-                .catch((error) => {
-                    console.error('Error stopping SignalR connection: ', error);
-                });
         }
-
-        return Promise.resolve();
     }
 }
 

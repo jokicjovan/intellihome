@@ -23,8 +23,11 @@ class SmartHome:
         self.smart_devices = {}
         self.battery_systems = []
         self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
+        self.home_usage_topic = f"FromSmartHouse/Consumption/{smart_home_id}"
         self.client = mqtt.Client(client_id=smart_home_id, clean_session=True)
         self.event_loop = asyncio.get_event_loop()
+        self.current_production = 0
+        self.current_consumption = 0
 
     def add_device(self, device_dto: SmartDeviceDTO):
         device_type_mapping = {
@@ -44,7 +47,6 @@ class SmartHome:
                                     device_dto.device_type, **device_dto.kwargs)
 
         smart_device.setup_connection(device_dto.host, device_dto.port, device_dto.keepalive)
-        # smart_device.turn_on()
         self.smart_devices[smart_device.device_id] = smart_device
         if device_dto.device_type == DeviceType.BatterySystem:
             self.battery_systems.append(smart_device)
@@ -68,32 +70,55 @@ class SmartHome:
             self.event_loop.create_task(smart_device.turn_off())
 
     def setup_connection(self, host, port, keepalive):
-        self.client.on_message = self.on_device_data_receive
+        self.client.on_message = self.on_device_usage_receive
         self.client.on_connect = self.on_home_connect
         self.client.connect(host, port, keepalive=keepalive)
         self.client.loop_start()
 
     def on_home_connect(self, client, userdata, flags, rc):
         self.client.subscribe(topic=self.device_topic)
+        self.event_loop.create_task(self.send_house_usage())
 
-    def on_device_data_receive(self, client, user_data, msg):
-        # asyncio.run_coroutine_threadsafe(self.handle_message_from_device(msg), loop=self.event_loop)
+    def on_device_usage_receive(self, client, user_data, msg):
         self.event_loop.create_task(self.handle_message_from_device(msg))
 
     async def handle_message_from_device(self, msg):
         topic_parts = msg.topic.split("/")
         data = json.loads(msg.payload.decode())
-        if self.battery_systems:
-            if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
-                total_production = data.get("production_per_minute")
-                production_by_battery = total_production / len(self.battery_systems)
-                for battery_system in self.battery_systems:
-                    async with battery_system.lock:
-                        battery_system.current_production += production_by_battery
+        if topic_parts[2] == DeviceCategory.VEU.value and topic_parts[3] == DeviceType.SolarPanelSystem:
+            self.current_production += data.get("production_per_minute")
+        elif topic_parts[3] != DeviceType.BatterySystem:
+            self.current_consumption += data.get("consumption_per_minute")
 
-            elif topic_parts[3] != DeviceType.BatterySystem:
-                total_consumption = data.get("consumption_per_minute")
-                consumption_by_battery = total_consumption / len(self.battery_systems)
-                for battery_system in self.battery_systems:
+    async def send_house_usage(self):
+        while True:
+            grid_per_minute = 0
+            turned_on_batteries = [battery_system for battery_system in self.battery_systems if battery_system.is_on]
+            if len(turned_on_batteries) > 0:
+                consumption_per_battery = self.current_consumption / len(turned_on_batteries)
+                production_per_battery = self.current_production / len(turned_on_batteries)
+                for battery_system in turned_on_batteries:
                     async with battery_system.lock:
-                        battery_system.current_consumption += consumption_by_battery
+                        difference = production_per_battery - consumption_per_battery
+                        expected_charge = battery_system.current_capacity + difference
+                        if expected_charge > battery_system.capacity:
+                            grid_per_minute += -(expected_charge - battery_system.capacity)
+                            battery_system.current_capacity = battery_system.capacity
+                        elif expected_charge < 0:
+                            grid_per_minute += -expected_charge
+                            battery_system.current_capacity = 0
+                        else:
+                            battery_system.current_capacity += difference
+                        asyncio.create_task(battery_system.send_data())
+            else:
+                grid_per_minute = -(self.current_production - self.current_consumption)
+
+            # grid pozitivan, preuzeto iz elektrodistribucije
+            # grud negativan, vraceno elektrodistribuciji
+            self.client.publish(self.home_usage_topic,
+                                json.dumps({"production_per_minute": round(self.current_production, 4),
+                                            "consumption_per_minute": round(self.current_consumption, 4),
+                                            "grid_per_minute": round(grid_per_minute, 4)}), retain=False)
+            self.current_production = 0
+            self.current_consumption = 0
+            await asyncio.sleep(10)

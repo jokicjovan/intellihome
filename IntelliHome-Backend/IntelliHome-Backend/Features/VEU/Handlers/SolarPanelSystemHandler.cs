@@ -32,22 +32,22 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             }
             _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
-            //using var scope = serviceProvider.CreateScope();
-            //var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
-            //var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(topic_parts[4]));
-            //if (solarPanelSystem != null)
-            //{
-            //    var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            //    var solarPanelSystemDataInflux = new Dictionary<string, object>
-            //        {
-            //            { "production_per_minute", solarPanelSystemData.ProductionPerMinute}
-            //        };
-            //    var solarPanelSystemDataTags = new Dictionary<string, string>
-            //        {
-            //            { "device_id", solarPanelSystem.Id.ToString() }
-            //        };
-            //    solarPanelSystemService.AddPoint(solarPanelSystemDataInflux, solarPanelSystemDataTags);
-            //}
+            using var scope = serviceProvider.CreateScope();
+            var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
+            var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(topic_parts[4]));
+            if (solarPanelSystem != null)
+            {
+                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+                var solarPanelSystemDataInflux = new Dictionary<string, object>
+                    {
+                        { "production_per_minute", solarPanelSystemData.ProductionPerMinute}
+                    };
+                var solarPanelSystemDataTags = new Dictionary<string, string>
+                    {
+                        { "device_id", solarPanelSystem.Id.ToString() }
+                    };
+                //solarPanelSystemService.AddPoint(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+            }
         }
     }
 }

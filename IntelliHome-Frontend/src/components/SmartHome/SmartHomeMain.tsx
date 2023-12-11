@@ -23,7 +23,6 @@ import VehicleChargerRegistrationForm from "../SmartDevices/Registration/VEU/Veh
 import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/VehicleGateRegistrationForm.tsx";
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
-import SignalRSmartDeviceService from "../../services/smartDevices/SignalRSmartDeviceService.ts";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
 
 
@@ -53,14 +52,16 @@ const SmartHomeMain = ( {smartHomeId} ) => {
 
         signalRSmartHomeService.startConnection().then(() =>
             {
+                console.log('SignalR connection established');
                 signalRSmartHomeService.subscribeToSmartHome(smartHomeId)
                 signalRSmartHomeService.receiveSmartHomeSubscriptionResult(subscriptionResultCallback);
             }
         );
 
         return () => {
-            console.log('Cleaning up SignalR connections...');
-            signalRSmartHomeService.stopConnection();
+            signalRSmartHomeService.stopConnection().then(() => {
+                console.log('SignalR connection stopped...');
+            });
         }
     }, []);
 

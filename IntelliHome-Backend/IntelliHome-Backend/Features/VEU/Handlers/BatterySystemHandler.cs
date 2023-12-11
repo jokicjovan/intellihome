@@ -32,24 +32,24 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             }
             _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
-            //using var scope = serviceProvider.CreateScope();
-            //var batterySystemService = scope.ServiceProvider.GetRequiredService<IBatterySystemService>();
-            //var batterySystem = await batterySystemService.Get(Guid.Parse(topic_parts[4]));
-            //if (batterySystem != null)
-            //{
-            //    var batterySystemData = JsonConvert.DeserializeObject<BatterySystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            //    var batterySystemDataInflux = new Dictionary<string, object>
-            //        {
-            //            { "current_capacity", batterySystemData.CurrentCapacity },
-            //            { "consumption_per_minute", batterySystemData.ConsumptionPerMinute },
-            //            { "grid_per_minute", batterySystemData.GridPerMinute }
-            //        };
-            //    var batterySystemDataTags = new Dictionary<string, string>
-            //        {
-            //            { "device_id", batterySystem.Id.ToString() }
-            //        };
-            //    batterySystemService.AddPoint(batterySystemDataInflux, batterySystemDataTags);
-            //}
+            using var scope = serviceProvider.CreateScope();
+            var batterySystemService = scope.ServiceProvider.GetRequiredService<IBatterySystemService>();
+            var batterySystem = await batterySystemService.Get(Guid.Parse(topic_parts[4]));
+            if (batterySystem != null)
+            {
+                var batterySystemData = JsonConvert.DeserializeObject<BatterySystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+                var batterySystemDataInflux = new Dictionary<string, object>
+                    {
+                        { "current_capacity", batterySystemData.CurrentCapacity },
+                        { "consumption_per_minute", batterySystemData.ConsumptionPerMinute },
+                        { "grid_per_minute", batterySystemData.GridPerMinute }
+                    };
+                var batterySystemDataTags = new Dictionary<string, string>
+                    {
+                        { "device_id", batterySystem.Id.ToString() }
+                    };
+                //batterySystemService.AddPoint(batterySystemDataInflux, batterySystemDataTags);
+            }
         }
     }
 }
