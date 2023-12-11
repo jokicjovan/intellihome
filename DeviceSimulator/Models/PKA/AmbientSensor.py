@@ -15,7 +15,7 @@ class AmbientSensor(SmartDevice):
             if not self.is_on:
                 break
             self.client.publish(self.send_topic, json.dumps({"temperature": i, "humidity": 60,
-                                                             "consumption_per_minute": round(self.power_per_hour / 60,
-                                                                                             4)}), retain=False)
+                                                             "consumptionPerMinute": round(self.power_per_hour / 60,
+                                                                                           4)}), retain=False)
             i += 1
             await asyncio.sleep(10)

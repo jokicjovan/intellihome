@@ -97,11 +97,10 @@ builder.Services.AddScoped(provider =>
 
 //Data repositories
 builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
+builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
 builder.Services.AddScoped<ISolarPanelSystemDataRepository, SolarPanelSystemDataRepository>();
 builder.Services.AddScoped<ISmartHomeDataRepository, SmartHomeDataRepository>();
-
-builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

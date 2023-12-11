@@ -15,18 +15,18 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
         }
         public void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _influxRepository.WriteToInfluxAsync("battery_system_capacity", fields, tags);
+            _influxRepository.WriteToInfluxAsync("batterySystemCapacity", fields, tags);
         }
 
         public List<BatterySystemCapacityDataDTO> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _influxRepository.GetHistoricalData("battery_system_capacity", id, from, to).Result;
+            var result = _influxRepository.GetHistoricalData("batterySystemCapacity", id, from, to).Result;
             return result.Select(ConvertToBatterySystemCapacityDataDTO).ToList();
         }
 
         public BatterySystemCapacityDataDTO GetLastCapacityData(Guid id)
         {
-            var table = _influxRepository.GetLastData("battery_system_capacity", id).Result;
+            var table = _influxRepository.GetLastData("batterySystemCapacity", id).Result;
             return ConvertToBatterySystemCapacityDataDTO(table);
         }
 
@@ -37,7 +37,7 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
-            var currentCapacityRecord = rows.FirstOrDefault(r => r.Row.Contains("current_capacity"));
+            var currentCapacityRecord = rows.FirstOrDefault(r => r.Row.Contains("currentCapacity"));
             double currentCapacity = currentCapacityRecord != null ? Convert.ToDouble(currentCapacityRecord.GetValueByKey("_value")) : 0.0;
 
             return new BatterySystemCapacityDataDTO {

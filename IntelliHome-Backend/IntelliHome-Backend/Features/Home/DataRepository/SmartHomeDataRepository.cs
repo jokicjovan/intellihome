@@ -15,18 +15,18 @@ namespace IntelliHome_Backend.Features.Home.DataRepository
         }
         public void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _influxRepository.WriteToInfluxAsync("smart_home_usage", fields, tags);
+            _influxRepository.WriteToInfluxAsync("smartHomeUsage", fields, tags);
         }
 
         public List<SmartHomeUsageDataDTO> GetUsageHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _influxRepository.GetHistoricalData("smart_home_usage", id, from, to).Result;
+            var result = _influxRepository.GetHistoricalData("smartHomeUsage", id, from, to).Result;
             return result.Select(ConvertToSmartHomeUsageDataDTO).ToList();
         }
 
         public SmartHomeUsageDataDTO GetLastUsageData(Guid id)
         {
-            var table = _influxRepository.GetLastData("smart_home_usage", id).Result;
+            var table = _influxRepository.GetLastData("smartHomeUsage", id).Result;
             return ConvertToSmartHomeUsageDataDTO(table);
         }
 
@@ -37,13 +37,13 @@ namespace IntelliHome_Backend.Features.Home.DataRepository
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
-            var consumptionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("production_per_minute"));
+            var consumptionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
             double consumptionPerMinute = consumptionPerMinuteRecord != null ? Convert.ToDouble(consumptionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
-            var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("production_per_minute"));
+            var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
             double productionPerMinute = productionPerMinuteRecord != null ? Convert.ToDouble(productionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
-            var gridPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("production_per_minute"));
+            var gridPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
             double gridPerMinute = gridPerMinuteRecord != null ? Convert.ToDouble(gridPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
             return new SmartHomeUsageDataDTO

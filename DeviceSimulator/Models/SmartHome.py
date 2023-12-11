@@ -23,7 +23,7 @@ class SmartHome:
         self.smart_devices = {}
         self.battery_systems = []
         self.device_topic = f"FromDevice/{smart_home_id}/+/+/+"
-        self.home_usage_topic = f"FromSmartHome/Usage/{smart_home_id}"
+        self.home_usage_topic = f"FromSmartHome/{smart_home_id}/Usage"
         self.client = mqtt.Client(client_id=smart_home_id, clean_session=True)
         self.event_loop = asyncio.get_event_loop()
         self.current_production = 0
@@ -116,9 +116,9 @@ class SmartHome:
             # grid pozitivan, preuzeto iz elektrodistribucije
             # grud negativan, vraceno elektrodistribuciji
             self.client.publish(self.home_usage_topic,
-                                json.dumps({"production_per_minute": round(self.current_production, 4),
-                                            "consumption_per_minute": round(self.current_consumption, 4),
-                                            "grid_per_minute": round(grid_per_minute, 4)}), retain=False)
+                                json.dumps({"productionPerMinute": round(self.current_production, 4),
+                                            "consumptionPerMinute": round(self.current_consumption, 4),
+                                            "gridPerMinute": round(grid_per_minute, 4)}), retain=False)
             self.current_production = 0
             self.current_consumption = 0
             await asyncio.sleep(10)

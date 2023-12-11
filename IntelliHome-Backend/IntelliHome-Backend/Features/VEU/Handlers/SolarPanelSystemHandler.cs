@@ -41,11 +41,11 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
                 var solarPanelSystemDataInflux = new Dictionary<string, object>
                     {
-                        { "production_per_minute", solarPanelSystemData.ProductionPerMinute}
+                        { "productionPerMinute", solarPanelSystemData.ProductionPerMinute}
                     };
                 var solarPanelSystemDataTags = new Dictionary<string, string>
                     {
-                        { "device_id", solarPanelSystem.Id.ToString() }
+                        { "deviceId", solarPanelSystem.Id.ToString() }
                     };
                 //solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
             }

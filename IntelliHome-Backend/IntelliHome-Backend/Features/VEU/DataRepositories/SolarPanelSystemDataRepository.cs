@@ -15,18 +15,18 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
         }
         public void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _influxRepository.WriteToInfluxAsync("solar_panel_system_production", fields, tags);
+            _influxRepository.WriteToInfluxAsync("solarPanelSystemProduction", fields, tags);
         }
 
         public List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _influxRepository.GetHistoricalData("solar_panel_system_production", id, from, to).Result;
+            var result = _influxRepository.GetHistoricalData("solarPanelSystemProduction", id, from, to).Result;
             return result.Select(ConvertToSolarPanelSystemProductionDataDTO).ToList();
         }
 
         public SolarPanelSystemProductionDataDTO GetLastProductionData(Guid id)
         {
-            var table = _influxRepository.GetLastData("solar_panel_system_production", id).Result;
+            var table = _influxRepository.GetLastData("solarPanelSystemProduction", id).Result;
             return ConvertToSolarPanelSystemProductionDataDTO(table);
         }
 
@@ -37,7 +37,7 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
-            var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("production_per_minute"));
+            var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
             double productionPerMinute = productionPerMinuteRecord != null ? Convert.ToDouble(productionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
             return new SolarPanelSystemProductionDataDTO
