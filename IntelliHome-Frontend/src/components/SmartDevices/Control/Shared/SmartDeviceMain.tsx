@@ -43,8 +43,7 @@ const SmartDeviceMain = () => {
             result = JSON.parse(result);
             setSmartDevice(prevSmartDevice => ({
                 ...prevSmartDevice,
-                currentBrightness: result.currentBrightness,
-                isWorking: result.isWorking,
+                ...result
             }));
 
         }
