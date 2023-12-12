@@ -2,6 +2,7 @@ import {Box, Typography} from "@mui/material";
 import React from "react";
 import {environment} from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
+import smartDeviceType, {getSmartDeviceTypeValueByKey, getValueByKey} from "../../models/enums/SmartDeviceType.ts";
 
 
 const SmartDeviceCard = (props) => {
@@ -24,7 +25,8 @@ const SmartDeviceCard = (props) => {
 
 
     function navigateToSmartDevice() {
-        navigate(`/smartDevice/${smartDeviceTypes[smartDevice.type]}/${smartDevice.id}`);
+        let type = getSmartDeviceTypeValueByKey(smartDevice.type);
+        navigate(`/smartDevice/${type}/${smartDevice.id}`);
     }
 
 

@@ -22,7 +22,7 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         [Route("{smartHomeId:Guid}")]
         public async Task<ActionResult> GetSmartDevicesForHome([FromRoute] Guid smartHomeId, [FromQuery] PageParametersDTO pageParameters)
         {
-            (IEnumerable<SmartDevice>, int) resultTuple = await _smartDeviceService.GetPagedSmartDevicesForSmartHome(smartHomeId, pageParameters.PageNumber, pageParameters.PageSize);
+            (IEnumerable<SmartDeviceDTO>, int) resultTuple = await _smartDeviceService.GetPagedSmartDevicesForSmartHome(smartHomeId, pageParameters.PageNumber, pageParameters.PageSize);
             SmartDevicesPaginatedDTO dto = new SmartDevicesPaginatedDTO
             {
                 SmartDevices = resultTuple.Item1,

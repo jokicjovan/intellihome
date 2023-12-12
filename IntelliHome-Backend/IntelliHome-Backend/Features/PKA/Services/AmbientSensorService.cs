@@ -29,8 +29,8 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 Name = ambientSensor.Name,
                 IsConnected = ambientSensor.IsConnected,
                 IsOn = ambientSensor.IsOn,
-                Category = ambientSensor.Category,
-                Type = ambientSensor.Type,
+                Category = ambientSensor.Category.ToString(),
+                Type = ambientSensor.Type.ToString(),
                 PowerPerHour = ambientSensor.PowerPerHour,
             };
 

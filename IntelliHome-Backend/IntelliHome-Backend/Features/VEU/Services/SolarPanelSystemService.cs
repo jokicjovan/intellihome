@@ -74,8 +74,8 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 Name = solarPanelSystem.Name,
                 IsConnected = solarPanelSystem.IsConnected,
                 IsOn = solarPanelSystem.IsOn,
-                Category = solarPanelSystem.Category,
-                Type = solarPanelSystem.Type,
+                Category = solarPanelSystem.Category.ToString(),
+                Type = solarPanelSystem.Type.ToString(),
                 Area = solarPanelSystem.Area,
                 Efficiency = solarPanelSystem.Efficiency
             };

@@ -48,8 +48,8 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 Name = lamp.Name,
                 IsConnected = lamp.IsConnected,
                 IsOn = lamp.IsOn,
-                Category = lamp.Category,
-                Type = lamp.Type,
+                Category = lamp.Category.ToString(),
+                Type = lamp.Type.ToString(),
                 PowerPerHour = lamp.PowerPerHour,
                 BrightnessLimit = lamp.BrightnessLimit,
             };

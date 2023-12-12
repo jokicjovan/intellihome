@@ -72,8 +72,8 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 Name = batterySystem.Name,
                 IsConnected = batterySystem.IsConnected,
                 IsOn = batterySystem.IsOn,
-                Category = batterySystem.Category,
-                Type = batterySystem.Type,
+                Category = batterySystem.Category.ToString(),
+                Type = batterySystem.Type.ToString(),
                 Capacity = batterySystem.Capacity,
             };
 
