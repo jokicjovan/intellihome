@@ -22,7 +22,6 @@ const SmartDeviceMain = () => {
     const [smartDevice, setSmartDevice] = useState({});
 
 
-
     function getSmartDevice() {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
             setSmartDevice(res.data)
@@ -31,7 +30,6 @@ const SmartDeviceMain = () => {
             console.log(err)
         });
     }
-
 
     useEffect(() => {
         if(smartDeviceId)
@@ -45,7 +43,6 @@ const SmartDeviceMain = () => {
                 ...prevSmartDevice,
                 ...result
             }));
-
         }
 
         const resultCallback = (result) => {
@@ -101,9 +98,9 @@ const SmartDeviceMain = () => {
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "SolarPanel" ? <SolarPanelsControl/> :
+                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
                             deviceType=="Gate"?<GateControl/>:
-                                deviceType=="Battery"?<BatteryControl/>:
+                                deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
                             <></>
 
 

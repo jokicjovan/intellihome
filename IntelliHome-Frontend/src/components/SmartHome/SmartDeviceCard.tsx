@@ -12,8 +12,7 @@ const SmartDeviceCard = (props) => {
 
 
     function navigateToSmartDevice() {
-        console.log(smartDevice.type == 3 ? "Lamp" : null);
-        navigate(`/smartDevice/${smartDevice.type == 3 ? "Lamp" : "Lamp"}/${smartDevice.id}`);
+        navigate(`/smartDevice/${smartDevice.type == 7 ? "BatterySystem" : "BatterySystem"}/${smartDevice.id}`);
     }
 
 

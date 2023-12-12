@@ -6,11 +6,11 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class BatteryController : ControllerBase
+    public class BatterySystemController : ControllerBase
     {
         private readonly IBatterySystemService _batterySystemService;
 
-        public BatteryController(IBatterySystemService batterySystemService)
+        public BatterySystemController(IBatterySystemService batterySystemService)
         {
             _batterySystemService = batterySystemService;
         }

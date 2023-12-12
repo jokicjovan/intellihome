@@ -48,7 +48,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     {
                         { "deviceId", batterySystem.Id.ToString() }
                     };
-                //batterySystemService.AddCapacityMeasurement(batterySystemDataInflux, batterySystemDataTags);
+                batterySystemService.AddCapacityMeasurement(batterySystemDataInflux, batterySystemDataTags);
             }
         }
     }

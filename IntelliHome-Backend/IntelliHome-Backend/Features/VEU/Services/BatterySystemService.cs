@@ -73,7 +73,8 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 IsConnected = batterySystem.IsConnected,
                 IsOn = batterySystem.IsOn,
                 Category = batterySystem.Category,
-                Type = batterySystem.Type
+                Type = batterySystem.Type,
+                Capacity = batterySystem.Capacity,
             };
 
             BatterySystemCapacityDataDTO batterySystemDataDTO = _batterySystemDataRepository.GetLastCapacityData(id);

@@ -65,7 +65,7 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                     {
                         { "deviceId", smartHome.Id.ToString() }
                     };
-                //smartHomeService.AddUsageMeasurement(smartHomeUsageDataInflux, smartHomeUsageDataTags);
+                smartHomeService.AddUsageMeasurement(smartHomeUsageDataInflux, smartHomeUsageDataTags);
             }
         }
     }

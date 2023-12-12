@@ -47,7 +47,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     {
                         { "deviceId", solarPanelSystem.Id.ToString() }
                     };
-                //solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+                solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
             }
         }
     }

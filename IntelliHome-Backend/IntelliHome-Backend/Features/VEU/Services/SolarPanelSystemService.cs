@@ -75,7 +75,9 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 IsConnected = solarPanelSystem.IsConnected,
                 IsOn = solarPanelSystem.IsOn,
                 Category = solarPanelSystem.Category,
-                Type = solarPanelSystem.Type
+                Type = solarPanelSystem.Type,
+                Area = solarPanelSystem.Area,
+                Efficiency = solarPanelSystem.Efficiency
             };
 
             SolarPanelSystemProductionDataDTO solarPanelSystemDataDTO = _solarPanelSystemDataRepository.GetLastProductionData(id);
