@@ -1,10 +1,10 @@
 ﻿using Data.Context;
 using Data.Models.PKA;
 using Data.Models.Shared;
+using IntelliHome_Backend.Features.Home.Handlers;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
@@ -45,7 +45,7 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
                     };
                 var ambientSensorDataTags = new Dictionary<string, string>
                     {
-                        { "device_id", ambientSensor.Id.ToString() }
+                        { "deviceId", ambientSensor.Id.ToString() }
                     };
                 ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
             }

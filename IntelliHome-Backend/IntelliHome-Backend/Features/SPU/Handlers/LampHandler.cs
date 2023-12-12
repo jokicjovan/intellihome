@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
@@ -13,6 +12,7 @@ using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using SendGrid.Helpers.Errors.Model;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
@@ -27,6 +27,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
+            Console.WriteLine(e.ApplicationMessage.Topic.Split("/").Last());
             smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
@@ -37,17 +38,17 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
             
             if (lamp != null)
             {
-                var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString());
+                var lampData = JsonConvert.DeserializeObject<LampData>(e.ApplicationMessage.ConvertPayloadToString() );
                 var lampDataInflux = new Dictionary<string, object>
                 {
-                        { "current_brightness", lampData.CurrentBrightness },
-                        { "is_working", lampData.IsWorking ? 1f : 0f },
-                        { "consumption_per_minute", lampData.ConsumptionPerMinute }
+                        { "currentBrightness", lampData.CurrentBrightness },
+                        { "isWorking", lampData.IsWorking ? 1f : 0f },
+                        { "consumptionPerMinute", lampData.ConsumptionPerMinute }
             
                 };
                 var lampDataTags = new Dictionary<string, string>
                 {
-                        { "device_id", lamp.Id.ToString() }
+                        { "deviceId", lamp.Id.ToString() }
                 };
                 lampService.AddPoint(lampDataInflux, lampDataTags);
             }

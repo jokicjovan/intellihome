@@ -65,7 +65,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             throw new NotImplementedException();
         }
 
-        public async Task<SolarPanelSystemDTO> GetWithData(Guid id)
+        public async Task<SolarPanelSystemDTO> GetWithProductionData(Guid id)
         {
             SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.Read(id);
             SolarPanelSystemDTO solarPanelSystemDTO = new SolarPanelSystemDTO
@@ -74,11 +74,13 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 Name = solarPanelSystem.Name,
                 IsConnected = solarPanelSystem.IsConnected,
                 IsOn = solarPanelSystem.IsOn,
-                Category = solarPanelSystem.Category,
-                Type = solarPanelSystem.Type
+                Category = solarPanelSystem.Category.ToString(),
+                Type = solarPanelSystem.Type.ToString(),
+                Area = solarPanelSystem.Area,
+                Efficiency = solarPanelSystem.Efficiency
             };
 
-            SolarPanelSystemDataDTO solarPanelSystemDataDTO = _solarPanelSystemDataRepository.GetLastData(id);
+            SolarPanelSystemProductionDataDTO solarPanelSystemDataDTO = _solarPanelSystemDataRepository.GetLastProductionData(id);
             if (solarPanelSystemDTO != null)
             {
                 solarPanelSystemDTO.ProductionPerMinute = solarPanelSystemDataDTO.ProductionPerMinute;
@@ -87,14 +89,14 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return solarPanelSystemDTO;
         }
 
-        public List<SolarPanelSystemDataDTO> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        public List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            return _solarPanelSystemDataRepository.GetHistoricalData(id, from, to);
+            return _solarPanelSystemDataRepository.GetProductionHistoricalData(id, from, to);
         }
 
-        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        public void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _solarPanelSystemDataRepository.AddPoint(fields, tags);
+            _solarPanelSystemDataRepository.AddProductionMeasurement(fields, tags);
         }
     }
 }

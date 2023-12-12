@@ -5,13 +5,13 @@ import AirConditionerControl from "../PKA/AirConditionerControl";
 import LampControl from "../SPU/LampControl";
 import SolarPanelsControl from "../VEU/SolarPanelsControl";
 import GateControl from "../SPU/GateControl";
-import SmartDeviceReportValues from "./SmartDeviceReportValues";
 import SmartDeviceReportAction from "./SmartDeviceReportAction";
 import dayjs from "dayjs";
 import BatteryControl from "../VEU/BatteryControl";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 import {useParams} from "react-router-dom";
+import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
 const SmartDeviceMain = () => {
     const params = useParams();
@@ -21,13 +21,50 @@ const SmartDeviceMain = () => {
     const [smartDeviceId, setSmartDeviceId] = useState(params.id);
     const [smartDevice, setSmartDevice] = useState({});
 
-    useEffect(() => {
+
+    function getSmartDevice() {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
             setSmartDevice(res.data)
             setIsConnected(res.data.isConnected)
         }).catch(err => {
             console.log(err)
         });
+    }
+
+    useEffect(() => {
+        if(smartDeviceId)
+        {
+            getSmartDevice()
+        }
+        const signalRSmartDeviceService = new SignalRSmartDeviceService();
+        const subscriptionResultCallback = (result) => {
+            result = JSON.parse(result);
+            setSmartDevice(prevSmartDevice => ({
+                ...prevSmartDevice,
+                ...result
+            }));
+        }
+
+        const resultCallback = (result) => {
+            console.log('Subscription result:', result);
+        };
+
+
+        signalRSmartDeviceService.startConnection().then(() => {
+            console.log('SignalR connection established');
+            console.log(smartDeviceId);
+            signalRSmartDeviceService.subscribeToSmartDevice(smartDeviceId);
+            signalRSmartDeviceService.receiveSmartDeviceData(subscriptionResultCallback);
+            signalRSmartDeviceService.receiveSmartDeviceSubscriptionResult(resultCallback);
+
+        });
+
+        return () => {
+            signalRSmartDeviceService.stopConnection().then(() => {
+                console.log('SignalR connection stopped');
+            });
+        }
+
     }, []);
 
     return <>
@@ -60,10 +97,10 @@ const SmartDeviceMain = () => {
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
-                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDevice={setSmartDevice}/> :
-                        deviceType == "SolarPanel" ? <SolarPanelsControl/> :
+                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
                             deviceType=="Gate"?<GateControl/>:
-                                deviceType=="Battery"?<BatteryControl/>:
+                                deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
                             <></>
 
 

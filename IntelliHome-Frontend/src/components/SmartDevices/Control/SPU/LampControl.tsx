@@ -14,15 +14,19 @@ import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 import {areDatesEqual} from "@mui/x-date-pickers/internals";
+import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSmartHomeService.ts";
+import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
-const LampControl = ({device, setSmartDevice}) => {
+const LampControl = ({device, setSmartDeviceParent}) => {
     const [brightness, setBrightness]=useState(device.currentBrightness)
     const [threshold, setThreshold]= useState(device.brightnessLimit)
     const [isOn, setIsOn]=useState(device.isOn)
     const [isAuto, setIsAuto]=useState(device.isAuto)
+    const [isWorking, setIsWorking]=useState(device.isWorking)
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked);
+            setIsWorking(e.target.checked);
             turnOnDevice(e.target.checked);
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
@@ -133,16 +137,24 @@ const LampControl = ({device, setSmartDevice}) => {
         device.isAuto = isAuto;
         device.brightnessLimit = threshold;
         device.currentBrightness = brightness;
-
-        setSmartDevice(device);
+        setSmartDeviceParent(device);
 
     }, [isOn, isAuto, threshold, brightness]);
+
+    useEffect(() => {
+        setBrightness(device.currentBrightness);
+        setThreshold(device.brightnessLimit);
+        setIsOn(device.isOn);
+        setIsAuto(device.isAuto);
+        setIsWorking(device.isWorking);
+    }, [device]);
+
 
 
 
     function turnOnDevice(isOn){
         console.log(isOn);
-        axios.put(environment + `/api/SmartDevice/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
+        axios.put(environment + `/api/Lamp/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
             console.log(res.data)
         }).catch(err => {
             console.log(err)
@@ -171,44 +183,52 @@ const LampControl = ({device, setSmartDevice}) => {
 
 
 
-    return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
+    return <>
+        <Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
                   gridTemplateRows="170px 170px 170px">
 
-        <Box gridColumn={1} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
-             alignItems="center" bgcolor="white" borderRadius="25px">
-            <Typography fontSize="50px" fontWeight="600"> POWER</Typography>
-            <FormControlLabel sx={{marginRight: 0}}
-                              control={<SwitchPower sx={{ml: "10px", mt: "20px"}}/>}
-            />
-        </Box>
-        <Box display="grid" gridColumn={2} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px 170px">
-            <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+            <Box gridColumn={1} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">
-                <Typography fontSize="30px" fontWeight="600"> AUTO</Typography>
-                <FormControlLabel sx={{marginRight: 0}} control={<SwitchAuto sx={{ml: "10px", mt: "20px"}}/>}
-            />
+                <Typography fontSize="50px" fontWeight="600"> POWER</Typography>
+                <FormControlLabel sx={{marginRight: 0}}
+                                  control={<SwitchPower sx={{ml: "10px", mt: "20px"}}/>}
+                />
             </Box>
-            <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
-                 alignItems="center" bgcolor="white" borderRadius="25px">
-                <Typography fontSize="30px" fontWeight="600"> THRESHOLD</Typography>
-                <Box display="flex" mt={2} flexDirection="row" justifyContent="center" alignItems="center">
-                    <Typography fontSize="40px" fontWeight="700" display="flex" alignItems="flex-end">{threshold}<Typography mb={1} fontSize="20px" >nit</Typography></Typography>
-                    <Box display="flex" flexDirection="column">
-                        <IconButton
-                            onClick={() => setThresholdLimit(threshold + 50)}><KeyboardArrowUp/></IconButton>
-                        <IconButton
-                            onClick={() => setThresholdLimit(threshold - 50)}><KeyboardArrowDown/></IconButton>
+            <Box display="grid" gridColumn={2} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px 170px">
+                <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+                     alignItems="center" bgcolor="white" borderRadius="25px">
+                    <Typography fontSize="30px" fontWeight="600"> AUTO</Typography>
+                    <FormControlLabel sx={{marginRight: 0}} control={<SwitchAuto sx={{ml: "10px", mt: "20px"}}/>}/>
+                </Box>
+                <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
+                     alignItems="center" bgcolor="white" borderRadius="25px">
+                    <Typography fontSize="30px" fontWeight="600"> THRESHOLD</Typography>
+                    <Box display="flex" mt={2} flexDirection="row" justifyContent="center" alignItems="center">
+                        <Typography fontSize="40px" fontWeight="700" display="flex" alignItems="flex-end">{threshold}<Typography mb={1} fontSize="20px" >nit</Typography></Typography>
+                        <Box display="flex" flexDirection="column">
+                            <IconButton
+                                onClick={() => setThresholdLimit(threshold + 50)}><KeyboardArrowUp/></IconButton>
+                            <IconButton
+                                onClick={() => setThresholdLimit(threshold - 50)}><KeyboardArrowDown/></IconButton>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
+            <Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+               alignItems="center" bgcolor="white" borderRadius="25px">
+                <Typography fontSize="30px" fontWeight="600"> BRIGHTNESS</Typography>
+                <Typography fontSize="50px" fontWeight="700" display="flex" alignItems="flex-end"> {brightness}<Typography mb={2} fontSize="20px" >nit</Typography></Typography>
 
-        </Box><Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
-                   alignItems="center" bgcolor="white" borderRadius="25px">
-        <Typography fontSize="30px" fontWeight="600"> BRIGHTNESS</Typography>
-        <Typography fontSize="50px" fontWeight="700" display="flex" alignItems="flex-end"> {brightness}<Typography mb={2} fontSize="20px" >nit</Typography></Typography>
+            </Box>
+            <Box gridColumn={1} height="350px" gridRow={3} display="flex" flexDirection="column"
+                 alignItems="center" bgcolor="white" borderRadius="25px">
+                <Typography fontSize="30px" mt={1} fontWeight="600">IS GLOWING </Typography>
+                <Typography fontSize="80px" color="#343F71" mt={8}
+                            fontWeight="600"> {isWorking ? "ON" : "OFF"}</Typography>
 
-    </Box>
-    </Box></>
+            </Box>
+        </Box>
+    </>
 }
 
 export default LampControl;

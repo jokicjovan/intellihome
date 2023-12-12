@@ -15,8 +15,8 @@ import {LineChart} from "@mui/x-charts";
 import {Chart} from "react-google-charts";
 
 const SolarPanelsControl = () => {
-    const [area,setArea]=useState(800)
-    const [efficiency,setEfficiency]=useState(85)
+    const [area,setArea]=useState(0)
+    const [efficiency,setEfficiency]=useState(0)
     const [isOn,setIsOn]=useState(false)
     const [data1, setData1] = useState([["date", "dogs", "cats"],
         [new Date().toDateString(), 1, 2],
@@ -30,6 +30,7 @@ const SolarPanelsControl = () => {
             title: "YLABEL",
         }
     };
+
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)

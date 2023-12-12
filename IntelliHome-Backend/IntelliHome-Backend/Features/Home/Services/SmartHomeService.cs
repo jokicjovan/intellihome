@@ -9,20 +9,28 @@ using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using SendGrid.Helpers.Mail;
 using SendGrid;
+using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
 namespace IntelliHome_Backend.Features.Home.Services
 {
     public class SmartHomeService : ISmartHomeService
     {
         private readonly ISmartHomeRepository _smartHomeRepository;
+        private readonly ISmartHomeDataRepository _smartHomeDataRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICityRepository _cityRepository;
+        private readonly ISmartHomeHandler _smartHomeHandler;
 
-        public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository)
+        public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
+            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler)
         {
             _smartHomeRepository = smartHomeRepository;
+            _smartHomeDataRepository = smartHomeDataRepository;
             _userRepository = userRepository;
             _cityRepository = cityRepository;
+            _smartHomeHandler = smartHomeHandler;
         }
 
 
@@ -168,6 +176,16 @@ namespace IntelliHome_Backend.Features.Home.Services
 
         public Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId) {
             return _smartHomeRepository.IsUserAllowed(smartHomeId, userId);
+        }
+
+        public List<SmartHomeUsageDataDTO> GetUsageHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _smartHomeDataRepository.GetUsageHistoricalData(id, from, to);
+        }
+
+        public void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _smartHomeDataRepository.AddUsageMeasurement(fields, tags);
         }
     }
 }

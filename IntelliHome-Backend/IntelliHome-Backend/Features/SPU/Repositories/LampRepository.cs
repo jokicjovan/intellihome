@@ -9,7 +9,7 @@ namespace IntelliHome_Backend.Features.SPU.Repositories
     public class LampRepository : CrudRepository<Lamp>, ILampRepository
     {
         public LampRepository(PostgreSqlDbContext context) : base(context) { }
-        public async Task<Lamp> GetWithSmartHome(Guid id)
+        public async Task<Lamp> FindWithSmartHome(Guid id)
         {
             return await _entities.Include(l => l.SmartHome).FirstOrDefaultAsync(l => l.Id == id);
         }

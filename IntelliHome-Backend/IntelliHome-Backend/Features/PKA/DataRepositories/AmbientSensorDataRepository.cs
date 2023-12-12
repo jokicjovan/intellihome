@@ -16,7 +16,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
 
         public List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _context.GetHistoricalData(id, from, to).Result;
+            var result = _context.GetHistoricalData("ambient_sensor", id, from, to).Result;
             return result.Select(ConvertToAmbientSensorData).ToList();
         }
 
@@ -35,7 +35,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
         public AmbientSensorData GetLastData(Guid id)
         {
            
-            var table = _context.GetLastData(id).Result;
+            var table = _context.GetLastData("ambient_sensor", id).Result;
 
             AmbientSensorData data = ConvertToAmbientSensorData(table);
 

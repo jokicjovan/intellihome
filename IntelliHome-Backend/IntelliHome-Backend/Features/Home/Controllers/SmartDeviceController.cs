@@ -4,7 +4,7 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IntelliHome_Backend.Features.Home
+namespace IntelliHome_Backend.Features.Home.Controllers
 {
 
     [ApiController]
@@ -22,7 +22,7 @@ namespace IntelliHome_Backend.Features.Home
         [Route("{smartHomeId:Guid}")]
         public async Task<ActionResult> GetSmartDevicesForHome([FromRoute] Guid smartHomeId, [FromQuery] PageParametersDTO pageParameters)
         {
-            (IEnumerable<SmartDevice>, Int32) resultTuple = await _smartDeviceService.GetPagedSmartDevicesForSmartHome(smartHomeId, pageParameters.PageNumber, pageParameters.PageSize);
+            (IEnumerable<SmartDeviceDTO>, int) resultTuple = await _smartDeviceService.GetPagedSmartDevicesForSmartHome(smartHomeId, pageParameters.PageNumber, pageParameters.PageSize);
             SmartDevicesPaginatedDTO dto = new SmartDevicesPaginatedDTO
             {
                 SmartDevices = resultTuple.Item1,
@@ -32,7 +32,7 @@ namespace IntelliHome_Backend.Features.Home
         }
 
         [HttpPut]
-        public async Task<ActionResult> TurnOnSmartDevice(Guid id, Boolean turnOn)
+        public async Task<ActionResult> TurnOnSmartDevice(Guid id, bool turnOn)
         {
             await _smartDeviceService.TurnOnSmartDevice(id, turnOn);
             return Ok();

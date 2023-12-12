@@ -12,5 +12,6 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task ChangeMode(Guid id, bool isAuto);
         Task ChangeBrightnessLimit(Guid id, double brightness);
+        Task TurnOnSmartDevice(Guid id, bool turnOn);
     }
 }

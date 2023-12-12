@@ -1,7 +1,8 @@
 ﻿using Data.Models.Shared;
+using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntelliHome_Backend.Features.Home.Services
@@ -52,13 +53,14 @@ namespace IntelliHome_Backend.Features.Home.Services
             return _smartDeviceRepository.UpdateAll(smartDevices);
         }
 
-        public async Task<(IEnumerable<SmartDevice>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize)
+        public async Task<(IEnumerable<SmartDeviceDTO>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize)
         {
             IQueryable<SmartDevice> query = GetSmartDevicesForSmartHome(smartHomeId).AsQueryable();
             Int32 totalItems = await query.CountAsync();
             //Int32 totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             IEnumerable<SmartDevice> entities = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            return (entities, totalItems);
+            IEnumerable<SmartDeviceDTO> dtos = entities.Select(entity => new SmartDeviceDTO(entity));
+            return (dtos, totalItems);
         }
 
         public IEnumerable<SmartDevice> GetSmartDevicesForSmartHome(Guid smartHomeId) {

@@ -16,6 +16,9 @@ class SolarPanelSystem(SmartDevice):
 
     async def send_data(self):
         while True:
+            if not self.is_on:
+                break
+
             pd_current_datetime = pd.to_datetime([datetime.utcnow()]).tz_localize('UTC')
             solar_position = pvlib.solarposition.get_solarposition(pd_current_datetime, latitude=44.786568,
                                                                    longitude=20.448921, altitude=155.813446)
@@ -39,6 +42,6 @@ class SolarPanelSystem(SmartDevice):
                 power_per_minute = solar_irradiance['poa_global'].mean() * self.area * self.efficiency / 100 / 60
             if not self.is_on:
                 break
-            self.client.publish(self.send_topic, json.dumps({"production_per_minute": round(power_per_minute, 4)}),
+            self.client.publish(self.send_topic, json.dumps({"productionPerMinute": round(power_per_minute, 4)}),
                                 retain=False)
             await asyncio.sleep(10)

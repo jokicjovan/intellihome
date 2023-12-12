@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Handlers;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
+using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -30,24 +30,25 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 Console.WriteLine("Error handling topic");
                 return;
             }
-            _ = smartDeviceHubContext.Clients.Group(topic_parts.Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+            string solarPanelSystemId = topic_parts.Last();
+            _ = smartDeviceHubContext.Clients.Group(solarPanelSystemId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
-            //using var scope = serviceProvider.CreateScope();
-            //var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
-            //var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(topic_parts[4]));
-            //if (solarPanelSystem != null)
-            //{
-            //    var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            //    var solarPanelSystemDataInflux = new Dictionary<string, object>
-            //        {
-            //            { "production_per_minute", solarPanelSystemData.ProductionPerMinute}
-            //        };
-            //    var solarPanelSystemDataTags = new Dictionary<string, string>
-            //        {
-            //            { "device_id", solarPanelSystem.Id.ToString() }
-            //        };
-            //    solarPanelSystemService.AddPoint(solarPanelSystemDataInflux, solarPanelSystemDataTags);
-            //}
+            using var scope = serviceProvider.CreateScope();
+            var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
+            var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(solarPanelSystemId));
+            if (solarPanelSystem != null)
+            {
+                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+                var solarPanelSystemDataInflux = new Dictionary<string, object>
+                    {
+                        { "productionPerMinute", solarPanelSystemData.ProductionPerMinute}
+                    };
+                var solarPanelSystemDataTags = new Dictionary<string, string>
+                    {
+                        { "deviceId", solarPanelSystem.Id.ToString() }
+                    };
+                solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+            }
         }
     }
 }

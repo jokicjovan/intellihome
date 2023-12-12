@@ -2,6 +2,7 @@ import {Box, Typography} from "@mui/material";
 import React from "react";
 import {environment} from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
+import smartDeviceType, {getSmartDeviceTypeValueByKey, getValueByKey} from "../../models/enums/SmartDeviceType.ts";
 
 
 const SmartDeviceCard = (props) => {
@@ -10,10 +11,22 @@ const SmartDeviceCard = (props) => {
     const colors = ["#676E79", "#F43F5E", "#2691D9"]
     const navigate = useNavigate();
 
+    const smartDeviceTypes = [
+        "AmbientSensor",
+        "AirConditioner",
+        "WashingMachine",
+        "Lamp",
+        "VehicleGate",
+        "Sprinkler",
+        "SolarPanelSystem",
+        "BatterySystem",
+        "VehicleCharger"
+    ];
+
 
     function navigateToSmartDevice() {
-        console.log(smartDevice.type == 3 ? "Lamp" : null);
-        navigate(`/smartDevice/${smartDevice.type == 3 ? "Lamp" : "Lamp"}/${smartDevice.id}`);
+        let type = getSmartDeviceTypeValueByKey(smartDevice.type);
+        navigate(`/smartDevice/${type}/${smartDevice.id}`);
     }
 
 
