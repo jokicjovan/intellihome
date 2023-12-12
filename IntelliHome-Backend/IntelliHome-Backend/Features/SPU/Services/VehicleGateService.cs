@@ -1,4 +1,7 @@
 ﻿using Data.Models.SPU;
+using IntelliHome_Backend.Features.SPU.DataRepositories;
+using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
+using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
@@ -9,11 +12,13 @@ namespace IntelliHome_Backend.Features.SPU.Services
     {
         private readonly IVehicleGateRepository _vehicleGateRepository;
         private readonly IVehicleGateHandler _vehicleGateHandler;
+        private readonly IVehicleGateDataRepository _vehicleGateDataRepository;
 
-        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IVehicleGateHandler vehicleGateHandler)
+        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IVehicleGateHandler vehicleGateHandler, IVehicleGateDataRepository vehicleGateDataRepository)
         {
             _vehicleGateRepository = vehicleGateRepository;
             _vehicleGateHandler = vehicleGateHandler;
+            _vehicleGateDataRepository = vehicleGateDataRepository;
         }
 
         public async Task<VehicleGate> Create(VehicleGate entity)
@@ -34,24 +39,99 @@ namespace IntelliHome_Backend.Features.SPU.Services
             return entity;
         }
 
+        
+
+        public async Task<VehicleGateDTO> GetWithData(Guid id)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.Read(id);
+            VehicleGateDTO vehicleGateDTO = new VehicleGateDTO
+            {
+                Id = vehicleGate.Id,
+                Name = vehicleGate.Name,
+                IsConnected = vehicleGate.IsConnected,
+                IsOn = vehicleGate.IsOn,
+                Category = vehicleGate.Category.ToString(),
+                Type = vehicleGate.Type.ToString(),
+                PowerPerHour = vehicleGate.PowerPerHour,
+                IsPublic = vehicleGate.IsPublic,
+                AllowedLicencePlates = vehicleGate.AllowedLicencePlates,
+            };
+
+            VehicleGateData vehicleGateData = null;
+            try
+            {
+                vehicleGateData = GetLastData(id);
+            }
+            catch (Exception)
+            {
+                vehicleGateData = null;
+            }
+
+            if (vehicleGateData != null)
+            {
+                vehicleGateDTO.CurrentLicencePlate = vehicleGateData.LicencePlate;
+                vehicleGateDTO.IsEntering = vehicleGateData.IsEntering;
+                vehicleGateDTO.IsOpen = vehicleGateData.IsOpen;
+            }
+
+            return vehicleGateDTO;
+        }
+
+        private VehicleGateData GetLastData(Guid id)
+        {
+            return _vehicleGateDataRepository.GetLastData(id);
+        }
+
+        public List<VehicleGateData> GetHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _vehicleGateDataRepository.GetHistoricalData(id, from, to);
+        }
+
+        public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _vehicleGateDataRepository.AddPoint(fields, tags);
+        }
+
+        public async Task ChangeMode(Guid id, bool isPublic)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
+            _vehicleGateHandler.ChangeMode(vehicleGate, isPublic);
+            vehicleGate.IsPublic = isPublic;
+            await _vehicleGateRepository.Update(vehicleGate);
+        }
+
+      
+
+        public async Task TurnOnSmartDevice(Guid id, bool turnOn)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
+            await _vehicleGateHandler.TurnOnSmartDevice(vehicleGate, turnOn);
+
+            vehicleGate.IsOn = turnOn;
+            await _vehicleGateRepository.Update(vehicleGate);
+        }
+
+
         public Task<VehicleGate> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            return _vehicleGateRepository.Delete(id);
         }
 
         public Task<VehicleGate> Get(Guid id)
         {
-            throw new NotImplementedException();
+            return _vehicleGateRepository.Read(id);
         }
 
         public Task<IEnumerable<VehicleGate>> GetAll()
         {
-            throw new NotImplementedException();
+            return _vehicleGateRepository.ReadAll();
         }
 
         public Task<VehicleGate> Update(VehicleGate entity)
         {
-            throw new NotImplementedException();
+            return _vehicleGateRepository.Update(entity);
         }
+
+        
     }
 }

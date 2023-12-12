@@ -6,6 +6,7 @@ namespace IntelliHome_Backend.Features.SPU.DTOs
     {
         public Double CurrentBrightness { get; set; }
         public Double BrightnessLimit { get; set; }
+        public Boolean IsWorking { get; set; }
         public Double PowerPerHour { get; set; }
     }
 }
