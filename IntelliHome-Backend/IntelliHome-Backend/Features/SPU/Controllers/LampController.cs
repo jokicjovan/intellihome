@@ -43,5 +43,12 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
             await _lampService.ChangeBrightnessLimit(id, brightness);
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<ActionResult> TurnOnSmartDevice(Guid id, bool turnOn)
+        {
+            await _lampService.TurnOnSmartDevice(id, turnOn);
+            return Ok();
+        }
     }
 }

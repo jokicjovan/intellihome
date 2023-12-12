@@ -5,8 +5,8 @@ enum SmartDeviceType {
     Lamp = "Lamp",
     Sprinkler = "Sprinkler",
     VehicleGate = "VehicleGate",
-    BatterySystem = "BatterySystem",
     SolarPanelSystem = "SolarPanelSystem",
+    BatterySystem = "BatterySystem",
     VehicleCharger = "VehicleCharger"
 }
 

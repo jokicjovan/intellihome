@@ -10,9 +10,21 @@ const SmartDeviceCard = (props) => {
     const colors = ["#676E79", "#F43F5E", "#2691D9"]
     const navigate = useNavigate();
 
+    const smartDeviceTypes = [
+        "AmbientSensor",
+        "AirConditioner",
+        "WashingMachine",
+        "Lamp",
+        "VehicleGate",
+        "Sprinkler",
+        "SolarPanelSystem",
+        "BatterySystem",
+        "VehicleCharger"
+    ];
+
 
     function navigateToSmartDevice() {
-        navigate(`/smartDevice/${smartDevice.type == 7 ? "BatterySystem" : "BatterySystem"}/${smartDevice.id}`);
+        navigate(`/smartDevice/${smartDeviceTypes[smartDevice.type]}/${smartDevice.id}`);
     }
 
 

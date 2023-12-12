@@ -6,7 +6,6 @@ namespace IntelliHome_Backend.Features.SPU.Repositories.Interfaces
 {
     public interface ILampRepository : ICrudRepository<Lamp>
     {
-
-        Task<Lamp> GetWithSmartHome(Guid id);
+        Task<Lamp> FindWithSmartHome(Guid id);
     }
 }

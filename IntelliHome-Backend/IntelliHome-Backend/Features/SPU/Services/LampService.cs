@@ -1,4 +1,5 @@
-﻿using Data.Models.SPU;
+﻿using Data.Models.Shared;
+using Data.Models.SPU;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
@@ -89,7 +90,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task ChangeMode(Guid id, bool isAuto)
         { 
-            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
             _lampHandler.ChangeMode(lamp, isAuto);
             lamp.IsAuto = isAuto;
             await _lampRepository.Update(lamp);
@@ -97,10 +98,19 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task ChangeBrightnessLimit(Guid id, double brightness)
         {
-            Lamp lamp = await _lampRepository.GetWithSmartHome(id);
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
             _lampHandler.ChangeBrightnessLimit(lamp, brightness);
             lamp.BrightnessLimit = brightness;
             await _lampRepository.Update(lamp);
+        }
+
+        public async Task TurnOnSmartDevice(Guid id, bool turnOn)
+        {
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
+            await _lampHandler.TurnOnSmartDevice(lamp, turnOn);
+
+            lamp.IsOn = turnOn;
+            _ = _lampRepository.Update(lamp);
         }
 
 

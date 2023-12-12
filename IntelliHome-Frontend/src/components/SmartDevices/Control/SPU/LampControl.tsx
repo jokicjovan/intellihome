@@ -154,7 +154,7 @@ const LampControl = ({device, setSmartDeviceParent}) => {
 
     function turnOnDevice(isOn){
         console.log(isOn);
-        axios.put(environment + `/api/SmartDevice/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
+        axios.put(environment + `/api/Lamp/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
             console.log(res.data)
         }).catch(err => {
             console.log(err)
