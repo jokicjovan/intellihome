@@ -64,15 +64,25 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 
         public void AddLicencePlate(VehicleGate vehicleGate, string licencePlate)
         {
-            string action = $"add_licence_plate={licencePlate}";
-            string payload = JsonConvert.SerializeObject(new { action });
+            string action = $"add_licence_plate";
+            string licence_plate = licencePlate;
+            string payload = JsonConvert.SerializeObject(new { action, licence_plate });
             PublishMessageToSmartDevice(vehicleGate, payload);
         }
 
         public void RemoveLicencePlate(VehicleGate vehicleGate, string licencePlate)
         {
-            string action = $"remove_licence_plate={licencePlate}";
-            string payload = JsonConvert.SerializeObject(new { action });
+            string action = $"remove_licence_plate";
+            string licence_plate = licencePlate;
+            string payload = JsonConvert.SerializeObject(new { action, licence_plate });
+            PublishMessageToSmartDevice(vehicleGate, payload);
+        }
+
+        public void OpenCloseGate(VehicleGate vehicleGate, bool isOpen, string username)
+        {
+            string action = isOpen ? "open_by_user" : "close_by_user";
+            string user = username;
+            string payload = JsonConvert.SerializeObject(new { action, user });
             PublishMessageToSmartDevice(vehicleGate, payload);
         }
     }

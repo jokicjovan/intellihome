@@ -110,6 +110,12 @@ namespace IntelliHome_Backend.Features.SPU.Services
             _vehicleGateHandler.RemoveLicencePlate(vehicleGate, licencePlate);
         }
 
+        public async Task OpenCloseGate(Guid id, bool isOpen, string username)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
+            _vehicleGateHandler.OpenCloseGate(vehicleGate, isOpen, username);
+        }
+
         public async Task ChangeMode(Guid id, bool isPublic)
         {
             VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);

@@ -8,5 +8,6 @@ namespace IntelliHome_Backend.Features.SPU.Handlers.Interfaces
         void ChangeMode(VehicleGate vehicle, bool isPublic);
         void AddLicencePlate(VehicleGate vehicleGate, string licencePlate);
         void RemoveLicencePlate(VehicleGate vehicleGate, string licencePlate);
+        void OpenCloseGate(VehicleGate vehicleGate, bool isOpen, string username);
     }
 }

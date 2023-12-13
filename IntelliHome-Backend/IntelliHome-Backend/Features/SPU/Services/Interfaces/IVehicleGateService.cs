@@ -15,5 +15,6 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
 
         Task AddLicencePlate(Guid id, string licencePlate);
         Task RemoveLicencePlate(Guid id, string licencePlate);
+        Task OpenCloseGate(Guid id, bool isOpen, string username);
     }
 }

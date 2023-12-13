@@ -20,12 +20,14 @@ def yield_licence_plate(allowed_licence_plates):
 
 class VehicleGate(SmartDevice):
     def __init__(self, device_id, smart_home_id, device_category, device_type, is_public, allowed_licence_plates,
-                 power_per_hour, is_open=False):
+                 power_per_hour, is_open=False, is_opened_by_user=False, user='System'):
         super().__init__(device_id, smart_home_id, device_category, device_type)
         self.is_public = is_public
         self.is_open = is_open
         self.allowed_licence_plates = allowed_licence_plates
         self.power_per_hour = power_per_hour
+        self.is_opened_by_user = is_opened_by_user
+        self.user = user
         self.licence_plates_in_home = []
 
     def on_data_receive(self, client, user_data, msg):
@@ -40,10 +42,23 @@ class VehicleGate(SmartDevice):
                 self.is_open = True
             elif data.get("action", None) == "close":
                 self.is_open = False
-            elif "add_licence_plate" in data.get("action", None):
-                self.allowed_licence_plates.append(data["action"].split("=")[1])
-            elif "remove_licence_plate" in data.get("action", None):
-                licence_plate_for_removal = data["action"].split("=")[1]
+            elif data.get("action", None) == "open_by_user":
+                self.user = data.get("user", None)
+                self.is_opened_by_user = True
+                self.is_open = True
+                self.publish_data("", False)
+                print("Gate is opened by user {}".format(self.user))
+            elif data.get("action", None) == "close_by_user":
+                self.user = data.get("user", None)
+                self.is_opened_by_user = False
+                self.is_open = False
+                self.publish_data("", False)
+                print("Gate is closed by user {}".format(self.user))
+            elif data.get("action", None) == "add_licence_plate":
+                licence_plate_to_add = data.get("licence_plate", None)
+                self.allowed_licence_plates.append(licence_plate_to_add)
+            elif data.get("action", None) == "remove_licence_plate":
+                licence_plate_for_removal = data.get("licence_plate", None)
                 if licence_plate_for_removal in self.allowed_licence_plates:
                     self.allowed_licence_plates.remove(licence_plate_for_removal)
 
@@ -52,9 +67,9 @@ class VehicleGate(SmartDevice):
                                                          "isPublic": self.is_public,
                                                          "isOpen": self.is_open,
                                                          "isEntering": is_entering,
+                                                         "actionBy": self.user,
                                                          "consumptionPerMinute": round(self.power_per_hour / 60, 4)}),
                             retain=False)
-
 
     async def send_data(self):
         while True:
@@ -65,6 +80,26 @@ class VehicleGate(SmartDevice):
             print("Licence plates in home: {}".format(self.licence_plates_in_home))
 
             licence_plate = next(yield_licence_plate(self.allowed_licence_plates))
+
+            if self.is_opened_by_user:
+                if licence_plate in self.licence_plates_in_home:
+                    print(
+                        "Car with licence plate {} is leaving home because gate is opened by {}".format(licence_plate,
+                                                                                                        self.user))
+                    self.publish_data(licence_plate, True)
+                    self.licence_plates_in_home.remove(licence_plate)
+                    await asyncio.sleep(2)
+                    continue
+                else:
+                    print(
+                        "Car with licence plate {} is entering home because gate is opened by {}".format(licence_plate,
+                                                                                                         self.user))
+                    self.publish_data(licence_plate, False)
+                    self.licence_plates_in_home.append(licence_plate)
+                    await asyncio.sleep(2)
+                    continue
+
+            self.user = "System"
 
             # car leaving home
             if licence_plate in self.licence_plates_in_home:

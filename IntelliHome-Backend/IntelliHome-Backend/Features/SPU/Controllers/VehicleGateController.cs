@@ -1,6 +1,8 @@
 ﻿using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IntelliHome_Backend.Features.SPU.Controllers
 {
@@ -54,6 +56,20 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         public async Task<ActionResult> RemoveLicencePlate(Guid id, string licencePlate)
         {
             await _vehicleGateService.RemoveLicencePlate(id, licencePlate);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> OpenCloseGate(Guid id, bool isOpen)
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _vehicleGateService.OpenCloseGate(id, isOpen, username);
             return Ok();
         }
     }
