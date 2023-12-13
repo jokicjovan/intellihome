@@ -13,5 +13,7 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         Task TurnOnSmartDevice(Guid id, bool turnOn);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
 
+        Task AddLicencePlate(Guid id, string licencePlate);
+        Task RemoveLicencePlate(Guid id, string licencePlate);
     }
 }

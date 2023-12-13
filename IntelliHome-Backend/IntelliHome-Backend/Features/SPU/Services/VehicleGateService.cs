@@ -92,6 +92,24 @@ namespace IntelliHome_Backend.Features.SPU.Services
             _vehicleGateDataRepository.AddPoint(fields, tags);
         }
 
+        public async Task AddLicencePlate(Guid id, string licencePlate)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
+            vehicleGate.AllowedLicencePlates.Add(licencePlate);
+            await _vehicleGateRepository.Update(vehicleGate);
+
+            _vehicleGateHandler.AddLicencePlate(vehicleGate, licencePlate);
+        }
+
+        public async Task RemoveLicencePlate(Guid id, string licencePlate)
+        {
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
+            vehicleGate.AllowedLicencePlates.Remove(licencePlate);
+            await _vehicleGateRepository.Update(vehicleGate);
+
+            _vehicleGateHandler.RemoveLicencePlate(vehicleGate, licencePlate);
+        }
+
         public async Task ChangeMode(Guid id, bool isPublic)
         {
             VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);

@@ -42,5 +42,19 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
             await _vehicleGateService.TurnOnSmartDevice(id, turnOn);
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<ActionResult> AddLicencePlate(Guid id, string licencePlate)
+        {
+            await _vehicleGateService.AddLicencePlate(id, licencePlate);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> RemoveLicencePlate(Guid id, string licencePlate)
+        {
+            await _vehicleGateService.RemoveLicencePlate(id, licencePlate);
+            return Ok();
+        }
     }
 }

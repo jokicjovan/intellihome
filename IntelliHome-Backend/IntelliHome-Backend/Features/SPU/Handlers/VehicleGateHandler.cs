@@ -61,5 +61,19 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 
             PublishMessageToSmartDevice(vehicle, payload);
         }
+
+        public void AddLicencePlate(VehicleGate vehicleGate, string licencePlate)
+        {
+            string action = $"add_licence_plate={licencePlate}";
+            string payload = JsonConvert.SerializeObject(new { action });
+            PublishMessageToSmartDevice(vehicleGate, payload);
+        }
+
+        public void RemoveLicencePlate(VehicleGate vehicleGate, string licencePlate)
+        {
+            string action = $"remove_licence_plate={licencePlate}";
+            string payload = JsonConvert.SerializeObject(new { action });
+            PublishMessageToSmartDevice(vehicleGate, payload);
+        }
     }
 }

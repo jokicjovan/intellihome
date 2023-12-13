@@ -61,7 +61,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             var isOpenRecord = rows.FirstOrDefault(r => r.Row.Contains("isOpen"));
             var isPublicRecord = rows.FirstOrDefault(r => r.Row.Contains("isPublic"));
             var isEnteringRecord = rows.FirstOrDefault(r => r.Row.Contains("isEntering"));
-            var licencePlateRecord = rows.FirstOrDefault(r => r.Row.Contains("licencePlate"));
+            // var licencePlateRecord = rows.FirstOrDefault(r => r.Row.Contains("licencePlate"));
 
             bool isOpen = isOpenRecord != null && Convert.ToBoolean(isOpenRecord.GetValueByKey("_value"));
             bool isPublic = isPublicRecord != null && Convert.ToBoolean(isPublicRecord.GetValueByKey("_value"));

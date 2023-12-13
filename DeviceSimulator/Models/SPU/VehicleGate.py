@@ -43,7 +43,9 @@ class VehicleGate(SmartDevice):
             elif "add_licence_plate" in data.get("action", None):
                 self.allowed_licence_plates.append(data["action"].split("=")[1])
             elif "remove_licence_plate" in data.get("action", None):
-                self.allowed_licence_plates.remove(data["action"].split("=")[1])
+                licence_plate_for_removal = data["action"].split("=")[1]
+                if licence_plate_for_removal in self.allowed_licence_plates:
+                    self.allowed_licence_plates.remove(licence_plate_for_removal)
 
     def publish_data(self, licence_plate, is_entering):
         self.client.publish(self.send_topic, json.dumps({"licencePlate": licence_plate,
@@ -58,6 +60,9 @@ class VehicleGate(SmartDevice):
         while True:
             if not self.is_on:
                 break
+
+            print("Allowed licence plates: {}".format(self.allowed_licence_plates))
+            print("Licence plates in home: {}".format(self.licence_plates_in_home))
 
             licence_plate = next(yield_licence_plate(self.allowed_licence_plates))
 
@@ -88,7 +93,6 @@ class VehicleGate(SmartDevice):
 
                     # gate is closed
                     self.is_open = False
-                    self.licence_plates_in_home.append(licence_plate)
                     self.publish_data(licence_plate, True)
                 else:
                     if licence_plate in self.allowed_licence_plates:
@@ -101,7 +105,6 @@ class VehicleGate(SmartDevice):
 
                         # gate is closed
                         self.is_open = False
-                        self.licence_plates_in_home.append(licence_plate)
                         self.publish_data(licence_plate, True)
                     else:
                         print("Car with licence plate {} is not allowed to enter home".format(licence_plate))
