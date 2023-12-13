@@ -24,7 +24,9 @@ const SmartDeviceMain = () => {
 
     function getSmartDevice() {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
+            console.log(res.data)
             setSmartDevice(res.data)
+            console.log(smartDevice)
             setIsConnected(res.data.isConnected)
         }).catch(err => {
             console.log(err)
@@ -39,6 +41,7 @@ const SmartDeviceMain = () => {
         const signalRSmartDeviceService = new SignalRSmartDeviceService();
         const subscriptionResultCallback = (result) => {
             result = JSON.parse(result);
+            console.log('Subscription result:', result);
             setSmartDevice(prevSmartDevice => ({
                 ...prevSmartDevice,
                 ...result
@@ -99,7 +102,7 @@ const SmartDeviceMain = () => {
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
-                            deviceType=="VehicleGate"?<GateControl/>:
+                            deviceType=="VehicleGate"?<GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/>:
                                 deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
                             <></>
 

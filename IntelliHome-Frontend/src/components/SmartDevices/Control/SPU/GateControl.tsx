@@ -8,19 +8,21 @@ import {
     SwitchProps, TextField,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Add, Close, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, {Dayjs} from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
+import axios from "axios";
+import {environment} from "../../../../security/Environment.tsx";
 
 
-const GateControl = () => {
+const GateControl = ({device, setSmartDeviceParent}) => {
 
-    const [lastPlate, setLastPlate] = useState("SM074HZ")
-    const [isOpenGate, setIsOpenGate] = useState(false)
-    const [isPublic, setIsPublic] = useState(false)
+    const [lastPlate, setLastPlate] = useState(device.currentLicencePlate)
+    const [isOpenGate, setIsOpenGate] = useState(device.isOpen)
+    const [isPublic, setIsPublic] = useState(device.isPublic)
     const [open, setIsOpen] = useState(false)
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
@@ -36,19 +38,8 @@ const GateControl = () => {
         "SM074HZ",
         "SM074HZ",
     ]);
-    const [myPlates, setMyPlates] = useState([
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-    ]);
-    console.log(value)
+    const [myPlates, setMyPlates] = useState(device.allowedLicencePlates ? device.allowedLicencePlates : []);
+    // console.log(value)
     const DatePickerStyle = {
         "& .MuiPickersLayout-actionBar": {display: "none"},
         minHeight: "520px"
@@ -172,6 +163,36 @@ const GateControl = () => {
             }),
         },
     }));
+
+    // useEffect(() => {
+    //     axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
+    //         console.log(res.data)
+    //     }).catch(err => {
+    //         console.log(err)
+    //     });
+    // }, []);
+
+    useEffect(() => {
+        device.IsOpen = isOpenGate
+        device.IsPublic = isPublic
+        device.AllowedLicencePlates = myPlates
+        device.CurrentLicencePlate = lastPlate
+        setSmartDeviceParent(device)
+    }, [isOpenGate, isPublic, myPlates, lastPlate]);
+
+
+    useEffect(() => {
+        console.log(device)
+        setIsOpenGate(device.isOpen)
+        setIsPublic(device.isPublic)
+        setMyPlates(device.allowedLicencePlates)
+        setLastPlate(device.licencePlate)
+        console.log(device)
+    }, [device]);
+
+
+
+
     return <>
         <Modal
             open={open}
@@ -278,7 +299,7 @@ const GateControl = () => {
                                 }}><Add/></IconButton>
                 </Box>
                 <Box display="flex" width="100%" flexDirection="column" overflow="auto">
-                    {myPlates.map((item) => <Box>
+                    {myPlates ? myPlates.map((item) => <Box>
                         <Box width="98%" margin="0 auto" height={"2px"} bgcolor="rgba(0, 0, 0, 0.20)"/>
                         <Box width={"100%"} my={1} display="flex" alignItems="center" flexDirection={"row"}>
                             <Box display="flex" width="100%" justifyContent="space-between">
@@ -286,7 +307,7 @@ const GateControl = () => {
                             </Box>
                             <IconButton onClick={() => {}}><Close/></IconButton>
                         </Box>
-                    </Box>)}
+                    </Box>) : <></>}
                 </Box>
             </Box>
 
