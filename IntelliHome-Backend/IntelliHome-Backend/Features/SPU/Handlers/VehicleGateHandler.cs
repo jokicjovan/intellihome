@@ -40,7 +40,6 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 var vehicleGateDataInflux = new Dictionary<string, object>
                 {
                         { "isPublic", vehicleGateData.IsPublic ? 1f : 0f },
-                        { "licencePlate", vehicleGateData.LicencePlate },
                         { "isOpen", vehicleGateData.IsOpen ? 1f : 0f },
                         { "isEntering", vehicleGateData.IsEntering ? 1f : 0f },
                         { "consumptionPerMinute", vehicleGateData.ConsumptionPerMinute }
@@ -48,6 +47,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 };
                 var vehicleGateDataTags = new Dictionary<string, string>
                 {
+                        { "licencePlate", vehicleGateData.LicencePlate },
                         { "deviceId", vehicleGate.Id.ToString() }
                 };
                 vehicleGateService.AddPoint(vehicleGateDataInflux, vehicleGateDataTags);
