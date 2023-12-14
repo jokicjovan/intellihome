@@ -68,6 +68,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
             if (lampData != null)
             {
                 lampDTO.CurrentBrightness = lampData.CurrentBrightness;
+                lampDTO.IsWorking = lampData.IsWorking;
             }
 
             return lampDTO;
@@ -110,7 +111,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
             await _lampHandler.ToggleSmartDevice(lamp, turnOn);
 
             lamp.IsOn = turnOn;
-            _ = _lampRepository.Update(lamp);
+            await _lampRepository.Update(lamp);
         }
 
 

@@ -18,6 +18,7 @@ import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSm
 import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
 const LampControl = ({device, setSmartDeviceParent}) => {
+    console.log(device)
     const [brightness, setBrightness]=useState(device.currentBrightness)
     const [threshold, setThreshold]= useState(device.brightnessLimit)
     const [isOn, setIsOn]=useState(device.isOn)

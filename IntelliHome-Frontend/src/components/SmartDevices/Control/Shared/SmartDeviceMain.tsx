@@ -36,6 +36,7 @@ const SmartDeviceMain = () => {
     function initSmartDeviceSocketConnection(){
         const subscriptionResultCallback = (result) => {
             result = JSON.parse(result);
+            console.log('Subscription result:', result);
             setSmartDevice(prevSmartDevice => ({
                 ...prevSmartDevice,
                 ...result
@@ -108,7 +109,7 @@ const SmartDeviceMain = () => {
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelsControl solarPanelSystem={smartDevice}/> :
-                            deviceType == "Gate" ? <GateControl/> :
+                            deviceType == "Gate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                                 deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
                                     <></>
 

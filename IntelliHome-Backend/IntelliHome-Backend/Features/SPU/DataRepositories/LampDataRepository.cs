@@ -19,7 +19,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
         public LampData GetLastData(Guid id)
         {
             var table = _influxRepository.GetLastData("lamp", id).Result;
-            if (table.Records.Count == 0)
+            if (table == null || table.Records.Count == 0)
             {
                 return new LampData
                 {
