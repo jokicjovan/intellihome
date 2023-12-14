@@ -39,6 +39,7 @@ const SmartDeviceMain = () => {
         const signalRSmartDeviceService = new SignalRSmartDeviceService();
         const subscriptionResultCallback = (result) => {
             result = JSON.parse(result);
+            console.log('Subscription result:', result);
             setSmartDevice(prevSmartDevice => ({
                 ...prevSmartDevice,
                 ...result
@@ -99,7 +100,7 @@ const SmartDeviceMain = () => {
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
-                            deviceType=="Gate"?<GateControl/>:
+                            deviceType=="VehicleGate"?<GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/>:
                                 deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
                             <></>
 
