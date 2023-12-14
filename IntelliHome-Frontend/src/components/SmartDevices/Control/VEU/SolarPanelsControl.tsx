@@ -16,11 +16,11 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
     const [efficiency, setEfficiency] = useState(solarPanelSystem.efficiency)
     const [isOn, setIsOn] = useState(solarPanelSystem.isOn)
     const [data, setData] = useState([["Date", "Current Production"]])
-    const [dataFetched, setDataFetched] = useState(false);
 
     const setSolarPanelSystemData = (solarPanelSystemData) => {
         setArea(solarPanelSystemData.area);
         setEfficiency(solarPanelSystemData.efficiency);
+        setIsOn(solarPanelSystemData.isOn);
         setData((prevData) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date().toUTCString(), solarPanelSystemData.productionPerMinute]];
@@ -28,10 +28,9 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
     };
 
     const fetchHistoricalData = async () => {
-        if (Object.keys(solarPanelSystem).length === 0 || dataFetched) {
+        if (Object.keys(solarPanelSystem).length === 0) {
             return;
         }
-        setDataFetched(true);
 
         const startDate = new Date();
         startDate.setUTCHours(0, 0, 0, 0);
@@ -41,7 +40,7 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
         try {
             const res = await axios.get(
                 environment +
-                `/api/SolarPanelSystem/GetProductionHistoricalData?Id=${solarPanelSystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${solarPanelSystem.type}/GetProductionHistoricalData?Id=${solarPanelSystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
             const transformedData = [
@@ -70,7 +69,7 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
 
     useEffect(() => {
         fetchHistoricalData();
-    }, [solarPanelSystem]);
+    }, [solarPanelSystem.id]);
 
     const options = {
         hAxis: {
@@ -84,7 +83,7 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
         height: 95,

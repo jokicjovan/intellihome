@@ -78,7 +78,7 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         }
         setError(null);
 
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WashingMachine)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WASHINGMACHINE)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

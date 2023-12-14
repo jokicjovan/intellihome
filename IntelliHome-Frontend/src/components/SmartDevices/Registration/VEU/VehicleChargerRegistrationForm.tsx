@@ -43,7 +43,7 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
 
     const handleVehicleChargerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VehicleCharger)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.VEHICLECHARGER)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

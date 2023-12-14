@@ -52,7 +52,7 @@ const LampRegistrationForm : React.FC<LampRegistrationFormProps> = ({smartHomeId
 
     const handleLampSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Lamp)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.LAMP)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

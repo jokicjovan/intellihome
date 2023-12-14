@@ -99,7 +99,11 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task ToggleSolarPanelSystem(Guid id, bool turnOn = true) {
             SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
-            _ = _solarPanelSystemHandler.TurnOnSmartDevice(solarPanelSystem, turnOn);
+            if (solarPanelSystem == null)
+            {
+                throw new ResourceNotFoundException("Smart device not found!");
+            }
+            await _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
             solarPanelSystem.IsOn = turnOn;
             _ = _solarPanelSystemRepository.Update(solarPanelSystem);
         }

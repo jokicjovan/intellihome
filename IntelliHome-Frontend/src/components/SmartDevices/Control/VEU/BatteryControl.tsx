@@ -5,15 +5,15 @@ import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 
 const BatteryControl = ({batterySystem}) => {
-    const [capacity, setCapacity] = useState(100)
-    const [currentCapacity, setCurrentCapacity] = useState(0)
-    const [isOn,setIsOn]=useState(false)
+    const [capacity, setCapacity] = useState(batterySystem.capacity)
+    const [currentCapacity, setCurrentCapacity] = useState(batterySystem.currentCapacity)
+    const [isOn,setIsOn]=useState(batterySystem.isOn)
     const [data, setData] = useState([["Date", "Current Capacity"]])
-    const [dataFetched, setDataFetched] = useState(false);
+
     const setBatterySystemData = (batterySystemData) => {
         setCapacity(batterySystemData.capacity);
         setCurrentCapacity(batterySystemData.currentCapacity);
-
+        setIsOn(batterySystemData.isOn);
         setData((prevData) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date().toUTCString(), currentCapacity]];
@@ -21,10 +21,9 @@ const BatteryControl = ({batterySystem}) => {
     };
 
     const fetchHistoricalData = async () => {
-        if (Object.keys(batterySystem).length === 0 || dataFetched) {
+        if (Object.keys(batterySystem).length === 0) {
             return;
         }
-        setDataFetched(true);
 
         const startDate = new Date();
         startDate.setUTCHours(0, 0, 0, 0);
@@ -34,7 +33,7 @@ const BatteryControl = ({batterySystem}) => {
         try {
             const res = await axios.get(
                 environment +
-                `/api/BatterySystem/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${batterySystem.type}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
             const transformedData = [
@@ -52,7 +51,6 @@ const BatteryControl = ({batterySystem}) => {
     };
 
     const handleBatterySystemDataChange = async (newBatterySystemData) => {
-        console.log("stigao novi");
         if (Object.keys(newBatterySystemData).length !== 0) {
             setBatterySystemData(newBatterySystemData);
         }
@@ -64,7 +62,7 @@ const BatteryControl = ({batterySystem}) => {
 
     useEffect(() => {
         fetchHistoricalData();
-    }, [batterySystem]);
+    }, [batterySystem.id]);
 
     const options = {
         hAxis: {
@@ -78,7 +76,7 @@ const BatteryControl = ({batterySystem}) => {
     const SwitchPower = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
         height: 95,

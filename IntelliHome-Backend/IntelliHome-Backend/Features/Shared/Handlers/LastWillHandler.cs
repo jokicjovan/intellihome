@@ -7,7 +7,6 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Client;
-using System;
 using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.Shared.Handlers

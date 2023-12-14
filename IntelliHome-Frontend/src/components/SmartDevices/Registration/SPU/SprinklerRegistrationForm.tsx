@@ -40,7 +40,7 @@ const SprinklerRegistrationForm : React.FC<SprinklerRegistrationFormProps> = ({s
     };
     const handleSprinklerSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.Sprinkler)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.SPRINKLER)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();
