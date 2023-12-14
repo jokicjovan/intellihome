@@ -66,7 +66,8 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             bool isOpen = isOpenRecord != null && Convert.ToBoolean(isOpenRecord.GetValueByKey("_value"));
             bool isPublic = isPublicRecord != null && Convert.ToBoolean(isPublicRecord.GetValueByKey("_value"));
             bool isEntering = isEnteringRecord != null && Convert.ToBoolean(isEnteringRecord.GetValueByKey("_value"));
-            string licencePlate = rows[0].GetValueByKey("licencePlate").ToString();
+            string licencePlate = rows[0].GetValueByKey("licencePlate") != null ? rows[0].GetValueByKey("licencePlate").ToString() : "";
+            
 
             return new VehicleGateData
             {

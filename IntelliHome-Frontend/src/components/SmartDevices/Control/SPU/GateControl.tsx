@@ -19,26 +19,16 @@ import {environment} from "../../../../security/Environment.tsx";
 
 
 const GateControl = ({device, setSmartDeviceParent}) => {
-
     const [lastPlate, setLastPlate] = useState(device.currentLicencePlate)
     const [isOpenGate, setIsOpenGate] = useState(device.isOpen)
+    const [isOpenGateByUser, setIsOpenGateByUser] = useState(device.isOpenByUser || false)
     const [isPublic, setIsPublic] = useState(device.isPublic)
     const [open, setIsOpen] = useState(false)
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
-    const [history, setHistory] = useState([
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-        "SM074HZ",
-    ]);
+    const [history, setHistory] = useState([]);
     const [myPlates, setMyPlates] = useState(device.allowedLicencePlates ? device.allowedLicencePlates : []);
+    const [newPlate, setNewPlate] = useState("")
     // console.log(value)
     const DatePickerStyle = {
         "& .MuiPickersLayout-actionBar": {display: "none"},
@@ -60,8 +50,9 @@ const GateControl = ({device, setSmartDeviceParent}) => {
 
     }
     const SwitchState = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOpenGate} onChange={(e) => {
-            setIsOpenGate(e.target.checked)
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOpenGateByUser} onChange={(e) => {
+            // setIsOpenGate(e.target.checked)
+            changeState(e.target.checked)
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
@@ -113,7 +104,8 @@ const GateControl = ({device, setSmartDeviceParent}) => {
     }));
     const SwitchMode = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isPublic} onChange={(e) => {
-            setIsPublic(e.target.checked)
+            // setIsPublic(e.target.checked)
+            changeMode(e.target.checked)
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
         width: 78,
@@ -164,33 +156,97 @@ const GateControl = ({device, setSmartDeviceParent}) => {
         },
     }));
 
-    // useEffect(() => {
-    //     axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
-    //         console.log(res.data)
-    //     }).catch(err => {
-    //         console.log(err)
-    //     });
-    // }, []);
+    useEffect(() => {
+        // axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
+        //     console.log(res.data)
+        // }).catch(err => {
+        //     console.log(err)
+        // });
+        const currentDate = new Date();
+
+        const oneHourBefore = new Date(currentDate);
+        oneHourBefore.setHours(currentDate.getHours() - 24);
+
+        const formattedCurrentDate = currentDate.toISOString();
+        const formattedOneHourBefore = oneHourBefore.toISOString();
+
+        axios.get(environment + `/api/VehicleGate/GetHistoricalData?Id=${device.id}&From=${formattedOneHourBefore}&To=${formattedCurrentDate}`).then(res => {
+            const licencePlates = res.data
+                .filter(item => item.isOpen === true)
+                .filter(item => item.licencePlate.length > 0)
+                .map(item => [item.licencePlate, item.isEntering]);
+            console.log(licencePlates)
+            setHistory(licencePlates)
+        }).catch(err => {
+            console.log(err)
+        });
+    }, []);
 
     useEffect(() => {
-        device.IsOpen = isOpenGate
-        device.IsPublic = isPublic
-        device.AllowedLicencePlates = myPlates
-        device.CurrentLicencePlate = lastPlate
+
+        device.isOpen = isOpenGate
+        device.isPublic = isPublic
+        device.allowedLicencePlates = myPlates
+        device.currentLicencePlate = lastPlate
+        device.licencePlate = lastPlate
+        device.isOpenByUser = isOpenGateByUser
         setSmartDeviceParent(device)
-    }, [isOpenGate, isPublic, myPlates, lastPlate]);
+    }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenGateByUser]);
 
 
     useEffect(() => {
+        console.log("promenio parent")
         console.log(device)
         setIsOpenGate(device.isOpen)
+        setIsOpenGateByUser(device.isOpenByUser)
         setIsPublic(device.isPublic)
         setMyPlates(device.allowedLicencePlates)
         setLastPlate(device.licencePlate)
-        console.log(device)
+        if(device.licencePlate !== undefined && device.licencePlate.length > 0 && device.isOpen == true)
+            history.push([device.licencePlate, device.isEntering])
+        setHistory(history)
     }, [device]);
 
 
+    const addNewLicencePlate = () => {
+        axios.put(environment + `/api/VehicleGate/AddLicencePlate?Id=${device.id}&LicencePlate=${newPlate}`).then(res => {
+            device.allowedLicencePlates = [...myPlates, newPlate]
+            setMyPlates([...myPlates, newPlate])
+            setIsOpen(false)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    const removeLicencePlate = (plate) => {
+        // console.log(plate)
+        axios.put(environment + `/api/VehicleGate/RemoveLicencePlate?Id=${device.id}&LicencePlate=${plate}`).then(res => {
+            device.allowedLicencePlates = myPlates.filter(item => item !== plate)
+            setMyPlates(myPlates.filter(item => item !== plate))
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    const changeMode = (value) => {
+        if(isOpenGateByUser)
+            return
+        axios.put(environment + `/api/VehicleGate/ChangeMode?Id=${device.id}&IsPublic=${value}`).then(res => {
+            setIsPublic(value)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    const changeState = (value) => {
+        console.log(value)
+        axios.put(environment + `/api/VehicleGate/OpenCloseGate?Id=${device.id}&IsOpen=${value}`).then(res => {
+            setIsOpenGate(value)
+            setIsOpenGateByUser(value)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
 
 
     return <>
@@ -214,12 +270,12 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                       flexDirection="column">
 
                     <TextField fullWidth type="text" name="myPlateModal"
-                               placeholder="Plate Number" sx={styledInput} mb={3}></TextField>
+                               placeholder="Plate Number" sx={styledInput} onChange={(e) => setNewPlate(e.target.value)} mb={3}></TextField>
 
                 </Grid>
                 <Grid item xs={12} display="flex" alignItems="flex-end" justifyContent="end">
                     <Box display="flex">
-                        <Button mx={2} type="submit" sx={{
+                        <Button mx={2} onClick={() => setIsOpen(false)} sx={{
                             backgroundColor: "white",
                             border: "1px solid #FBC40E",
                             color: "black",
@@ -227,7 +283,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                             marginRight:"20px",
                             ':hover': {backgroundColor: "white"}
                         }}>Cancel</Button>
-                        <Button mx={2} type="submit" sx={{
+                        <Button mx={2} onClick={addNewLicencePlate} sx={{
                             backgroundColor: "#FBC40E",
                             border: "1px solid #FBC40E",
                             color: "black",
@@ -273,11 +329,13 @@ const GateControl = ({device, setSmartDeviceParent}) => {
 
                 </Box>
                 <Box display="flex" width="100%" flexDirection="column" overflow="auto">
-                    {history.map((item) => <Box>
+                    {[...history].reverse().map((item) => <Box>
                         <Box width="98%" margin="0 auto" height={"2px"} bgcolor="rgba(0, 0, 0, 0.20)"/>
                         <Box width={"100%"} my={1.5} display="flex" alignItems="center" flexDirection={"row"}>
-                            <Box display="flex" width="100%" justifyContent="start">
-                                <Typography ml={2} fontSize="20px" fontWeight="500"> {item}</Typography>
+                            <Box display="flex" width="100%" justifyContent="space-between">
+                                <Typography ml={2} fontSize="20px" fontWeight="500"> {item[0]}</Typography>
+                                <Typography mr={2} fontSize="20px" fontWeight="500"> {item[1]? "In" : "Out"}</Typography>
+
                             </Box>
                         </Box>
                     </Box>)}
@@ -305,7 +363,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                             <Box display="flex" width="100%" justifyContent="space-between">
                                 <Typography ml={2} fontSize="20px" fontWeight="500"> {item}</Typography>
                             </Box>
-                            <IconButton onClick={() => {}}><Close/></IconButton>
+                            <IconButton onClick={() => removeLicencePlate(item)}><Close/></IconButton>
                         </Box>
                     </Box>) : <></>}
                 </Box>
