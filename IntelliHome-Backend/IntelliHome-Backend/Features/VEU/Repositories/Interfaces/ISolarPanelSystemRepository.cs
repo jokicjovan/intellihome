@@ -5,5 +5,6 @@ namespace IntelliHome_Backend.Features.VEU.Repositories.Interfaces
 {
     public interface ISolarPanelSystemRepository : ICrudRepository<SolarPanelSystem>
     {
+        Task<SolarPanelSystem> FindWithSmartHome(Guid id);
     }
 }

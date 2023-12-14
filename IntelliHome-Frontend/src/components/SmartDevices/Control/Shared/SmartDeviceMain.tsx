@@ -43,6 +43,7 @@ const SmartDeviceMain = () => {
                 ...prevSmartDevice,
                 ...result
             }));
+            setIsConnected(smartDevice.isConnected);
         }
 
         const resultCallback = (result) => {
@@ -98,7 +99,7 @@ const SmartDeviceMain = () => {
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
+                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl solarPanelSystem={smartDevice}/> :
                             deviceType=="Gate"?<GateControl/>:
                                 deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
                             <></>

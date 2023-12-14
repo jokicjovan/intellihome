@@ -27,7 +27,7 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
         public SolarPanelSystemProductionDataDTO GetLastProductionData(Guid id)
         {
             var table = _influxRepository.GetLastData("solarPanelSystemProduction", id).Result;
-            return ConvertToSolarPanelSystemProductionDataDTO(table);
+            return table == null ?  new SolarPanelSystemProductionDataDTO() : ConvertToSolarPanelSystemProductionDataDTO(table);
         }
 
         private SolarPanelSystemProductionDataDTO ConvertToSolarPanelSystemProductionDataDTO(FluxTable table)

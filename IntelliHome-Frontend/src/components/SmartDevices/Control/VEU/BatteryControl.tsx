@@ -8,7 +8,7 @@ const BatteryControl = ({batterySystem}) => {
     const [capacity, setCapacity] = useState(100)
     const [currentCapacity, setCurrentCapacity] = useState(0)
     const [isOn,setIsOn]=useState(false)
-    const [data, setData] = useState([["Date", "Current Capacity"], [new Date().toUTCString(), 0]])
+    const [data, setData] = useState([["Date", "Current Capacity"]])
     const [dataFetched, setDataFetched] = useState(false);
     const setBatterySystemData = (batterySystemData) => {
         setCapacity(batterySystemData.capacity);
@@ -71,7 +71,7 @@ const BatteryControl = ({batterySystem}) => {
             title: "Time",
         },
         vAxis: {
-            title: "Capacity",
+            title: "Capacity (KWh)",
         }
     };
 

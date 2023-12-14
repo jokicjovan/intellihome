@@ -9,5 +9,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to);
         void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task<SolarPanelSystemDTO> GetWithProductionData(Guid id);
+        Task ToggleSolarPanelSystem(Guid id, bool turnOn = true);
     }
 }

@@ -1,9 +1,14 @@
 ﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Client;
+using System;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.Shared.Handlers
 {
@@ -11,10 +16,12 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
     {
         private readonly IMqttService _mqttService;
         private readonly IServiceProvider _serviceProvider;
-        public LastWillHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simulationService)
+        private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
+        public LastWillHandler(IMqttService mqttService, IServiceProvider serviceProvider, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             _mqttService = mqttService;
             _serviceProvider = serviceProvider;
+            _smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async Task SetupLastWillHandler()
@@ -31,6 +38,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
                 SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
                 smartDevice.IsConnected = false;
                 await smartDeviceService.Update(smartDevice);
+                _smartDeviceHubContext.Clients.Group(deviceId.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isConnected = smartDevice.IsConnected }));
             }
         }
 
