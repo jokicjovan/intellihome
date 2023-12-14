@@ -27,7 +27,7 @@ const SmartDeviceMain = () => {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
             setSmartDevice(res.data)
             setIsConnected(res.data.isConnected)
-        }).then().catch(err => {
+        }).catch(err => {
             console.log(err)
         });
     }

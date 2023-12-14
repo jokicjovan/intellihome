@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 
 const BatteryControl = ({batterySystem}) => {
     const [capacity, setCapacity] = useState(batterySystem.capacity)
@@ -73,8 +74,16 @@ const BatteryControl = ({batterySystem}) => {
         }
     };
 
+    const handleSwitchClick = () => {
+        const res = axios.put(
+            environment +
+            `/api/${SmartDeviceType[batterySystem.type]}/Toggle?Id=${batterySystem.id}&turnOn=${!isOn}`
+        );
+        setIsOn(!isOn);
+    };
+
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onClick={handleSwitchClick} onChange={(e) => {
             setIsOn(e.target.checked)
         }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({

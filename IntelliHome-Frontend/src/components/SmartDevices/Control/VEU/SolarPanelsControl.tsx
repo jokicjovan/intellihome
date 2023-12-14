@@ -10,6 +10,7 @@ import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 
 const SolarPanelsControl = ({solarPanelSystem}) => {
     const [area, setArea] = useState(solarPanelSystem.area)
@@ -40,7 +41,7 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
         try {
             const res = await axios.get(
                 environment +
-                `/api/${solarPanelSystem.type}/GetProductionHistoricalData?Id=${solarPanelSystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${SmartDeviceType[solarPanelSystem.type]}/GetProductionHistoricalData?Id=${solarPanelSystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
             const transformedData = [
@@ -80,8 +81,16 @@ const SolarPanelsControl = ({solarPanelSystem}) => {
         }
     };
 
+    const handleSwitchClick = () => {
+        const res = axios.put(
+            environment +
+            `/api/${SmartDeviceType[solarPanelSystem.type]}/Toggle?Id=${solarPanelSystem.id}&turnOn=${!isOn}`
+        );
+        setIsOn(!isOn);
+    };
+
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onClick={handleSwitchClick} onChange={(e) => {
             setIsOn(e.target.checked)
         }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
