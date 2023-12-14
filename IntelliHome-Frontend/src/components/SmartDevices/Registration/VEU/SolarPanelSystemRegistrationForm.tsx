@@ -43,7 +43,7 @@ const SolarPanelSystemRegistrationForm : React.FC<SolarPanelSystemRegistrationFo
 
     const handleSolarPanelSystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SolarPanelSystem)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.SOLARPANELSYSTEM)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

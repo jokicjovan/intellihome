@@ -5,9 +5,9 @@ namespace IntelliHome_Backend.Features.Home.Handlers.Interfaces
 {
     public interface ISmartDeviceHandler
     {
-        void PublishMessageToSmartDevice(SmartDevice smartDevice, string payload);
+        Task PublishMessageToSmartDevice(SmartDevice smartDevice, string payload);
         Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<string, object> additionalAttributes);
-        void SubscribeToSmartDevice(SmartDevice smartDevice);
-        Task TurnOnSmartDevice(SmartDevice smartDevice, bool turnOn);
+        Task SubscribeToSmartDevice(SmartDevice smartDevice);
+        Task ToggleSmartDevice(SmartDevice smartDevice, bool turnOn);
     }
 }

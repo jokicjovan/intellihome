@@ -28,5 +28,12 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
             BatterySystemDTO result = await _batterySystemService.GetWithCapacityData(id);
             return Ok(result);
         }
+
+        [HttpPut]
+        public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
+        {
+            await _batterySystemService.ToggleBatterySystem(id, turnOn);
+            return Ok();
+        }
     }
 }

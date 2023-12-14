@@ -1,4 +1,5 @@
-﻿using Data.Models.VEU;
+﻿using Data.Models.SPU;
+using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs;
@@ -94,6 +95,17 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _batterySystemDataRepository.AddCapacityMeasurement(fields, tags);
+        }
+
+        public async Task ToggleBatterySystem(Guid id, bool turnOn = true)
+        {
+            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
+            if ( batterySystem == null ) {
+                throw new ResourceNotFoundException("Smart device not found!");
+            }
+            await _batterySystemHandler.ToggleSmartDevice(batterySystem, turnOn);
+            batterySystem.IsOn = turnOn;
+            _ = _batterySystemRepository.Update(batterySystem);
         }
     }
 }

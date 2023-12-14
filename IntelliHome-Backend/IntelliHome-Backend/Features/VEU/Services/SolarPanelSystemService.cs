@@ -1,4 +1,5 @@
-﻿using Data.Models.VEU;
+﻿using Data.Models.SPU;
+using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs;
@@ -81,10 +82,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             };
 
             SolarPanelSystemProductionDataDTO solarPanelSystemDataDTO = _solarPanelSystemDataRepository.GetLastProductionData(id);
-            if (solarPanelSystemDTO != null)
-            {
-                solarPanelSystemDTO.ProductionPerMinute = solarPanelSystemDataDTO.ProductionPerMinute;
-            }
+            solarPanelSystemDTO.ProductionPerMinute = solarPanelSystemDataDTO.ProductionPerMinute;
 
             return solarPanelSystemDTO;
         }
@@ -97,6 +95,17 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _solarPanelSystemDataRepository.AddProductionMeasurement(fields, tags);
+        }
+
+        public async Task ToggleSolarPanelSystem(Guid id, bool turnOn = true) {
+            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
+            if (solarPanelSystem == null)
+            {
+                throw new ResourceNotFoundException("Smart device not found!");
+            }
+            await _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
+            solarPanelSystem.IsOn = turnOn;
+            _ = _solarPanelSystemRepository.Update(solarPanelSystem);
         }
     }
 }

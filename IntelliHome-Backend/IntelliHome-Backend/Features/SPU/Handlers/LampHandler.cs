@@ -60,7 +60,6 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         {
             string action = isAuto ? "auto" : "manual";
             string payload = JsonConvert.SerializeObject(new { action });
-
             PublishMessageToSmartDevice(lamp, payload);
         }
 

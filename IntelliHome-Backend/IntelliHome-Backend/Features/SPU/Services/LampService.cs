@@ -108,7 +108,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
         public async Task TurnOnSmartDevice(Guid id, bool turnOn)
         {
             Lamp lamp = await _lampRepository.FindWithSmartHome(id);
-            await _lampHandler.TurnOnSmartDevice(lamp, turnOn);
+            await _lampHandler.ToggleSmartDevice(lamp, turnOn);
 
             lamp.IsOn = turnOn;
             await _lampRepository.Update(lamp);

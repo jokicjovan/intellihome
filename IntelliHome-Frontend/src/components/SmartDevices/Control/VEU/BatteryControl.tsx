@@ -3,17 +3,18 @@ import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 
 const BatteryControl = ({batterySystem}) => {
-    const [capacity, setCapacity] = useState(100)
-    const [currentCapacity, setCurrentCapacity] = useState(0)
-    const [isOn,setIsOn]=useState(false)
-    const [data, setData] = useState([["Date", "Current Capacity"], [new Date().toUTCString(), 0]])
-    const [dataFetched, setDataFetched] = useState(false);
+    const [capacity, setCapacity] = useState(batterySystem.capacity)
+    const [currentCapacity, setCurrentCapacity] = useState(batterySystem.currentCapacity)
+    const [isOn,setIsOn]=useState(batterySystem.isOn)
+    const [data, setData] = useState([["Date", "Current Capacity"]])
+
     const setBatterySystemData = (batterySystemData) => {
         setCapacity(batterySystemData.capacity);
         setCurrentCapacity(batterySystemData.currentCapacity);
-
+        setIsOn(batterySystemData.isOn);
         setData((prevData) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date().toUTCString(), currentCapacity]];
@@ -21,10 +22,9 @@ const BatteryControl = ({batterySystem}) => {
     };
 
     const fetchHistoricalData = async () => {
-        if (Object.keys(batterySystem).length === 0 || dataFetched) {
+        if (Object.keys(batterySystem).length === 0) {
             return;
         }
-        setDataFetched(true);
 
         const startDate = new Date();
         startDate.setUTCHours(0, 0, 0, 0);
@@ -34,7 +34,7 @@ const BatteryControl = ({batterySystem}) => {
         try {
             const res = await axios.get(
                 environment +
-                `/api/BatterySystem/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${batterySystem.type}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
             const transformedData = [
@@ -52,7 +52,6 @@ const BatteryControl = ({batterySystem}) => {
     };
 
     const handleBatterySystemDataChange = async (newBatterySystemData) => {
-        console.log("stigao novi");
         if (Object.keys(newBatterySystemData).length !== 0) {
             setBatterySystemData(newBatterySystemData);
         }
@@ -64,21 +63,29 @@ const BatteryControl = ({batterySystem}) => {
 
     useEffect(() => {
         fetchHistoricalData();
-    }, [batterySystem]);
+    }, [batterySystem.id]);
 
     const options = {
         hAxis: {
             title: "Time",
         },
         vAxis: {
-            title: "Capacity",
+            title: "Capacity (KWh)",
         }
     };
 
+    const handleSwitchClick = () => {
+        const res = axios.put(
+            environment +
+            `/api/${SmartDeviceType[batterySystem.type]}/Toggle?Id=${batterySystem.id}&turnOn=${!isOn}`
+        );
+        setIsOn(!isOn);
+    };
+
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onClick={handleSwitchClick} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
         height: 95,

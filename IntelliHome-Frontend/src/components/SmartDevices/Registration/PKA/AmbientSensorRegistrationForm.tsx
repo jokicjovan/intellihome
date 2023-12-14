@@ -45,7 +45,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
 
     const handleAmbientSensorSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AmbientSensor)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AMBIENTSENSOR)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

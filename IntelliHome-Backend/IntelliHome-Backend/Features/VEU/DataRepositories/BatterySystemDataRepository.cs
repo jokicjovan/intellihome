@@ -27,7 +27,7 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
         public BatterySystemCapacityDataDTO GetLastCapacityData(Guid id)
         {
             var table = _influxRepository.GetLastData("batterySystemCapacity", id).Result;
-            return ConvertToBatterySystemCapacityDataDTO(table);
+            return table == null ? new BatterySystemCapacityDataDTO() : ConvertToBatterySystemCapacityDataDTO(table);
         }
 
         private BatterySystemCapacityDataDTO ConvertToBatterySystemCapacityDataDTO(FluxTable table)

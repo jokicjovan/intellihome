@@ -1,5 +1,6 @@
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { environment } from '../../utils/Environment.ts';
+import {HubConnectionState} from "@microsoft/signalr/src/HubConnection.ts";
 
 class SignalRSmartDeviceService {
     private connection: HubConnection | null = null;
@@ -16,16 +17,10 @@ class SignalRSmartDeviceService {
             .build();
 
         return this.connection.start()
-            .then(() => {
-                console.log('SignalR connection established');
-            })
-            .catch((error) => {
-                console.error('SignalR connection error: ', error);
-            });
     }
 
     public receiveSmartDeviceData(callback: (data: any) => void): void {
-        if (this.connection) {
+        if (this.connection && this.connection.state == HubConnectionState.Connected) {
             this.connection.on('ReceiveSmartDeviceData', (data: any) => {
                 callback(data);
             });
@@ -33,21 +28,21 @@ class SignalRSmartDeviceService {
     }
 
     public receiveSmartDeviceSubscriptionResult(callback: (data: any) => void): void {
-        if (this.connection) {
+        if (this.connection && this.connection.state == HubConnectionState.Connected) {
             this.connection.on('ReceiveSmartDeviceSubscriptionResult', (data: any) => {
                 callback(data);
             });
         }
     }
 
-    public subscribeToSmartDevice(smartDeviceId: string): void {
-        if (this.connection) {
-            this.connection.invoke('SubscribeToSmartDevice', smartDeviceId);
+    public subscribeToSmartDevice(smartDeviceId: string): Promise<void> {
+        if (this.connection && this.connection.state == HubConnectionState.Connected) {
+            return this.connection.invoke('SubscribeToSmartDevice', smartDeviceId);
         }
     }
 
     public stopConnection(): Promise<void> {
-        if (this.connection) {
+        if (this.connection && this.connection.state == HubConnectionState.Connected) {
             return this.connection.stop()
                 .then(() => {
                     console.log('SignalR connection stopped');

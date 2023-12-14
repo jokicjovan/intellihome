@@ -74,7 +74,7 @@ namespace IntelliHome_Backend.Features.Home.Services
         public async Task TurnOnSmartDevice(Guid id, bool turnOn)
         {
             SmartDevice smartDevice = await _smartDeviceRepository.FindWithSmartHome(id);
-            await _smartDeviceHandler.TurnOnSmartDevice(smartDevice, turnOn);
+            await _smartDeviceHandler.ToggleSmartDevice(smartDevice, turnOn);
 
             smartDevice.IsOn = turnOn;
             _ = _smartDeviceRepository.Update(smartDevice);

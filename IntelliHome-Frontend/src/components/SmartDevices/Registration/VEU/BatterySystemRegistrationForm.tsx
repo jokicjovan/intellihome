@@ -41,7 +41,7 @@ const BatterySystemRegistrationForm : React.FC<BatterySystemRegistrationFormProp
 
     const handleBatterySystemSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BatterySystem)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.VEU, SmartDeviceType.BATTERYSYSTEM)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

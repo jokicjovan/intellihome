@@ -6,6 +6,8 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
+using Data.Models.VEU;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.Home.Handlers
 {
@@ -24,26 +26,27 @@ namespace IntelliHome_Backend.Features.Home.Handlers
             this.smartDeviceHubContext = smartDeviceHubContext;
         }
 
-        public async void SubscribeToSmartDevice(SmartDevice smartDevice)
+        public Task SubscribeToSmartDevice(SmartDevice smartDevice)
         {
             string topic = $"FromDevice/{smartDevice.SmartHome.Id}/{smartDevice.Category}/{smartDevice.Type}/{smartDevice.Id}";
-            await mqttService.SubscribeAsync(topic, HandleMessageFromDevice);
+            return mqttService.SubscribeAsync(topic, HandleMessageFromDevice);
         }
 
-        public async Task TurnOnSmartDevice(SmartDevice smartDevice, bool turnOn)
+        public virtual Task ToggleSmartDevice(SmartDevice smartDevice, bool turnOn)
         {
             string action = turnOn ? "turn_on" : "turn_off";
             string payload = $"{{\"action\": \"{action}\"}}";
-            PublishMessageToSmartDevice(smartDevice, payload);
+            smartDeviceHubContext.Clients.Group(smartDevice.Id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isOn = turnOn }));
+            return PublishMessageToSmartDevice(smartDevice, payload);
         }
 
-        public async void PublishMessageToSmartDevice(SmartDevice smartDevice, string payload)
+        public Task PublishMessageToSmartDevice(SmartDevice smartDevice, string payload)
         {
             string topic = $"ToDevice/{smartDevice.SmartHome.Id}/{smartDevice.Category}/{smartDevice.Type}/{smartDevice.Id}";
-            await mqttService.PublishAsync(topic, payload);
+            return mqttService.PublishAsync(topic, payload);
         }
 
-        public async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<string, object> additionalAttributes)
+        public Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<string, object> additionalAttributes)
         {
             var requestBody = new
             {
@@ -56,7 +59,7 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                 keepalive = 30,
                 kwargs = additionalAttributes
             };
-            return await simualtionsHandler.AddDeviceToSimulator(requestBody);
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
 
         protected virtual Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

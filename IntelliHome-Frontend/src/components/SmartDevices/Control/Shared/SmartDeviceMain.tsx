@@ -1,5 +1,5 @@
 import {Box, Container, CssBaseline, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import AmbientSensorControl from "../PKA/AmbientSensorControl";
 import AirConditionerControl from "../PKA/AirConditionerControl";
 import LampControl from "../SPU/LampControl";
@@ -12,6 +12,7 @@ import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 import {useParams} from "react-router-dom";
 import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
+import SmartDevice from "../../../../models/interfaces/SmartDevice.ts";
 
 const SmartDeviceMain = () => {
     const params = useParams();
@@ -19,8 +20,8 @@ const SmartDeviceMain = () => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [deviceType, setDeviceType] = useState(params.type);
     const [smartDeviceId, setSmartDeviceId] = useState(params.id);
-    const [smartDevice, setSmartDevice] = useState({});
-
+    // @ts-ignore
+    const [smartDevice, setSmartDevice] = useState<SmartDevice>({});
 
     function getSmartDevice() {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
@@ -31,12 +32,8 @@ const SmartDeviceMain = () => {
         });
     }
 
-    useEffect(() => {
-        if(smartDeviceId)
-        {
-            getSmartDevice()
-        }
-        const signalRSmartDeviceService = new SignalRSmartDeviceService();
+    const signalRSmartDeviceService = useMemo(() => new SignalRSmartDeviceService(), [smartDeviceId]);
+    function initSmartDeviceSocketConnection(){
         const subscriptionResultCallback = (result) => {
             result = JSON.parse(result);
             console.log('Subscription result:', result);
@@ -44,12 +41,12 @@ const SmartDeviceMain = () => {
                 ...prevSmartDevice,
                 ...result
             }));
+            result.isConnected !== undefined && setIsConnected(result.isConnected);
         }
 
         const resultCallback = (result) => {
             console.log('Subscription result:', result);
         };
-
 
         signalRSmartDeviceService.startConnection().then(() => {
             console.log('SignalR connection established');
@@ -57,16 +54,28 @@ const SmartDeviceMain = () => {
             signalRSmartDeviceService.subscribeToSmartDevice(smartDeviceId);
             signalRSmartDeviceService.receiveSmartDeviceData(subscriptionResultCallback);
             signalRSmartDeviceService.receiveSmartDeviceSubscriptionResult(resultCallback);
+        })
+    }
 
-        });
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (smartDeviceId) {
+                    await getSmartDevice();
+                }
+                await initSmartDeviceSocketConnection();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        fetchData();
 
         return () => {
             signalRSmartDeviceService.stopConnection().then(() => {
                 console.log('SignalR connection stopped');
             });
         }
-
-    }, []);
+    }, [smartDeviceId]);
 
     return <>
         <Box display="flex" flexDirection="row" alignItems="center">
@@ -99,13 +108,13 @@ const SmartDeviceMain = () => {
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl/> :
-                            deviceType=="VehicleGate"?<GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/>:
-                                deviceType=="BatterySystem"?<BatteryControl batterySystem={smartDevice}/>:
-                            <></>
+                        deviceType == "SolarPanelSystem" ? <SolarPanelsControl solarPanelSystem={smartDevice}/> :
+                            deviceType == "Gate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
+                                    <></>
 
 
-            :selectedTab == 2?<SmartDeviceReportAction inputData={[
+            : selectedTab == 2 ? <SmartDeviceReportAction inputData={[
                 {action: "some actino", by: "Vukasin", date: new Date(dayjs().subtract(1, "hour").toString())},
                 {action: "some actino", by: "Marko", date: new Date(dayjs().subtract(5, "hour").toString())},
                 {action: "some actino", by: "Vukasin", date: new Date(dayjs().subtract(1, "day").toString())},
@@ -113,7 +122,7 @@ const SmartDeviceMain = () => {
                 {action: "some actino", by: "Dusan", date: new Date(dayjs().toString())},
                 {action: "some actino", by: "Vukasin", date: new Date(dayjs().toString())},
                 {action: "some actino", by: "Vukasin", date: new Date(dayjs().toString())},
-            ]}/>: <></>}
+            ]}/> : <></>}
 
     </>
 }

@@ -82,7 +82,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
         }
         setError(null);
 
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AirConditioner)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AIRCONDITIONER)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

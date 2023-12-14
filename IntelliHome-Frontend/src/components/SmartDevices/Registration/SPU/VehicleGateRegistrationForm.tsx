@@ -94,7 +94,7 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
         }
         setError(null);
 
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VehicleGate)
+        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.SPU, SmartDeviceType.VEHICLEGATE)
             .then((res) => {
                 if (res.status === 200) {
                     onClose();

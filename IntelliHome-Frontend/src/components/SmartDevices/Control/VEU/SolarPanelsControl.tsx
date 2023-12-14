@@ -1,40 +1,98 @@
 import {
     Box,
-    Container,
-    CssBaseline,
     FormControlLabel,
-    IconButton,
     styled,
     Switch,
     SwitchProps,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
-import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
-import {LineChart} from "@mui/x-charts";
+import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
+import axios from "axios";
+import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 
-const SolarPanelsControl = () => {
-    const [area,setArea]=useState(0)
-    const [efficiency,setEfficiency]=useState(0)
-    const [isOn,setIsOn]=useState(false)
-    const [data1, setData1] = useState([["date", "dogs", "cats"],
-        [new Date().toDateString(), 1, 2],
-        [new Date().toDateString(), 2, 7]])
+const SolarPanelsControl = ({solarPanelSystem}) => {
+    const [area, setArea] = useState(solarPanelSystem.area)
+    const [efficiency, setEfficiency] = useState(solarPanelSystem.efficiency)
+    const [isOn, setIsOn] = useState(solarPanelSystem.isOn)
+    const [data, setData] = useState([["Date", "Current Production"]])
 
-    const options1 = {
-        hAxis: {
-            title: "XLABEL",
-        },
-        vAxis: {
-            title: "YLABEL",
+    const setSolarPanelSystemData = (solarPanelSystemData) => {
+        setArea(solarPanelSystemData.area);
+        setEfficiency(solarPanelSystemData.efficiency);
+        setIsOn(solarPanelSystemData.isOn);
+        setData((prevData) => {
+            const filteredData = prevData.filter((_, index) => index !== 1);
+            return [...filteredData, [new Date().toUTCString(), solarPanelSystemData.productionPerMinute]];
+        });
+    };
+
+    const fetchHistoricalData = async () => {
+        if (Object.keys(solarPanelSystem).length === 0) {
+            return;
+        }
+
+        const startDate = new Date();
+        startDate.setUTCHours(0, 0, 0, 0);
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + 1);
+
+        try {
+            const res = await axios.get(
+                environment +
+                `/api/${SmartDeviceType[solarPanelSystem.type]}/GetProductionHistoricalData?Id=${solarPanelSystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+            );
+
+            const transformedData = [
+                ["Date", "Current Capacity"],
+                ...res.data.map(({ timestamp, currentCapacity }) => [
+                    new Date(timestamp).toUTCString(),
+                    currentCapacity,
+                ]),
+            ];
+
+            setData(transformedData);
+        } catch (err) {
+            console.log(err);
         }
     };
 
+    const handleSolarPanelSystemDataChange = async (newSolarPanelSystemData) => {
+        if (Object.keys(newSolarPanelSystemData).length !== 0) {
+            setSolarPanelSystemData(newSolarPanelSystemData);
+        }
+    };
+
+    useEffect(() => {
+        handleSolarPanelSystemDataChange(solarPanelSystem);
+    }, [solarPanelSystem]);
+
+    useEffect(() => {
+        fetchHistoricalData();
+    }, [solarPanelSystem.id]);
+
+    const options = {
+        hAxis: {
+            title: "Time",
+        },
+        vAxis: {
+            title: "Production (KWh)",
+        }
+    };
+
+    const handleSwitchClick = () => {
+        const res = axios.put(
+            environment +
+            `/api/${SmartDeviceType[solarPanelSystem.type]}/Toggle?Id=${solarPanelSystem.id}&turnOn=${!isOn}`
+        );
+        setIsOn(!isOn);
+    };
+
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onClick={handleSwitchClick} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
         height: 95,
@@ -91,7 +149,7 @@ const SolarPanelsControl = () => {
             <Typography fontSize="50px" fontWeight="600"> POWER</Typography>
             <FormControlLabel sx={{marginRight: 0}}
                               control={<SwitchPower sx={{ml: "10px", mt: "20px"}}/>}
-            />
+                              label=""/>
         </Box>
         <Box display="grid" gridColumn={2} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px 170px">
             <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
@@ -107,14 +165,15 @@ const SolarPanelsControl = () => {
 
             </Box>
 
-        </Box><Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+        </Box><Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center"
+                   flexDirection="column"
                    alignItems="center" bgcolor="white" borderRadius="25px">
         <Chart
             chartType="LineChart"
             width="100%"
             height="300px"
-            data={data1}
-            options={options1}
+            data={data}
+            options={options}
         />
 
     </Box>
