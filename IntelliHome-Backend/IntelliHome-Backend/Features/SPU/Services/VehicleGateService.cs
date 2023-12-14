@@ -129,7 +129,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
         public async Task TurnOnSmartDevice(Guid id, bool turnOn)
         {
             VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
-            await _vehicleGateHandler.TurnOnSmartDevice(vehicleGate, turnOn);
+            await _vehicleGateHandler.ToggleSmartDevice(vehicleGate, turnOn);
 
             vehicleGate.IsOn = turnOn;
             await _vehicleGateRepository.Update(vehicleGate);

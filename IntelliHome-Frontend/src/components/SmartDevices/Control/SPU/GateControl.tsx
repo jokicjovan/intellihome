@@ -157,11 +157,11 @@ const GateControl = ({device, setSmartDeviceParent}) => {
     }));
 
     useEffect(() => {
-        // axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
-        //     console.log(res.data)
-        // }).catch(err => {
-        //     console.log(err)
-        // });
+        axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
+            console.log(res.data)
+        }).catch(err => {
+            console.log(err)
+        });
         const currentDate = new Date();
 
         const oneHourBefore = new Date(currentDate);

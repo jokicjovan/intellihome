@@ -109,7 +109,7 @@ const SmartDeviceMain = () => {
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelsControl solarPanelSystem={smartDevice}/> :
-                            deviceType == "Gate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                                 deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
                                     <></>
 
