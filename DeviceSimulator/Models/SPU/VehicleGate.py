@@ -66,6 +66,7 @@ class VehicleGate(SmartDevice):
         self.client.publish(self.send_topic, json.dumps({"licencePlate": licence_plate,
                                                          "isPublic": self.is_public,
                                                          "isOpen": self.is_open,
+                                                         "isOpenedByUser": self.is_opened_by_user,
                                                          "isEntering": is_entering,
                                                          "actionBy": self.user,
                                                          "consumptionPerMinute": round(self.power_per_hour / 60, 4)}),

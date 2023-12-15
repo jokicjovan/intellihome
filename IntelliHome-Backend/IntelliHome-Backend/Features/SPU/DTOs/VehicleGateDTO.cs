@@ -7,6 +7,8 @@ namespace IntelliHome_Backend.Features.SPU.DTOs
         public String CurrentLicencePlate { get; set; }
         public Boolean IsPublic { get; set; }
         public Boolean IsOpen { get; set; }
+        public Boolean IsOpenedByUser { get; set; }
+        public String ActionBy { get; set; }
         public Boolean IsEntering { get; set; }
         public Double PowerPerHour { get; set; }
         public List<String> AllowedLicencePlates { get; set; }

@@ -18,25 +18,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
         public VehicleGateData GetLastData(Guid id)
         {
             var table = _influxRepository.GetLastData("vehicleGate", id).Result;
-            if (table == null || table.Records.Count == 0)
-            {
-                return new VehicleGateData
-                {
-                    IsOpen = false,
-                    IsPublic = false,
-                    IsEntering = false,
-                    LicencePlate = "",
-                };
-            }
-            VehicleGateData vehicleGateData = ConvertToVehicleGateData(table);
-
-            return new VehicleGateData
-            {
-                IsOpen = vehicleGateData.IsOpen,
-                IsPublic = vehicleGateData.IsPublic,
-                IsEntering = vehicleGateData.IsEntering,
-                LicencePlate = vehicleGateData.LicencePlate,
-            };
+            return table == null || table.Records.Count == 0 ? new VehicleGateData() : ConvertToVehicleGateData(table);
 
         }
 
@@ -61,12 +43,14 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             var isOpenRecord = rows.FirstOrDefault(r => r.Row.Contains("isOpen"));
             var isPublicRecord = rows.FirstOrDefault(r => r.Row.Contains("isPublic"));
             var isEnteringRecord = rows.FirstOrDefault(r => r.Row.Contains("isEntering"));
-            // var licencePlateRecord = rows.FirstOrDefault(r => r.Row.Contains("licencePlate"));
+            var isOpendByUserRecord = rows.FirstOrDefault(r => r.Row.Contains("isOpenedByUser"));
 
             bool isOpen = isOpenRecord != null && Convert.ToBoolean(isOpenRecord.GetValueByKey("_value"));
+            bool isOpendByUser = isOpendByUserRecord != null && Convert.ToBoolean(isOpendByUserRecord.GetValueByKey("_value"));
             bool isPublic = isPublicRecord != null && Convert.ToBoolean(isPublicRecord.GetValueByKey("_value"));
             bool isEntering = isEnteringRecord != null && Convert.ToBoolean(isEnteringRecord.GetValueByKey("_value"));
             string licencePlate = rows[0].GetValueByKey("licencePlate") != null ? rows[0].GetValueByKey("licencePlate").ToString() : "";
+            string actionBy = rows[0].GetValueByKey("actionBy") != null ? rows[0].GetValueByKey("actionBy").ToString() : "";
             
 
             return new VehicleGateData
@@ -76,6 +60,8 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
                 IsPublic = isPublic,
                 IsEntering = isEntering,
                 LicencePlate = licencePlate,
+                ActionBy = actionBy,
+                IsOpenedByUser = isOpendByUser
             };
         }
     }

@@ -75,7 +75,7 @@ namespace IntelliHome_Backend.Features.Shared.Influx
 
             var result = await QueryFromInfluxAsync(query);
 
-            return result.FirstOrDefault();
+            return result.LastOrDefault();
         }
 
         public async Task<IEnumerable<FluxTable>> GetLastHourData(Guid deviceId)

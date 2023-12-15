@@ -42,7 +42,8 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 var lampDataInflux = new Dictionary<string, object>
                 {
                         { "currentBrightness", lampData.CurrentBrightness },
-                        { "isWorking", lampData.IsWorking ? 1f : 0f },
+                        { "isShining", lampData.IsShining ? 1f : 0f },
+                        { "isAuto", lampData.IsAuto ? 1f : 0f},
                         { "consumptionPerMinute", lampData.ConsumptionPerMinute }
             
                 };
@@ -65,7 +66,14 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 
         public void ChangeBrightnessLimit(Lamp lamp, double brightness)
         {
-            string action = $"set_brightness_limit={brightness}";
+            string action = $"set_brightness_limit";
+            string payload = JsonConvert.SerializeObject(new { action, brightness });
+            PublishMessageToSmartDevice(lamp, payload);
+        }
+
+        public void TurnLightOnOff(Lamp lamp, bool turnOn)
+        {
+            string action = turnOn ? "turn_lamp_on" : "turn_lamp_off";
             string payload = JsonConvert.SerializeObject(new { action });
             PublishMessageToSmartDevice(lamp, payload);
         }

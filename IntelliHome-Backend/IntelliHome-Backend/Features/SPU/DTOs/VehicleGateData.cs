@@ -5,6 +5,8 @@
         public String LicencePlate { get; set; }
         public Boolean IsPublic { get; set; }
         public Boolean IsOpen { get; set; }
+        public Boolean IsOpenedByUser { get; set; }
+        public String ActionBy { get; set; }
         public Boolean IsEntering { get; set; }
         public Double ConsumptionPerMinute { get; set; }
         public DateTime? Timestamp { get; set; }

@@ -45,9 +45,16 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> TurnOnSmartDevice(Guid id, bool turnOn)
+        public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
         {
-            await _lampService.TurnOnSmartDevice(id, turnOn);
+            await _lampService.ToggleLamp(id, turnOn);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> TurnLightOnOff(Guid id, bool turnOn = true)
+        {
+            await _lampService.TurnLightOnOff(id, turnOn);
             return Ok();
         }
     }

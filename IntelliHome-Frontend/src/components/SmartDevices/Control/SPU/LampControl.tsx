@@ -21,13 +21,11 @@ const LampControl = ({device, setSmartDeviceParent}) => {
     console.log(device)
     const [brightness, setBrightness]=useState(device.currentBrightness)
     const [threshold, setThreshold]= useState(device.brightnessLimit)
-    const [isOn, setIsOn]=useState(device.isOn)
     const [isAuto, setIsAuto]=useState(device.isAuto)
-    const [isWorking, setIsWorking]=useState(device.isWorking)
+    const [isShining, setisShining]=useState(device.isShining)
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
-            setIsOn(e.target.checked);
-            setIsWorking(e.target.checked);
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isShining} onChange={(e) => {
+            setisShining(e.target.checked);
             turnOnDevice(e.target.checked);
         }} size="large" disableRipple {...props} />
     ))(({theme}) => ({
@@ -132,22 +130,21 @@ const LampControl = ({device, setSmartDeviceParent}) => {
         },
     }));
 
-    useEffect(() => {
-
-        device.isOn = isOn;
-        device.isAuto = isAuto;
-        device.brightnessLimit = threshold;
-        device.currentBrightness = brightness;
-        setSmartDeviceParent(device);
-
-    }, [isOn, isAuto, threshold, brightness]);
+    // useEffect(() => {
+    //
+    //     device.isAuto = isAuto;
+    //     device.brightnessLimit = threshold;
+    //     device.currentBrightness = brightness;
+    //     device.isShining = isShining;
+    //     setSmartDeviceParent(device);
+    //
+    // }, [isShining, isAuto, threshold, brightness]);
 
     useEffect(() => {
         setBrightness(device.currentBrightness);
         setThreshold(device.brightnessLimit);
-        setIsOn(device.isOn);
         setIsAuto(device.isAuto);
-        setIsWorking(device.isWorking);
+        setisShining(device.isShining);
     }, [device]);
 
 
@@ -155,7 +152,7 @@ const LampControl = ({device, setSmartDeviceParent}) => {
 
     function turnOnDevice(isOn){
         console.log(isOn);
-        axios.put(environment + `/api/Lamp/TurnOnSmartDevice?Id=${device.id}&TurnOn=${isOn}`).then(res => {
+        axios.put(environment + `/api/Lamp/TurnLightOnOff?Id=${device.id}&TurnOn=${isOn}`).then(res => {
             console.log(res.data)
         }).catch(err => {
             console.log(err)
@@ -163,7 +160,6 @@ const LampControl = ({device, setSmartDeviceParent}) => {
     }
 
     function setAutoMode(isAuto) {
-        if (!isOn) return;
         console.log(isAuto);
         axios.put(environment + `/api/Lamp/ChangeMode?Id=${device.id}&IsAuto=${isAuto}`).then(res => {
             console.log(res.data)
@@ -219,13 +215,6 @@ const LampControl = ({device, setSmartDeviceParent}) => {
                alignItems="center" bgcolor="white" borderRadius="25px">
                 <Typography fontSize="30px" fontWeight="600"> BRIGHTNESS</Typography>
                 <Typography fontSize="50px" fontWeight="700" display="flex" alignItems="flex-end"> {brightness}<Typography mb={2} fontSize="20px" >nit</Typography></Typography>
-
-            </Box>
-            <Box gridColumn={1} height="350px" gridRow={3} display="flex" flexDirection="column"
-                 alignItems="center" bgcolor="white" borderRadius="25px">
-                <Typography fontSize="30px" mt={1} fontWeight="600">IS GLOWING </Typography>
-                <Typography fontSize="80px" color="#343F71" mt={8}
-                            fontWeight="600"> {isWorking ? "ON" : "OFF"}</Typography>
 
             </Box>
         </Box>
