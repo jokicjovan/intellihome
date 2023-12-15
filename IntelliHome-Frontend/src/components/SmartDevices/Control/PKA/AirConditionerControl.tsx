@@ -17,7 +17,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 
 const AirConditionerControl = () => {
-
     const [currentTemperature, setCurrentTemperature] = useState(25)
     const [minTemperature, setMinTemperature] = useState(0)
     const [maxTemperature, setMaxTemperature] = useState(70)

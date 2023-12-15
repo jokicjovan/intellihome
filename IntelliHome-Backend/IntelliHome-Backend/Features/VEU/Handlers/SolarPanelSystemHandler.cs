@@ -50,5 +50,13 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
             }
         }
+
+        public override Task ToggleSmartDevice(SmartDevice smartDevice, bool turnOn)
+        {
+            string action = turnOn ? "turn_on" : "turn_off";
+            string payload = $"{{\"action\": \"{action}\"}}";
+            smartDeviceHubContext.Clients.Group(smartDevice.Id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isOn = turnOn }));
+            return PublishMessageToSmartDevice(smartDevice, payload);
+        }
     }
 }

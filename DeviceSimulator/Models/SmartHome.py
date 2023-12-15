@@ -1,6 +1,5 @@
 import asyncio
 import json
-
 import paho.mqtt.client as mqtt
 from DTOs.SmartDeviceDTO import SmartDeviceDTO
 from Enums.DeviceCategory import DeviceCategory
@@ -30,6 +29,9 @@ class SmartHome:
         self.current_consumption = 0
 
     def add_device(self, device_dto: SmartDeviceDTO):
+        if self.smart_devices.get(device_dto.device_id, None) is not None:
+            return
+
         device_type_mapping = {
             DeviceType.AirConditioner: AirConditioner,
             DeviceType.AmbientSensor: AmbientSensor,
