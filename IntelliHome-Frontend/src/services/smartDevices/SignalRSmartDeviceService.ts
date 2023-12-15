@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import {HubConnectionBuilder, HubConnection, JsonHubProtocol} from '@microsoft/signalr';
 import { environment } from '../../utils/Environment.ts';
 import {HubConnectionState} from "@microsoft/signalr/src/HubConnection.ts";
 
