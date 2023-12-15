@@ -2,6 +2,7 @@
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.Shared.Influx;
+using IntelliHome_Backend.Features.VEU.DTOs;
 
 namespace IntelliHome_Backend.Features.PKA.DataRepositories
 {
@@ -39,11 +40,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
 
             AmbientSensorData data = ConvertToAmbientSensorData(table);
 
-            return new AmbientSensorData
-            {
-                Temperature = data.Temperature,
-                Humidity = data.Humidity,
-            };
+            return table == null ? new AmbientSensorData() : ConvertToAmbientSensorData(table);
         }
 
 

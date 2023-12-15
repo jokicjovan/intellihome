@@ -27,6 +27,7 @@ const SmartDeviceMain = () => {
         axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
             setSmartDevice(res.data)
             setIsConnected(res.data.isConnected)
+
         }).catch(err => {
             console.log(err)
         });
@@ -105,7 +106,7 @@ const SmartDeviceMain = () => {
                 ':hover': {backgroundColor: selectedTab == 2 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(2)} fontSize="25px" fontWeight="500">Reports</Typography>
         </Box>
-        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
+        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelsControl solarPanelSystem={smartDevice}/> :
