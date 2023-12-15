@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import SmartDeviceReportAction from "../Shared/SmartDeviceReportAction.tsx";
 import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
+import dayjs from "dayjs";
 
 interface GateReportProps {
     environment: boolean
@@ -9,8 +10,8 @@ interface GateReportProps {
 
 const GateReport = ({ device}) => {
     const [gate, setGate] = useState(device);
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
+    const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
+    const [endDate, setEndDate] = useState(dayjs());
     const [user, setUser] = useState("");
     const [historicalData, setHistoricalData] = useState([]);
 
@@ -21,7 +22,7 @@ const GateReport = ({ device}) => {
                 res.data.forEach((entry) => {
                     data.push({action: entry.action, by: entry.actionBy, date: new Date(entry.timestamp)})
                 })
-                // console.log(data)
+                console.log(data)
                 setHistoricalData(data.reverse())
             }
         ).catch(err => {

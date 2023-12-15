@@ -29,7 +29,7 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
     const [admins, setAdmins] = useState(Array.from(new Set(filteredData.map(obj => obj.by))));
     const [pagePerRow, setPagePerRow] = useState(10);
     const [personName, setPersonName] = React.useState<string[]>([]);
-    const [startDate, setStartDate] = useState<TDate>(dayjs().subtract(24, "day"));
+    const [startDate, setStartDate] = useState<TDate>(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState<TDate>(dayjs());
     useEffect(() => {
         setPage(0);
@@ -40,7 +40,8 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
         setParentStartDate(startDate)
         setParentEndDate(endDate)
         setParentUser(personName)
-    }, [startDate, endDate, personName])
+        setAdmins(Array.from(new Set(inputData.map(obj => obj.by))));
+    }, [startDate, endDate, personName, inputData])
     const handleChangeSelect = (event: SelectChangeEvent<typeof personName>) => {
         const {
             target: {value},

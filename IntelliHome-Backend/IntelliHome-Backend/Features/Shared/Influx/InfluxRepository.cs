@@ -56,6 +56,10 @@ namespace IntelliHome_Backend.Features.Shared.Influx
 
         public async Task<IEnumerable<FluxTable>> GetHistoricalData(string measurement, Guid deviceId, DateTime from, DateTime to)
         {
+            if (to == from)
+            {
+                to = to.AddSeconds(1);
+            }
             var query = $"from(bucket: \"{_bucket}\") " +
                         $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
                         $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\" and r._measurement == \"{measurement}\") " +
