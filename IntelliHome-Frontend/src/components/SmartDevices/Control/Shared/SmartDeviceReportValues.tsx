@@ -28,7 +28,7 @@ import {Chart} from "react-google-charts";
                   1: { color: '#e7711b' }}}
 
  */
-const SmartDeviceReportValues = ({xLabel,yLabel,inputData,colorScheme={}}) => {
+const SmartDeviceReportValues = ({xLabel,yLabel,inputData, setParentStartDate, setParentEndDate, colorScheme={}}) => {
     type TDate = TDate | null;
     const [data, setData] = useState(inputData)
     const [hasError, setHasError] = useState(false)
@@ -69,6 +69,8 @@ const SmartDeviceReportValues = ({xLabel,yLabel,inputData,colorScheme={}}) => {
             setHasError(true)
             setFilteredData([['', ''], [0, 0]])
         }
+        setParentStartDate(startDate)
+        setParentEndDate(endDate)
 
     }, [startDate, endDate])
     return <Box display="flex" flexDirection="column" alignItems="center">
