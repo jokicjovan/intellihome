@@ -15,29 +15,14 @@ const GateReport = ({ device}) => {
     const [historicalData, setHistoricalData] = useState([]);
 
     useEffect(() => {
-        axios.get(environment + `/api/VehicleGate/GetHistoricalData?Id=${gate.id}&From=${startDate.toISOString()}&To=${endDate.toISOString()}`).then(res => {
+        axios.get(environment + `/api/VehicleGate/GetHistoricalActionData?Id=${gate.id}&From=${startDate.toISOString()}&To=${endDate.toISOString()}`).then(res => {
                 // setHistoricalData(res.data)
                 let data = []
                 res.data.forEach((entry) => {
-                    let action: string
-                    if(entry.isOpenedByUser)
-                    {
-                        if(entry.isOpen)
-                            action = "Gate opened by user"
-                        else
-                            action = "Gate closed by user"
-                    }
-                    else
-                    {
-                        if(entry.isOpen)
-                            action = "Gate opened by system"
-                        else
-                            action = "Gate closed by system"
-                    }
-                    data.push({action: action, by: entry.actionBy, date: new Date(entry.timestamp)})
+                    data.push({action: entry.action, by: entry.actionBy, date: new Date(entry.timestamp)})
                 })
                 // console.log(data)
-                setHistoricalData(data)
+                setHistoricalData(data.reverse())
             }
         ).catch(err => {
             console.log(err)

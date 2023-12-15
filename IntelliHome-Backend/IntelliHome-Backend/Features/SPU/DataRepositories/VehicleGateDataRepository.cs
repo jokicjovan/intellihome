@@ -28,10 +28,45 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             return result.Select(ConvertToVehicleGateData).ToList();
         }
 
+        public List<VehicleGateActionData> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
+        {
+            var result = _influxRepository.GetHistoricalData("vehicleGateActions", id, from, to).Result;
+            return result.Select(ConvertToVehicleGateActionData).ToList();
+        }
+
+
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _influxRepository.WriteToInfluxAsync("vehicleGate", fields, tags);
         }
+
+        public void SaveAction(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _influxRepository.WriteToInfluxAsync("vehicleGateActions", fields, tags);
+        }
+
+        private VehicleGateActionData ConvertToVehicleGateActionData(FluxTable table)
+        {
+            var rows = table.Records;
+            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
+            TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
+            timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
+
+            var actionRecord = rows.FirstOrDefault(r => r.Row.Contains("action"));
+
+            string action = actionRecord != null ? actionRecord.GetValueByKey("_value").ToString() : "";
+            string actionBy = rows[0].GetValueByKey("username") != null ? rows[0].GetValueByKey("username").ToString() : "";
+
+            return new VehicleGateActionData
+            {
+                Timestamp = timestamp,
+                Action = action,
+                ActionBy = actionBy
+            };
+
+        }
+
+
 
         private VehicleGateData ConvertToVehicleGateData(FluxTable table)
         {

@@ -7,5 +7,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces
         VehicleGateData GetLastData(Guid id);
         List<VehicleGateData> GetHistoricalData(Guid id, DateTime from, DateTime to);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        void SaveAction(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        List<VehicleGateActionData> GetHistoricalActionData(Guid id, DateTime from, DateTime to);
     }
 }
