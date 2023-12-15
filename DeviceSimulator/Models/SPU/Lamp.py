@@ -24,11 +24,12 @@ def generate_lumens():
 
 
 class Lamp(SmartDevice):
-    def __init__(self, device_id, smart_home_id, device_category, device_type, brightness_limit, power_per_hour, is_auto):
+    def __init__(self, device_id, smart_home_id, device_category, device_type, brightness_limit, power_per_hour, is_auto, is_shining=False):
         super().__init__(device_id, smart_home_id, device_category, device_type)
         self.brightness_limit = brightness_limit
         self.power_per_hour = power_per_hour
         self.is_auto = is_auto
+        self.is_shining = is_shining
 
     def on_data_receive(self, client, user_data, msg):
         super().on_data_receive(client, user_data, msg)
@@ -38,22 +39,26 @@ class Lamp(SmartDevice):
                 self.is_auto = True
             elif data.get("action", None) == "manual":
                 self.is_auto = False
-            elif "set_brightness_limit" in data.get("action", None):
-                self.brightness_limit = eval(data["action"].split("=")[1])
+            elif data.get("action", None) == "set_brightness_limit":
+                brightness_limit = data.get("brightness", None)
+                self.brightness_limit = brightness_limit
+            elif data.get("action", None) == "turn_lamp_on":
+                self.is_shining = True
+            elif data.get("action", None) == "turn_lamp_off":
+                self.is_shining = False
 
     async def send_data(self):
         while True:
             if not self.is_on:
                 break
             lumens = generate_lumens()
-            print(f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}")
+            print(f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}, is shining: {self.is_shining}")
             if self.is_auto:
-                is_working = lumens < self.brightness_limit
-            else:
-                is_working = self.is_on
+                self.is_shining = lumens < self.brightness_limit
 
             self.client.publish(self.send_topic, json.dumps({"currentBrightness": lumens,
-                                                             "isWorking": is_working,
+                                                             "isShining": self.is_shining,
+                                                             "isAuto": self.is_auto,
                                                              "consumptionPerMinute": round(self.power_per_hour / 60,
                                                                                                 4)}), retain=False)
             await asyncio.sleep(10)

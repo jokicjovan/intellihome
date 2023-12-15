@@ -10,7 +10,7 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         List<VehicleGateData> GetHistoricalData(Guid id, DateTime from, DateTime to);
         Task<VehicleGateDTO> GetWithData(Guid id);
         Task ChangeMode(Guid id, bool isPublic);
-        Task TurnOnSmartDevice(Guid id, bool turnOn);
+        Task ToggleVehicleGate(Guid id, bool turnOn);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
 
         Task AddLicencePlate(Guid id, string licencePlate);

@@ -72,6 +72,8 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 vehicleGateDTO.CurrentLicencePlate = vehicleGateData.LicencePlate;
                 vehicleGateDTO.IsEntering = vehicleGateData.IsEntering;
                 vehicleGateDTO.IsOpen = vehicleGateData.IsOpen;
+                vehicleGateDTO.IsOpenedByUser = vehicleGateData.IsOpenedByUser;
+                vehicleGateDTO.ActionBy = vehicleGateData.ActionBy;
             }
 
             return vehicleGateDTO;
@@ -126,7 +128,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
       
 
-        public async Task TurnOnSmartDevice(Guid id, bool turnOn)
+        public async Task ToggleVehicleGate(Guid id, bool turnOn)
         {
             VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
             await _vehicleGateHandler.ToggleSmartDevice(vehicleGate, turnOn);

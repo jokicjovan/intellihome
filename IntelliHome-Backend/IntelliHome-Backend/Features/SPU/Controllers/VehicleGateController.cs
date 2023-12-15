@@ -39,9 +39,9 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> TurnOnSmartDevice(Guid id, bool turnOn)
+        public async Task<ActionResult> Toggle(Guid id, bool turnOn)
         {
-            await _vehicleGateService.TurnOnSmartDevice(id, turnOn);
+            await _vehicleGateService.ToggleVehicleGate(id, turnOn);
             return Ok();
         }
 

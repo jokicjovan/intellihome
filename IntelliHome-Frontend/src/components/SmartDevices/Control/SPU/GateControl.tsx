@@ -21,7 +21,7 @@ import {environment} from "../../../../security/Environment.tsx";
 const GateControl = ({device, setSmartDeviceParent}) => {
     const [lastPlate, setLastPlate] = useState(device.currentLicencePlate)
     const [isOpenGate, setIsOpenGate] = useState(device.isOpen)
-    const [isOpenGateByUser, setIsOpenGateByUser] = useState(device.isOpenByUser || false)
+    const [isOpenedByUser, setIsOpenedByUser] = useState(device.isOpenedByUser || false)
     const [isPublic, setIsPublic] = useState(device.isPublic)
     const [open, setIsOpen] = useState(false)
     type TDate = TDate | null;
@@ -50,7 +50,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
 
     }
     const SwitchState = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOpenGateByUser} onChange={(e) => {
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOpenedByUser} onChange={(e) => {
             // setIsOpenGate(e.target.checked)
             changeState(e.target.checked)
         }} size="large" disableRipple {...props} />
@@ -157,11 +157,6 @@ const GateControl = ({device, setSmartDeviceParent}) => {
     }));
 
     useEffect(() => {
-        axios.put(environment + `/api/VehicleGate/TurnOnSmartDevice?Id=${device.id}&TurnOn=${true}`).then(res => {
-            console.log(res.data)
-        }).catch(err => {
-            console.log(err)
-        });
         const currentDate = new Date();
 
         const oneHourBefore = new Date(currentDate);
@@ -177,28 +172,29 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                 .map(item => [item.licencePlate, item.isEntering]);
             console.log(licencePlates)
             setHistory(licencePlates)
+            setLastPlate(licencePlates[licencePlates.length - 1][0])
         }).catch(err => {
             console.log(err)
         });
-    }, []);
+    }, [device.id]);
 
-    useEffect(() => {
-
-        device.isOpen = isOpenGate
-        device.isPublic = isPublic
-        device.allowedLicencePlates = myPlates
-        device.currentLicencePlate = lastPlate
-        device.licencePlate = lastPlate
-        device.isOpenByUser = isOpenGateByUser
-        setSmartDeviceParent(device)
-    }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenGateByUser]);
+    // useEffect(() => {
+    //
+    //     device.isOpen = isOpenGate
+    //     device.isPublic = isPublic
+    //     device.allowedLicencePlates = myPlates
+    //     device.currentLicencePlate = lastPlate
+    //     device.licencePlate = lastPlate
+    //     device.isOpenByUser = isOpenGateByUser
+    //     setSmartDeviceParent(device)
+    // }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenGateByUser]);
 
 
     useEffect(() => {
         console.log("promenio parent")
         console.log(device)
         setIsOpenGate(device.isOpen)
-        setIsOpenGateByUser(device.isOpenByUser)
+        setIsOpenedByUser(device.isOpenedByUser)
         setIsPublic(device.isPublic)
         setMyPlates(device.allowedLicencePlates)
         setLastPlate(device.licencePlate)
@@ -229,7 +225,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
     }
 
     const changeMode = (value) => {
-        if(isOpenGateByUser)
+        if(isOpenedByUser)
             return
         axios.put(environment + `/api/VehicleGate/ChangeMode?Id=${device.id}&IsPublic=${value}`).then(res => {
             setIsPublic(value)
@@ -242,7 +238,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
         console.log(value)
         axios.put(environment + `/api/VehicleGate/OpenCloseGate?Id=${device.id}&IsOpen=${value}`).then(res => {
             setIsOpenGate(value)
-            setIsOpenGateByUser(value)
+            setIsOpenedByUser(value)
         }).catch(err => {
             console.log(err)
         });

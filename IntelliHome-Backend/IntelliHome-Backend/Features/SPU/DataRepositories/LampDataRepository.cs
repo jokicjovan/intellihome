@@ -19,19 +19,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
         public LampData GetLastData(Guid id)
         {
             var table = _influxRepository.GetLastData("lamp", id).Result;
-            if (table == null || table.Records.Count == 0)
-            {
-                return new LampData
-                {
-                    CurrentBrightness = 0.0,
-                };
-            }
-            LampData lampData = ConvertToLampData(table);
-
-            return new LampData
-            {
-                CurrentBrightness = lampData.CurrentBrightness,
-            };
+            return table == null || table.Records.Count == 0  ? new LampData() : ConvertToLampData(table);
         }
 
 
@@ -54,13 +42,19 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
             var currentBrightnessRecord = rows.FirstOrDefault(r => r.Row.Contains("currentBrightness"));
+            var isShiningRecord = rows.FirstOrDefault(r => r.Row.Contains("isShining"));
+            var isAutoRecord = rows.FirstOrDefault(r => r.Row.Contains("isAuto"));
 
             double currentBrightness = currentBrightnessRecord != null ? Convert.ToDouble(currentBrightnessRecord.GetValueByKey("_value")) : 0.0;
+            bool isShining = isShiningRecord != null && Convert.ToBoolean(isShiningRecord.GetValueByKey("_value"));
+            bool isAuto = isAutoRecord != null && Convert.ToBoolean(isAutoRecord.GetValueByKey("_value"));
 
             return new LampData
             {
                 Timestamp = timestamp,
                 CurrentBrightness = currentBrightness,
+                IsShining = isShining,
+                IsAuto = isAuto
             };
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Data.Models.Shared;
 using Data.Models.SPU;
+using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
@@ -41,7 +42,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task<LampDTO> GetWithData(Guid id)
         {
-            Lamp lamp = await _lampRepository.Read(id);
+            Lamp lamp = await _lampRepository.Read(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             LampDTO lampDTO = new LampDTO
             {
                 Id = lamp.Id,
@@ -68,7 +69,8 @@ namespace IntelliHome_Backend.Features.SPU.Services
             if (lampData != null)
             {
                 lampDTO.CurrentBrightness = lampData.CurrentBrightness;
-                lampDTO.IsWorking = lampData.IsWorking;
+                lampDTO.IsShining = lampData.IsShining;
+                lampDTO.IsAuto = lampData.IsAuto;
             }
 
             return lampDTO;
@@ -91,7 +93,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task ChangeMode(Guid id, bool isAuto)
         { 
-            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             _lampHandler.ChangeMode(lamp, isAuto);
             lamp.IsAuto = isAuto;
             await _lampRepository.Update(lamp);
@@ -99,19 +101,25 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task ChangeBrightnessLimit(Guid id, double brightness)
         {
-            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             _lampHandler.ChangeBrightnessLimit(lamp, brightness);
             lamp.BrightnessLimit = brightness;
             await _lampRepository.Update(lamp);
         }
 
-        public async Task TurnOnSmartDevice(Guid id, bool turnOn)
+        public async Task ToggleLamp(Guid id, bool turnOn)
         {
-            Lamp lamp = await _lampRepository.FindWithSmartHome(id);
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             await _lampHandler.ToggleSmartDevice(lamp, turnOn);
 
             lamp.IsOn = turnOn;
             await _lampRepository.Update(lamp);
+        }
+
+        public async Task TurnLightOnOff(Guid id, bool turnOn)
+        {
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
+            _lampHandler.TurnLightOnOff(lamp, turnOn);
         }
 
 
