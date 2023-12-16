@@ -27,6 +27,7 @@ const AmbientSensorControl = ({smartDevice}) => {
             return [...filteredData, [new Date().toUTCString(), smartDevice.temperature,smartDevice.humidity]];
         });
     }, [smartDevice])
+    console.log(data)
     const getHistoricalData = async () => {
         if (Object.keys(smartDevice).length === 0) {
             return;
@@ -73,7 +74,7 @@ const AmbientSensorControl = ({smartDevice}) => {
         </Box>
 
         <Box mx={3} display="flex" justifyContent="center" flexDirection="column" alignItems="center" bgcolor="white"
-             width="500px" height="350px" borderRadius="25px">
+             width="600px" height="350px" borderRadius="25px">
             <Chart
                 chartType="LineChart"
                 width="100%"

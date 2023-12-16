@@ -5,9 +5,13 @@ using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
+using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
+using NodaTime.Extensions;
+using System.Globalization;
+using System.Linq;
 
 namespace IntelliHome_Backend.Features.Shared.BackgroundServices
 {
@@ -50,6 +54,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
+                IAirConditionerService airConditionerService= scope.ServiceProvider.GetRequiredService<IAirConditionerService>();
                 IAmbientSensorHandler ambientSensorHandler = scope.ServiceProvider.GetRequiredService<IAmbientSensorHandler>();
                 IAirConditionerHandler airConditionerHandler = scope.ServiceProvider.GetRequiredService<IAirConditionerHandler>();
                 IWashingMachineHandler washingMachineHandler = scope.ServiceProvider.GetRequiredService<IWashingMachineHandler>();
@@ -74,10 +79,23 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                     }
                     else if (smartDevice.Type == SmartDeviceType.AIRCONDITIONER)
                     {
-                        AirConditioner airConditioner = (AirConditioner)smartDevice;
+                        AirConditioner airConditioner =await airConditionerService.GetWithHome(smartDevice.Id);
+                        var result = airConditioner.ScheduledWorks
+                            .SelectMany(work => work.DateTo != null
+                                ? new[]
+                                {
+                                    new { timestamp = $"{work.DateFrom.ToString("dd/MM/yyyy")} {work.Start.ToString("HH:mm")}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature },
+                                    new { timestamp = $"{work.DateTo.ToString("dd/MM/yyyy")} {work.End.ToString("HH:mm")}", mode = "turn_off", temperature = work.Temperature }
+                                }
+                                : new[]
+                                {
+                                    new { timestamp = $"{work.DateFrom} {work.Start}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature }
+                                })
+                            .ToList().Where(work => DateTime.ParseExact(work.timestamp,"dd/MM/yyyy HH:mm",CultureInfo.InvariantCulture) > DateTime.UtcNow).ToList();
                         Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
                         {
-                            { "power_per_hour", airConditioner.PowerPerHour},
+                            {"power_per_hour", airConditioner.PowerPerHour},
+                            {"schedule_list", result }
                         };
                         smartDevice.IsConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
                     }
