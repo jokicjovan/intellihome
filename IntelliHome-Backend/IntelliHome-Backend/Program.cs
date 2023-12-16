@@ -1,5 +1,4 @@
 using Data.Context;
-using Data.Models.SPU;
 using MQTTnet;
 using MQTTnet.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -180,7 +179,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8000", "https://accounts.google.com")
+            builder.WithOrigins("http://localhost:8000", "http://localhost:4173", "https://accounts.google.com")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

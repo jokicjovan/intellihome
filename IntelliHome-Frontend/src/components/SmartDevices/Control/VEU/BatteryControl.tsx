@@ -1,4 +1,4 @@
-import {Box, FormControlLabel, styled, Switch, SwitchProps, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";

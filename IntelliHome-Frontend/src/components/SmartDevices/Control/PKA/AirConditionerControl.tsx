@@ -12,7 +12,7 @@ import React, {useState} from "react";
 import {Add, Close, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 
 
@@ -25,6 +25,7 @@ const AirConditionerControl = () => {
     const [isOn, setIsOn] = useState(false)
     const [isThereTimeLimit, setIsThereTimeLimit] = useState(false)
     const [open, setIsOpen] = useState(false)
+    // @ts-ignore
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
     const [scheduledMode, setScheduledMode] = useState("AUTO");
@@ -60,12 +61,11 @@ const AirConditionerControl = () => {
             borderRadius: "10px"
         },
         margin: "8px auto", borderRadius: "10px"
-
     }
     const SwitchAnalog = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
         height: 52,
@@ -153,10 +153,10 @@ const AirConditionerControl = () => {
                     </Select>
                     <TextField fullWidth type="number" name="temperatureSchedule"
                                InputProps={{endAdornment: <InputAdornment position="start">°C</InputAdornment>}}
-                               placeholder="Desired temperature" sx={styledInput} mb={3}></TextField>
+                               placeholder="Desired temperature" sx={styledInput}></TextField>
                     <TextField fullWidth disabled={isThereTimeLimit} type="number" name="durationSchedule"
                                InputProps={{endAdornment: <InputAdornment position="start">min</InputAdornment>}}
-                               placeholder="Duration" sx={styledInput} mb={3}></TextField>
+                               placeholder="Duration" sx={styledInput}></TextField>
                     <FormControl sx={{width: "500px"}}>
                         <FormControlLabel
                             label="Without Time Limit"
@@ -213,7 +213,7 @@ const AirConditionerControl = () => {
                 <Typography fontSize="30px" fontWeight="600"> POWER</Typography>
                 <FormControlLabel sx={{marginRight: 0}}
                                   control={<SwitchAnalog sx={{ml: "10px", mt: "20px"}}/>}
-                />
+                 label={""}/>
             </Box>
             <Box gridColumn={1} gridRow={4} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">

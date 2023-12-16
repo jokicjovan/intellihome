@@ -29,6 +29,7 @@ import {Chart} from "react-google-charts";
 
  */
 const SmartDeviceReportValues = ({xLabel,yLabel,inputData, setParentStartDate, setParentEndDate, title, colorScheme={}}) => {
+    // @ts-ignore
     type TDate = TDate | null;
     const [data, setData] = useState(inputData)
     const [hasError, setHasError] = useState(false)

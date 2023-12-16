@@ -1,9 +1,5 @@
 import {
     Box,
-    FormControlLabel,
-    styled,
-    Switch,
-    SwitchProps,
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -17,7 +13,7 @@ const SolarPanelControl = ({solarPanelSystem}) => {
     const [efficiency, setEfficiency] = useState(solarPanelSystem.efficiency)
     const [productionPerMinute, setProductionPerMinute] = useState(solarPanelSystem.productionPerMinute)
     const headerRow = ["Date", "KWh per min"];
-    const [data, setData] = useState([headerRow, [new Date().toUTCString(), 0]])
+    const [data, setData] = useState([headerRow])
 
     const setSolarPanelSystemData = (solarPanelSystemData) => {
         setArea(solarPanelSystemData.area);

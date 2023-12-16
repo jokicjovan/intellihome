@@ -1,4 +1,4 @@
-import {Box, Container, CssBaseline, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {LineChart} from "@mui/x-charts";
 import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";

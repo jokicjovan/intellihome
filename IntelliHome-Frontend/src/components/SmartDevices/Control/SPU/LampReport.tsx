@@ -1,4 +1,3 @@
-import GateReport from "./GateReport.tsx";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
@@ -33,6 +32,7 @@ const LampReport = ({device}) => {
             xLabel={"time"}
             yLabel={"brightness"}
             inputData={historicalData}
+            title={"Historical brightness data"}
         />
     </>
 }

@@ -1,19 +1,16 @@
 import {
-    Box, Button, Checkbox, FormControl,
+    Box, Button,
     FormControlLabel,
     Grid,
-    IconButton, MenuItem, Modal, Select,
+    IconButton, Modal,
     styled,
     Switch,
     SwitchProps, TextField,
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {Add, Close, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
-import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {Add, Close} from "@mui/icons-material";
 import dayjs, {Dayjs} from "dayjs";
-import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
 
@@ -24,6 +21,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
     const [isOpenedByUser, setIsOpenedByUser] = useState(device.isOpenedByUser || false)
     const [isPublic, setIsPublic] = useState(device.isPublic)
     const [open, setIsOpen] = useState(false)
+    // @ts-ignore
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
     const [history, setHistory] = useState([]);
@@ -46,14 +44,14 @@ const GateControl = ({device, setSmartDeviceParent}) => {
             },
             borderRadius: "10px"
         },
-        margin: "8px auto", borderRadius: "10px"
-
+        margin: "8px auto", borderRadius: "10px",
+        marginBottom: 3
     }
     const SwitchState = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOpenedByUser} onChange={(e) => {
             // setIsOpenGate(e.target.checked)
             changeState(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
         height: 52,
@@ -106,7 +104,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isPublic} onChange={(e) => {
             // setIsPublic(e.target.checked)
             changeMode(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 78,
         height: 41,
@@ -266,12 +264,12 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                       flexDirection="column">
 
                     <TextField fullWidth type="text" name="myPlateModal"
-                               placeholder="Plate Number" sx={styledInput} onChange={(e) => setNewPlate(e.target.value)} mb={3}></TextField>
+                               placeholder="Plate Number" sx={styledInput} onChange={(e) => setNewPlate(e.target.value)}></TextField>
 
                 </Grid>
                 <Grid item xs={12} display="flex" alignItems="flex-end" justifyContent="end">
                     <Box display="flex">
-                        <Button mx={2} onClick={() => setIsOpen(false)} sx={{
+                        <Button onClick={() => setIsOpen(false)} sx={{
                             backgroundColor: "white",
                             border: "1px solid #FBC40E",
                             color: "black",
@@ -279,7 +277,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                             marginRight:"20px",
                             ':hover': {backgroundColor: "white"}
                         }}>Cancel</Button>
-                        <Button mx={2} onClick={addNewLicencePlate} sx={{
+                        <Button onClick={addNewLicencePlate} sx={{
                             backgroundColor: "#FBC40E",
                             border: "1px solid #FBC40E",
                             color: "black",
@@ -300,14 +298,14 @@ const GateControl = ({device, setSmartDeviceParent}) => {
                 <Typography fontSize="80px" color="#343F71" mt={8}
                             fontWeight="600"> {isOpenGate ? "OPENED" : "CLOSED"}</Typography>
                 <FormControlLabel sx={{marginRight: 0}} control={<SwitchState sx={{ml: "10px", mt: "20px"}}/>}
-                />
+                 label=""/>
             </Box>
             <Box gridColumn={1} gridRow={3} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">
                 <Typography fontSize="30px" mt={1} mb={2} fontWeight="600"> MODE</Typography>
                 <Typography fontSize="40px" color="#343F71"
                             fontWeight="600"> {isPublic ? "PUBLIC" : "PRIVATE"}</Typography>
-                <FormControlLabel sx={{marginRight: 0}} control={<SwitchMode sx={{ml: "10px", mt: "5px"}}/>}/>
+                <FormControlLabel sx={{marginRight: 0}} control={<SwitchMode sx={{ml: "10px", mt: "5px"}}/>} label=""/>
             </Box>
             <Box gridColumn={1} gridRow={4} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">

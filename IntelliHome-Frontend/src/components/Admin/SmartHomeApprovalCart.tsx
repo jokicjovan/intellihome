@@ -52,7 +52,7 @@ const SmartHomeApprovalCard = (props) => {
             params: {
                 Id: data.id,
                 UserId: data.owner.id,
-                Reason: document.getElementById("reason-text").value
+                Reason: (document.getElementById("reason-text") as HTMLInputElement).value
             }
         };
 

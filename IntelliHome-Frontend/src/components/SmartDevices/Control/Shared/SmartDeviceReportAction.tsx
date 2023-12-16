@@ -22,6 +22,7 @@ import dayjs from "dayjs";
  */
 
 const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDate, setParentUser}) => {
+    // @ts-ignore
     type TDate = TDate | null;
     const [page, setPage] = useState(0);
     const [filteredData, setFilteredData] = useState(inputData);
@@ -32,6 +33,7 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
     const [endDate, setEndDate] = useState<TDate>(dayjs());
     useEffect(() => {
         setPage(0);
+        // @ts-ignore
         if (personName == "" || personName == [])
             setFilteredData(inputData.filter(item => dayjs(item.date.toString()).isAfter(new Date(startDate.toString())) && dayjs(item.date.toString()).isBefore(new Date(endDate.toString()))))
         else
@@ -43,6 +45,7 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
     }, [startDate, endDate, personName]);
 
     useEffect(() => {
+        // @ts-ignore
         if (personName == "" || personName == [])
             setFilteredData(inputData);
         else

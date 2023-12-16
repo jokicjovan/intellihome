@@ -5,12 +5,9 @@ import AirConditionerControl from "../PKA/AirConditionerControl";
 import LampControl from "../SPU/LampControl";
 import SolarPanelControl from "../VEU/SolarPanelControl.tsx";
 import GateControl from "../SPU/GateControl";
-import SmartDeviceReportAction from "./SmartDeviceReportAction";
-import dayjs from "dayjs";
 import BatteryControl from "../VEU/BatteryControl";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
-import {useParams} from "react-router-dom";
 import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 import SmartDevice from "../../../../models/interfaces/SmartDevice.ts";
 import AmbientSensorReport from "../PKA/AmbientSensorReport.tsx";
@@ -19,15 +16,11 @@ import LampReport from "../SPU/LampReport.tsx";
 import SolarPanelReport from "../VEU/SolarPanelReport.tsx";
 import GateReport from "../SPU/GateReport.tsx";
 import HomeReport from "../VEU/HomeReport.tsx";
-import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSmartHomeService.ts";
 import ActionData from "../../../../models/interfaces/Action.ts";
 
-const SmartDeviceMain = () => {
-    const params = useParams();
+const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [deviceType, setDeviceType] = useState(params.type);
-    const [smartDeviceId, setSmartDeviceId] = useState(params.id);
     const [isOn, setIsOn] = useState(false);
     // @ts-ignore
     const [smartDevice, setSmartDevice] = useState<SmartDevice>({});
@@ -41,7 +34,7 @@ const SmartDeviceMain = () => {
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
 
-        if(result.Action !== undefined || result.ActionBy !== undefined || result.Timestamp !== undefined){
+        if(result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined){
             setReport(result);
         }
         else

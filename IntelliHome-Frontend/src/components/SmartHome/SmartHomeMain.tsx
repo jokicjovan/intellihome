@@ -12,7 +12,7 @@ import {
     TablePagination,
     Typography
 } from "@mui/material";
-import {Add, LocationOn, ScatterPlot, ShowChart} from "@mui/icons-material";
+import {Add, LocationOn, ShowChart} from "@mui/icons-material";
 import SmartDeviceCard from "./SmartDeviceCard.tsx";
 import AirConditionerRegistrationForm from "../SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import AmbientSensorRegistrationForm from "../SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";

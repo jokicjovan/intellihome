@@ -4,7 +4,7 @@ import SmartDeviceReportValues from "../Shared/SmartDeviceReportValues.tsx";
 import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
 import dayjs from "dayjs";
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import {Chart} from "react-google-charts";
 
 const HomeReport = ({smartHomeId}) => {
@@ -22,7 +22,7 @@ const HomeReport = ({smartHomeId}) => {
     const smartHomeDataCallback = (result) => {
         result = JSON.parse(result);
         console.log('data result:', result);
-        setRecentData((prevData) => {
+        setRecentData((prevData: any) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date(),
                 parseFloat(result.productionPerMinute),
@@ -31,7 +31,7 @@ const HomeReport = ({smartHomeId}) => {
         });
     };
 
-    useEffect(() => {
+    useEffect(() : any => {
         if (smartHomeId) {
             signalRSmartHomeService.startConnection().then(() => {
                 console.log('SignalR home connection established');
