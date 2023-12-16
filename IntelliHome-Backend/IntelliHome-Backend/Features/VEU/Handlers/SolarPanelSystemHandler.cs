@@ -36,27 +36,19 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             using var scope = serviceProvider.CreateScope();
             var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
             var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(solarPanelSystemId));
-            if (solarPanelSystem != null)
+            var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            if (solarPanelSystem != null && solarPanelSystemData != null)
             {
-                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-                var solarPanelSystemDataInflux = new Dictionary<string, object>
+                var fields = new Dictionary<string, object>
                     {
                         { "productionPerMinute", solarPanelSystemData.ProductionPerMinute}
                     };
-                var solarPanelSystemDataTags = new Dictionary<string, string>
+                var tags = new Dictionary<string, string>
                     {
                         { "deviceId", solarPanelSystem.Id.ToString() }
                     };
-                solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+                solarPanelSystemService.AddProductionMeasurement(fields, tags);
             }
-        }
-
-        public override Task ToggleSmartDevice(SmartDevice smartDevice, bool turnOn)
-        {
-            string action = turnOn ? "turn_on" : "turn_off";
-            string payload = $"{{\"action\": \"{action}\"}}";
-            smartDeviceHubContext.Clients.Group(smartDevice.Id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isOn = turnOn }));
-            return PublishMessageToSmartDevice(smartDevice, payload);
         }
     }
 }

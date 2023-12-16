@@ -15,12 +15,14 @@ import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 const SolarPanelControl = ({solarPanelSystem}) => {
     const [area, setArea] = useState(solarPanelSystem.area)
     const [efficiency, setEfficiency] = useState(solarPanelSystem.efficiency)
-    const headerRow = ["Date", "Current Production"];
-    const [data, setData] = useState([])
+    const [productionPerMinute, setProductionPerMinute] = useState(solarPanelSystem.productionPerMinute)
+    const headerRow = ["Date", "KWh per min"];
+    const [data, setData] = useState([headerRow, [new Date().toUTCString(), 0]])
 
     const setSolarPanelSystemData = (solarPanelSystemData) => {
         setArea(solarPanelSystemData.area);
         setEfficiency(solarPanelSystemData.efficiency);
+        setProductionPerMinute(solarPanelSystemData.productionPerMinute)
         setData((prevData) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date().toUTCString(), solarPanelSystemData.productionPerMinute]];
@@ -72,23 +74,29 @@ const SolarPanelControl = ({solarPanelSystem}) => {
         },
         vAxis: {
             title: "Production (KWh)",
-        }
+        },
+        title: "Power Production Per Minute"
     };
 
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 5fr"
-                  gridTemplateRows="170px 170px 170px">
-
-        <Box display="grid" gridColumn={1} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px 170px">
+                  gridTemplateRows="170px">
+        <Box display="grid" gridColumn={1} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px">
             <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">
                 <Typography fontSize="30px" fontWeight="600"> Area</Typography>
                 <Typography fontSize="50px" fontWeight="700">{area}m<sup>2</sup></Typography>
             </Box>
-            <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
+            <Box gridColumn={2} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
                  alignItems="center" bgcolor="white" borderRadius="25px">
                 <Typography fontSize="30px" fontWeight="600"> Efficiency</Typography>
                 <Typography fontSize="50px" fontWeight="700">{efficiency}%</Typography>
             </Box>
+        </Box>
+
+        <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
+             alignItems="center" bgcolor="white" borderRadius="25px">
+            <Typography fontSize="30px" fontWeight="600"> Production per minute</Typography>
+            <Typography fontSize="50px" fontWeight="700">{productionPerMinute} KWh/min</Typography>
         </Box>
         <Box gridColumn={2} height="350px" gridRow={1} display="flex" justifyContent="center"
              flexDirection="column"

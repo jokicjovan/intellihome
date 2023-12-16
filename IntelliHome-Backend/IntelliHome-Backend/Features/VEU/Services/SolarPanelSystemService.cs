@@ -1,5 +1,6 @@
 ﻿using Data.Models.SPU;
 using Data.Models.VEU;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs;
@@ -8,6 +9,7 @@ using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using System;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -68,7 +70,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<SolarPanelSystemDTO> GetWithProductionData(Guid id)
         {
-            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.Read(id);
+            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
             SolarPanelSystemDTO solarPanelSystemDTO = new SolarPanelSystemDTO
             {
                 Id = solarPanelSystem.Id,
@@ -77,6 +79,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 IsOn = solarPanelSystem.IsOn,
                 Category = solarPanelSystem.Category.ToString(),
                 Type = solarPanelSystem.Type.ToString(),
+                SmartHomeId = solarPanelSystem.SmartHome.Id,
                 Area = solarPanelSystem.Area,
                 Efficiency = solarPanelSystem.Efficiency
             };
@@ -87,25 +90,42 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return solarPanelSystemDTO;
         }
 
-        public List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to)
-        {
-            return _solarPanelSystemDataRepository.GetProductionHistoricalData(id, from, to);
-        }
-
         public void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _solarPanelSystemDataRepository.AddProductionMeasurement(fields, tags);
         }
 
-        public async Task ToggleSolarPanelSystem(Guid id, bool turnOn = true) {
+        public List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _solarPanelSystemDataRepository.GetProductionHistoricalData(id, from, to);
+        }
+
+        public async Task ToggleSolarPanelSystem(Guid id, String togglerUsername, bool turnOn = true)
+        {
             SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
             if (solarPanelSystem == null)
             {
                 throw new ResourceNotFoundException("Smart device not found!");
             }
-            await _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
+            _ = _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
             solarPanelSystem.IsOn = turnOn;
             _ = _solarPanelSystemRepository.Update(solarPanelSystem);
+
+            var fields = new Dictionary<string, object>
+            {
+                { "action", turnOn ? "ON" : "OFF" }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", togglerUsername},
+                { "deviceId", id.ToString()}
+            };
+            _solarPanelSystemDataRepository.AddActionMeasurement(fields, tags);
+        }
+        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _solarPanelSystemDataRepository.GetActionHistoricalData(id, from, to);
         }
     }
 }

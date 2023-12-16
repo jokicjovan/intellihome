@@ -178,16 +178,16 @@ const GateControl = ({device, setSmartDeviceParent}) => {
         });
     }, [device.id]);
 
-    // useEffect(() => {
-    //
-    //     device.isOpen = isOpenGate
-    //     device.isPublic = isPublic
-    //     device.allowedLicencePlates = myPlates
-    //     device.currentLicencePlate = lastPlate
-    //     device.licencePlate = lastPlate
-    //     device.isOpenByUser = isOpenGateByUser
-    //     setSmartDeviceParent(device)
-    // }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenGateByUser]);
+    useEffect(() => {
+
+        device.isOpen = isOpenGate
+        device.isPublic = isPublic
+        device.allowedLicencePlates = myPlates
+        device.currentLicencePlate = lastPlate
+        device.licencePlate = lastPlate
+        device.isOpenByUser = isOpenedByUser
+        setSmartDeviceParent(device)
+    }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenedByUser]);
 
 
     useEffect(() => {

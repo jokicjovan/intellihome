@@ -21,23 +21,27 @@ import dayjs from "dayjs";
 
  */
 
-const SmartDeviceReportAction = ({inputData}) => {
+const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDate, setParentUser}) => {
+    // console.log(inputData)
     type TDate = TDate | null;
-    const [data, setData] = useState(inputData)
     const [page, setPage] = useState(0);
-    const [filteredData, setFilteredData] = useState(data);
+    const [filteredData, setFilteredData] = useState(inputData);
     const [admins, setAdmins] = useState(Array.from(new Set(filteredData.map(obj => obj.by))));
     const [pagePerRow, setPagePerRow] = useState(10);
     const [personName, setPersonName] = React.useState<string[]>([]);
-    const [startDate, setStartDate] = useState<TDate>(dayjs().subtract(24, "day"));
+    const [startDate, setStartDate] = useState<TDate>(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState<TDate>(dayjs());
     useEffect(() => {
         setPage(0);
         if (personName == "" || personName == [])
-            setFilteredData(data.filter(item => dayjs(item.date.toString()).isAfter(new Date(startDate.toString())) && dayjs(item.date.toString()).isBefore(new Date(endDate.toString()))))
+            setFilteredData(inputData.filter(item => dayjs(item.date.toString()).isAfter(new Date(startDate.toString())) && dayjs(item.date.toString()).isBefore(new Date(endDate.toString()))))
         else
-            setFilteredData(data.filter(item => dayjs(item.date.toString()).isAfter(new Date(startDate.toString())) && dayjs(item.date.toString()).isBefore(new Date(endDate.toString())) && personName.includes(item.by)))
-    }, [startDate, endDate, personName])
+            setFilteredData(inputData.filter(item => dayjs(item.date.toString()).isAfter(new Date(startDate.toString())) && dayjs(item.date.toString()).isBefore(new Date(endDate.toString())) && personName.includes(item.by)))
+        setParentStartDate(startDate)
+        setParentEndDate(endDate)
+        setParentUser(personName)
+        setAdmins(Array.from(new Set(inputData.map(obj => obj.by))));
+    }, [startDate, endDate, personName, inputData])
     const handleChangeSelect = (event: SelectChangeEvent<typeof personName>) => {
         const {
             target: {value},
@@ -95,7 +99,7 @@ const SmartDeviceReportAction = ({inputData}) => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {admins.map((name) => (
+                    {admins.map((name : string) => (
                         <MenuItem key={name} value={name}>
                             <Checkbox checked={personName.indexOf(name) > -1}/>
                             <ListItemText primary={name}/>

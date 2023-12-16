@@ -130,15 +130,15 @@ const LampControl = ({device, setSmartDeviceParent}) => {
         },
     }));
 
-    // useEffect(() => {
-    //
-    //     device.isAuto = isAuto;
-    //     device.brightnessLimit = threshold;
-    //     device.currentBrightness = brightness;
-    //     device.isShining = isShining;
-    //     setSmartDeviceParent(device);
-    //
-    // }, [isShining, isAuto, threshold, brightness]);
+    useEffect(() => {
+
+        device.isAuto = isAuto;
+        device.brightnessLimit = threshold;
+        device.currentBrightness = brightness;
+        device.isShining = isShining;
+        setSmartDeviceParent(device);
+
+    }, [isShining, isAuto, threshold, brightness]);
 
     useEffect(() => {
         setBrightness(device.currentBrightness);

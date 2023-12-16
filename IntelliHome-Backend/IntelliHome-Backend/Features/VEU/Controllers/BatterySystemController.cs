@@ -1,5 +1,6 @@
 ﻿using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome_Backend.Features.VEU.Controllers
@@ -16,13 +17,19 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to)
         {
+            if (from > to)
+            {
+                return BadRequest("FROM date cant be after TO date");
+            }
             List<BatterySystemCapacityDataDTO> result = _batterySystemService.GetCapacityHistoricalData(id, from, to);
             return Ok(result);
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get(Guid id)
         {
             BatterySystemDTO result = await _batterySystemService.GetWithCapacityData(id);
@@ -30,6 +37,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
         {
             await _batterySystemService.ToggleBatterySystem(id, turnOn);

@@ -10,6 +10,7 @@ namespace IntelliHome_Backend.Features.Shared.DTOs
         public String Type { get; set; }
         public Boolean IsConnected { get; set; }
         public Boolean IsOn { get; set; }
+        public Guid SmartHomeId { get; set; }
 
 
         public SmartDeviceDTO()

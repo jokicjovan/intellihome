@@ -1,4 +1,5 @@
-﻿using IntelliHome_Backend.Features.SPU.DTOs;
+﻿using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,14 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
+        {
+            List<ActionDataDTO> result = _vehicleGateService.GetHistoricalActionData(id, from, to);
+            return Ok(result);
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> Get(Guid id)
         {
             VehicleGateDTO result = await _vehicleGateService.GetWithData(id);
@@ -34,14 +43,28 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangeMode(Guid id, Boolean isPublic)
         {
-            await _vehicleGateService.ChangeMode(id, isPublic);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _vehicleGateService.ChangeMode(id, isPublic, username);
             return Ok();
         }
 
         [HttpPut]
         public async Task<ActionResult> Toggle(Guid id, bool turnOn)
         {
-            await _vehicleGateService.ToggleVehicleGate(id, turnOn);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _vehicleGateService.ToggleVehicleGate(id, turnOn, username);
             return Ok();
         }
 

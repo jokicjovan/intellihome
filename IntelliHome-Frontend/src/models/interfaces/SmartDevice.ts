@@ -9,5 +9,6 @@ export default interface SmartDevice {
     type: SmartDeviceType;
     isConnected: boolean;
     isOn: boolean;
+    smartHomeId: string;
     [key: string]: any;
 }

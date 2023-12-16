@@ -34,9 +34,9 @@ namespace IntelliHome_Backend.Features.Home.Handlers
 
         public virtual Task ToggleSmartDevice(SmartDevice smartDevice, bool turnOn)
         {
+            smartDeviceHubContext.Clients.Group(smartDevice.Id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isOn = turnOn }));
             string action = turnOn ? "turn_on" : "turn_off";
             string payload = $"{{\"action\": \"{action}\"}}";
-            smartDeviceHubContext.Clients.Group(smartDevice.Id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isOn = turnOn }));
             return PublishMessageToSmartDevice(smartDevice, payload);
         }
 

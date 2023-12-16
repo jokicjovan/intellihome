@@ -27,12 +27,12 @@ const BatteryControl = ({batterySystem}) => {
 
         const startDate = new Date();
         const endDate = new Date(startDate);
-        startDate.setHours(startDate.getHours() - 24);
+        startDate.setHours(endDate.getHours() - 24);
 
         try {
             const res = await axios.get(
                 environment +
-                `/api/${batterySystem.type}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${SmartDeviceType[batterySystem.type]}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
             const dataRows = res.data.map(({ timestamp, currentCapacity }) => [
@@ -66,7 +66,8 @@ const BatteryControl = ({batterySystem}) => {
         },
         vAxis: {
             title: "Capacity (KWh)",
-        }
+        },
+        title: "Battery Capacity"
     };
 
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 5fr"
