@@ -1,5 +1,5 @@
 ﻿using Data.Models.SPU;
-using IntelliHome_Backend.Features.SPU.DataRepositories;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
@@ -43,7 +43,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task<VehicleGateDTO> GetWithData(Guid id)
         {
-            VehicleGate vehicleGate = await _vehicleGateRepository.Read(id);
+            VehicleGate vehicleGate = await _vehicleGateRepository.FindWithSmartHome(id);
             VehicleGateDTO vehicleGateDTO = new VehicleGateDTO
             {
                 Id = vehicleGate.Id,
@@ -52,6 +52,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 IsOn = vehicleGate.IsOn,
                 Category = vehicleGate.Category.ToString(),
                 Type = vehicleGate.Type.ToString(),
+                SmartHomeId = vehicleGate.SmartHome.Id,
                 PowerPerHour = vehicleGate.PowerPerHour,
                 IsPublic = vehicleGate.IsPublic,
                 AllowedLicencePlates = vehicleGate.AllowedLicencePlates,
@@ -89,7 +90,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
             return _vehicleGateDataRepository.GetHistoricalData(id, from, to);
         }
 
-        public List<VehicleGateActionData> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
+        public List<ActionDataDTO> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
         {
             return _vehicleGateDataRepository.GetHistoricalActionData(id, from, to);
         }

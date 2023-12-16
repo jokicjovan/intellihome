@@ -1,5 +1,6 @@
 ﻿using Data.Models.PKA;
 using Data.Models.SPU;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 
@@ -16,6 +17,6 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         Task AddLicencePlate(Guid id, string licencePlate);
         Task RemoveLicencePlate(Guid id, string licencePlate);
         Task OpenCloseGate(Guid id, bool isOpen, string username);
-        List<VehicleGateActionData> GetHistoricalActionData(Guid id, DateTime from, DateTime to);
+        List<ActionDataDTO> GetHistoricalActionData(Guid id, DateTime from, DateTime to);
     }
 }

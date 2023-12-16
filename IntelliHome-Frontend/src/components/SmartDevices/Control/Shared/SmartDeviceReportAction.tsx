@@ -99,7 +99,7 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {admins.map((name) => (
+                    {admins.map((name : string) => (
                         <MenuItem key={name} value={name}>
                             <Checkbox checked={personName.indexOf(name) > -1}/>
                             <ListItemText primary={name}/>

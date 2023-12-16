@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Security.Claims;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using IntelliHome_Backend.Features.SPU.DTOs;
 
 namespace IntelliHome_Backend.Features.Home.Controllers
 {
@@ -25,9 +26,9 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> CreateSmartHome([FromForm] SmartHomeCreationDTO dto)
         {
-            // TODO: Get user from token
             AuthenticateResult result = await HttpContext.AuthenticateAsync();
             if (!result.Succeeded)
             {
@@ -49,6 +50,7 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> GetSmartHome(Guid Id)
         {
             GetSmartHomeDTO smartHome;
@@ -65,9 +67,9 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> GetSmartHomesForUser([FromQuery] PageParametersDTO pageParameters, [FromQuery] string search)
         {
-            // TODO: Get user from token
             AuthenticateResult result = await HttpContext.AuthenticateAsync();
             if (!result.Succeeded)
             {
@@ -113,7 +115,6 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
 
-        //TODO: Add authorization, just admin can approve smart homes
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ApproveSmartHome(Guid id)
@@ -131,7 +132,6 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
 
-        // TODO: Add authorization, just admin can delete smart homes or owner of the smart home
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteSmartHome(Guid id, Guid userId, string reason)
@@ -146,6 +146,17 @@ namespace IntelliHome_Backend.Features.Home.Controllers
             }
 
             return Ok("Smart home deleted!");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUsageHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            if (from > to) {
+                return BadRequest("FROM date cant be after TO date");
+            }
+            List<SmartHomeUsageDataDTO> result = _smartHomeService.GetUsageHistoricalData(id, from, to);
+            return Ok(result);
         }
     }
 }

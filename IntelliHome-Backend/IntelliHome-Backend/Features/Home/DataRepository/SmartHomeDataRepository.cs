@@ -37,13 +37,13 @@ namespace IntelliHome_Backend.Features.Home.DataRepository
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
-            var consumptionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
+            var consumptionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("consumptionPerMinute"));
             double consumptionPerMinute = consumptionPerMinuteRecord != null ? Convert.ToDouble(consumptionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
             var productionPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
             double productionPerMinute = productionPerMinuteRecord != null ? Convert.ToDouble(productionPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
-            var gridPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("productionPerMinute"));
+            var gridPerMinuteRecord = rows.FirstOrDefault(r => r.Row.Contains("gridPerMinute"));
             double gridPerMinute = gridPerMinuteRecord != null ? Convert.ToDouble(gridPerMinuteRecord.GetValueByKey("_value")) : 0.0;
 
             return new SmartHomeUsageDataDTO

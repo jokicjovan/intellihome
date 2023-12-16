@@ -28,7 +28,7 @@ import {Chart} from "react-google-charts";
                   1: { color: '#e7711b' }}}
 
  */
-const SmartDeviceReportValues = ({xLabel,yLabel,inputData, setParentStartDate, setParentEndDate, colorScheme={}}) => {
+const SmartDeviceReportValues = ({xLabel,yLabel,inputData, setParentStartDate, setParentEndDate, title, colorScheme={}}) => {
     type TDate = TDate | null;
     const [data, setData] = useState(inputData)
     const [hasError, setHasError] = useState(false)
@@ -40,7 +40,8 @@ const SmartDeviceReportValues = ({xLabel,yLabel,inputData, setParentStartDate, s
         vAxis: {
             title: yLabel,
         },
-        series: colorScheme
+        series: colorScheme,
+        title: title
     };
     const [startDate, setStartDate] = useState<TDate>(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState<TDate>(dayjs());

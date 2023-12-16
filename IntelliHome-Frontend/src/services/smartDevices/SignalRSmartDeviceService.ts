@@ -42,16 +42,12 @@ class SignalRSmartDeviceService {
     }
 
     public stopConnection(): Promise<void> {
-        if (this.connection && this.connection.state == HubConnectionState.Connected) {
+        if (this.connection) {
             return this.connection.stop()
-                .then(() => {
-                    console.log('SignalR connection stopped');
-                })
                 .catch((error) => {
                     console.error('Error stopping SignalR connection: ', error);
                 });
         }
-
         return Promise.resolve();
     }
 }

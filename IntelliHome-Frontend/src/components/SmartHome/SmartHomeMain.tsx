@@ -12,7 +12,7 @@ import {
     TablePagination,
     Typography
 } from "@mui/material";
-import {Add, LocationOn} from "@mui/icons-material";
+import {Add, LocationOn, ScatterPlot, ShowChart} from "@mui/icons-material";
 import SmartDeviceCard from "./SmartDeviceCard.tsx";
 import AirConditionerRegistrationForm from "../SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import AmbientSensorRegistrationForm from "../SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
@@ -24,6 +24,7 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
+import HomeReport from "../SmartDevices/Control/VEU/HomeReport.tsx";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
@@ -44,12 +45,24 @@ const SmartHomeMain = ({smartHomeId}) => {
         backgroundColor: "#FBC40E",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
         width: "200px",
-        height: "30px",
+        height: "40px",
         fontSize: "20px",
         fontWeight: "600",
         margin: "15px",
         borderRadius: "5px",
         ':hover': {backgroundColor: "#EDB90D"},
+        textTransform: "none"
+    }
+    const statsButtonStyle = {
+        backgroundColor: "#343F71",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        width: "100px",
+        height: "40px",
+        fontSize: "20px",
+        fontWeight: "600",
+        margin: "15px",
+        borderRadius: "5px",
+        ':hover': {backgroundColor: "#20284b"},
         textTransform: "none"
     }
     const typoStyle = {color: "white", fontWeight: "600", fontSize: "15px"}
@@ -126,6 +139,11 @@ const SmartHomeMain = ({smartHomeId}) => {
         setAnchorEl(event.currentTarget);
     };
 
+    const handleStatsClick = (event) => {
+        setAnchorEl(null);
+        handleOpenModal(99)
+    };
+
     const handleCloseModal = () => {
         setOpenModal(false);
         getSmartDevices();
@@ -162,6 +180,9 @@ const SmartHomeMain = ({smartHomeId}) => {
                 <SolarPanelSystemRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
             {modalContentItem === 8 &&
                 <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
+
+            {modalContentItem === 99 &&
+                <HomeReport smartHomeId={smartHomeId}/>}
 
         </Box>
     );
@@ -267,6 +288,8 @@ const SmartHomeMain = ({smartHomeId}) => {
                     <Typography sx={{fontSize: "15px", fontWeight: "600"}}>High power devices</Typography>
 
                 </Box>
+                <Button onClick={handleStatsClick} sx={statsButtonStyle}><ShowChart sx={{marginX: "5px", color: "white"}}
+                                                                    fontSize="inherit"/><Typography sx={typoStyle}>Stats</Typography></Button>
                 <Button onClick={handleClick} sx={buttonStyle}><Add sx={{marginX: "5px", color: "white"}}
                                                                     fontSize="inherit"/><Typography sx={typoStyle}>Add
                     new device</Typography></Button>

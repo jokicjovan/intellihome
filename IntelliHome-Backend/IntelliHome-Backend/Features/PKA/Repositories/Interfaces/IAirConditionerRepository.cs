@@ -5,5 +5,6 @@ namespace IntelliHome_Backend.Features.PKA.Repositories.Interfaces
 {
     public interface IAirConditionerRepository : ICrudRepository<AirConditioner>
     {
+        Task<AirConditioner> FindWithSmartHome(Guid id);
     }
 }

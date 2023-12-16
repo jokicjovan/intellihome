@@ -4,6 +4,7 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IntelliHome_Backend.Features.VEU.Controllers
@@ -31,6 +32,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
 
         [HttpPost]
         [Route("{smartHomeId:Guid}")]
+        [Authorize]
         public async Task<ActionResult> CreateBatterySystem([FromRoute] Guid smartHomeId, [FromForm] BatterySystemCreationDTO dto)
         {
             BatterySystem batterySystem = new BatterySystem
@@ -48,6 +50,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
 
         [HttpPost]
         [Route("{smartHomeId:Guid}")]
+        [Authorize]
         public async Task<ActionResult> CreateSolarPanelSystem([FromRoute] Guid smartHomeId, [FromForm] SolarPanelSystemCreationDTO dto)
         {
             SolarPanelSystem solarPanelSystem = new SolarPanelSystem
@@ -66,6 +69,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
 
         [HttpPost]
         [Route("{smartHomeId:Guid}")]
+        [Authorize]
         public async Task<ActionResult> CreateVehicleCharger([FromRoute] Guid smartHomeId, [FromForm] VehicleChargerCreationDTO dto)
         {
             VehicleCharger vehicleCharger = new VehicleCharger

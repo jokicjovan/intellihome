@@ -1,4 +1,5 @@
-﻿using IntelliHome_Backend.Features.SPU.DTOs;
+﻿using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
         {
-            List<VehicleGateActionData> result = _vehicleGateService.GetHistoricalActionData(id, from, to);
+            List<ActionDataDTO> result = _vehicleGateService.GetHistoricalActionData(id, from, to);
             return Ok(result);
         }
 

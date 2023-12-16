@@ -22,7 +22,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
 
         public async Task<AmbientSensorDTO> GetWithData(Guid id)
         {
-            AmbientSensor ambientSensor = await _ambientSensorRepository.Read(id);
+            AmbientSensor ambientSensor = await _ambientSensorRepository.FindWithSmartHome(id);
             AmbientSensorDTO ambientSensorDTO = new AmbientSensorDTO
             {
                 Id = ambientSensor.Id,
@@ -31,6 +31,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 IsOn = ambientSensor.IsOn,
                 Category = ambientSensor.Category.ToString(),
                 Type = ambientSensor.Type.ToString(),
+                SmartHomeId = ambientSensor.SmartHome.Id,
                 PowerPerHour = ambientSensor.PowerPerHour,
             };
 
