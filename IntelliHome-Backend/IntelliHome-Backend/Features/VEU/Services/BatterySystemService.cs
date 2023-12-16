@@ -66,7 +66,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<BatterySystemDTO> GetWithCapacityData(Guid id)
         {
-            BatterySystem batterySystem = await _batterySystemRepository.Read(id);
+            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
             BatterySystemDTO batterySystemDTO = new BatterySystemDTO
             {
                 Id = batterySystem.Id,
@@ -75,6 +75,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 IsOn = batterySystem.IsOn,
                 Category = batterySystem.Category.ToString(),
                 Type = batterySystem.Type.ToString(),
+                SmartHomeId = batterySystem.SmartHome.Id,
                 Capacity = batterySystem.Capacity,
             };
 

@@ -4,6 +4,10 @@ import {Chart} from "react-google-charts";
 import axios from "axios";
 import {environment} from "../../../../security/Environment";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType";
+import {Box, Typography} from "@mui/material";
+import {useEffect, useState} from "react";
+import {LineChart} from "@mui/x-charts";
+import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
 const AmbientSensorControl = ({smartDevice}) => {
     const [temperature, setTemperature] = useState(smartDevice.temperature)

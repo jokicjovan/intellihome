@@ -15,7 +15,7 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task DeleteSmartHome(Guid id, Guid userId, String reason);
         Task<SmartHomePaginatedDTO> GetSmartHomesForApproval(PageParametersDTO pageParameters);
         Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId);
-        List<SmartHomeUsageDataDTO> GetUsageHistoricalData(Guid id, DateTime from, DateTime to);
         void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        List<SmartHomeUsageDataDTO> GetUsageHistoricalData(Guid id, DateTime from, DateTime to);
     }
 }

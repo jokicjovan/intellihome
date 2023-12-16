@@ -1,4 +1,4 @@
-import {Box, FormControlLabel, styled, Switch, SwitchProps, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
@@ -8,13 +8,12 @@ import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 const BatteryControl = ({batterySystem}) => {
     const [capacity, setCapacity] = useState(batterySystem.capacity)
     const [currentCapacity, setCurrentCapacity] = useState(batterySystem.currentCapacity)
-    const [isOn,setIsOn]=useState(batterySystem.isOn)
-    const [data, setData] = useState([["Date", "Current Capacity"]])
+    const headerRow = ["Date", "Current Capacity"];
+    const [data, setData] = useState([headerRow])
 
     const setBatterySystemData = (batterySystemData) => {
         setCapacity(batterySystemData.capacity);
         setCurrentCapacity(batterySystemData.currentCapacity);
-        setIsOn(batterySystemData.isOn);
         setData((prevData) => {
             const filteredData = prevData.filter((_, index) => index !== 1);
             return [...filteredData, [new Date().toUTCString(), currentCapacity]];
@@ -27,24 +26,20 @@ const BatteryControl = ({batterySystem}) => {
         }
 
         const startDate = new Date();
-        startDate.setUTCHours(0, 0, 0, 0);
-        const endDate = new Date();
-        endDate.setDate(startDate.getDate() + 1);
+        const endDate = new Date(startDate);
+        startDate.setHours(endDate.getHours() - 24);
 
         try {
             const res = await axios.get(
                 environment +
-                `/api/${batterySystem.type}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+                `/api/${SmartDeviceType[batterySystem.type]}/GetCapacityHistoricalData?Id=${batterySystem.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
             );
 
-            const transformedData = [
-                ["Date", "Current Capacity"],
-                ...res.data.map(({ timestamp, currentCapacity }) => [
-                    new Date(timestamp).toUTCString(),
-                    currentCapacity,
-                ]),
-            ];
-
+            const dataRows = res.data.map(({ timestamp, currentCapacity }) => [
+                new Date(timestamp).toUTCString(),
+                parseFloat(currentCapacity),
+            ]);
+            const transformedData = [headerRow, ...dataRows];
             setData(transformedData);
         } catch (err) {
             console.log(err);
@@ -71,91 +66,25 @@ const BatteryControl = ({batterySystem}) => {
         },
         vAxis: {
             title: "Capacity (KWh)",
-        }
+        },
+        title: "Battery Capacity"
     };
 
-    const handleSwitchClick = () => {
-        const res = axios.put(
-            environment +
-            `/api/${SmartDeviceType[batterySystem.type]}/Toggle?Id=${batterySystem.id}&turnOn=${!isOn}`
-        );
-        setIsOn(!isOn);
-    };
-
-    const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onClick={handleSwitchClick} onChange={(e) => {
-            setIsOn(e.target.checked)
-        }} size="medium" disableRipple {...props} />
-    ))(({theme}) => ({
-        width: 210,
-        height: 95,
-        padding: 0,
-        '& .MuiSwitch-switchBase': {
-            padding: 0,
-            margin: 4,
-            transitionDuration: '300ms',
-            '&.Mui-checked': {
-                transform: 'translateX(114px)',
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
-                    opacity: 1,
-                    border: 0,
-                },
-                '&.Mui-disabled + .MuiSwitch-track': {
-                    opacity: 0.5,
-                },
-            },
-            '&.Mui-focusVisible .MuiSwitch-thumb': {
-                color: '#33cf4d',
-                border: '6px solid #fff',
-            },
-            '&.Mui-disabled .MuiSwitch-thumb': {
-                color:
-                    theme.palette.mode === 'light'
-                        ? theme.palette.grey[100]
-                        : theme.palette.grey[600],
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
-            },
-        },
-        '& .MuiSwitch-thumb': {
-            boxSizing: 'border-box',
-            width: 88,
-            height: 88,
-        },
-        '& .MuiSwitch-track': {
-            borderRadius: 52,
-            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-            opacity: 1,
-            transition: theme.transitions.create(['background-color'], {
-                duration: 500,
-            }),
-        },
-    }));
-    return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 3fr 5fr"
+    return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 5fr"
                   gridTemplateRows="170px 170px 170px">
-        <Box gridColumn={1} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
-             alignItems="center" bgcolor="white" borderRadius="25px">
-            <Typography fontSize="50px" fontWeight="600"> POWER</Typography>
-            <FormControlLabel sx={{marginRight: 0}}
-                              control={<SwitchPower sx={{ml: "10px", mt: "20px"}}/>}
-             label=""/>
-        </Box>
-        <Box gridColumn={2} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+        <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
              alignItems="center" bgcolor="white" borderRadius="25px">
             <Typography fontSize="20px" fontWeight="600"> Capacity</Typography>
             <Typography fontSize="50px" fontWeight="700">{capacity}kW</Typography>
 
         </Box>
-        <Box gridColumn={2} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
+        <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
              alignItems="center" bgcolor="white" borderRadius="25px">
             <Typography fontSize="20px" fontWeight="600"> Current Capacity</Typography>
             <Typography fontSize="50px" fontWeight="700">{currentCapacity}kW</Typography>
 
         </Box>
-        <Box gridColumn={3} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
+        <Box gridColumn={2} height="350px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
              alignItems="center" bgcolor="white" borderRadius="25px">
             <Chart
                 chartType="LineChart"

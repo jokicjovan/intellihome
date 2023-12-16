@@ -1,7 +1,5 @@
 import {
     Box,
-    Container,
-    CssBaseline,
     FormControlLabel,
     IconButton,
     styled,
@@ -13,9 +11,6 @@ import React, {useEffect, useState} from "react";
 import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
-import {areDatesEqual} from "@mui/x-date-pickers/internals";
-import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSmartHomeService.ts";
-import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
 const LampControl = ({device, setSmartDeviceParent}) => {
     console.log(device)
@@ -27,7 +22,7 @@ const LampControl = ({device, setSmartDeviceParent}) => {
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isShining} onChange={(e) => {
             setisShining(e.target.checked);
             turnOnDevice(e.target.checked);
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
         height: 95,
@@ -80,7 +75,7 @@ const LampControl = ({device, setSmartDeviceParent}) => {
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isAuto} onChange={(e) => {
             setIsAuto(e.target.checked)
             setAutoMode(e.target.checked);
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
         height: 52,
@@ -130,15 +125,15 @@ const LampControl = ({device, setSmartDeviceParent}) => {
         },
     }));
 
-    // useEffect(() => {
-    //
-    //     device.isAuto = isAuto;
-    //     device.brightnessLimit = threshold;
-    //     device.currentBrightness = brightness;
-    //     device.isShining = isShining;
-    //     setSmartDeviceParent(device);
-    //
-    // }, [isShining, isAuto, threshold, brightness]);
+    useEffect(() => {
+
+        device.isAuto = isAuto;
+        device.brightnessLimit = threshold;
+        device.currentBrightness = brightness;
+        device.isShining = isShining;
+        setSmartDeviceParent(device);
+
+    }, [isShining, isAuto, threshold, brightness]);
 
     useEffect(() => {
         setBrightness(device.currentBrightness);
@@ -189,13 +184,13 @@ const LampControl = ({device, setSmartDeviceParent}) => {
                 <Typography fontSize="50px" fontWeight="600"> POWER</Typography>
                 <FormControlLabel sx={{marginRight: 0}}
                                   control={<SwitchPower sx={{ml: "10px", mt: "20px"}}/>}
-                />
+                 label=""/>
             </Box>
             <Box display="grid" gridColumn={2} height="350px" gridRow={1} gap="10px" gridTemplateRows="170px 170px">
                 <Box gridColumn={1} height="170px" gridRow={1} display="flex" justifyContent="center" flexDirection="column"
                      alignItems="center" bgcolor="white" borderRadius="25px">
                     <Typography fontSize="30px" fontWeight="600"> AUTO</Typography>
-                    <FormControlLabel sx={{marginRight: 0}} control={<SwitchAuto sx={{ml: "10px", mt: "20px"}}/>}/>
+                    <FormControlLabel sx={{marginRight: 0}} control={<SwitchAuto sx={{ml: "10px", mt: "20px"}}/>} label=""/>
                 </Box>
                 <Box gridColumn={1} height="170px" gridRow={2} display="flex" justifyContent="center" flexDirection="column"
                      alignItems="center" bgcolor="white" borderRadius="25px">

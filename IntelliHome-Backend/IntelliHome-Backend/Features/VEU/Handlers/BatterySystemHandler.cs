@@ -37,18 +37,18 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             using var scope = serviceProvider.CreateScope();
             var batterySystemService = scope.ServiceProvider.GetRequiredService<IBatterySystemService>();
             var batterySystem = await batterySystemService.Get(Guid.Parse(batterySystemId));
-            if (batterySystem != null)
+            var batterySystemData = JsonConvert.DeserializeObject<BatterySystemCapacityDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            if (batterySystem != null && batterySystemData != null)
             {
-                var batterySystemData = JsonConvert.DeserializeObject<BatterySystemCapacityDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-                var batterySystemDataInflux = new Dictionary<string, object>
+                var fields = new Dictionary<string, object>
                     {
                         { "currentCapacity", batterySystemData.CurrentCapacity }
                     };
-                var batterySystemDataTags = new Dictionary<string, string>
+                var tags = new Dictionary<string, string>
                     {
                         { "deviceId", batterySystem.Id.ToString() }
                     };
-                batterySystemService.AddCapacityMeasurement(batterySystemDataInflux, batterySystemDataTags);
+                batterySystemService.AddCapacityMeasurement(fields, tags);
             }
         }
     }

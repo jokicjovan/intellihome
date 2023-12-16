@@ -36,18 +36,18 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             using var scope = serviceProvider.CreateScope();
             var solarPanelSystemService = scope.ServiceProvider.GetRequiredService<ISolarPanelSystemService>();
             var solarPanelSystem = await solarPanelSystemService.Get(Guid.Parse(solarPanelSystemId));
-            if (solarPanelSystem != null)
+            var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            if (solarPanelSystem != null && solarPanelSystemData != null)
             {
-                var solarPanelSystemData = JsonConvert.DeserializeObject<SolarPanelSystemProductionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-                var solarPanelSystemDataInflux = new Dictionary<string, object>
+                var fields = new Dictionary<string, object>
                     {
                         { "productionPerMinute", solarPanelSystemData.ProductionPerMinute}
                     };
-                var solarPanelSystemDataTags = new Dictionary<string, string>
+                var tags = new Dictionary<string, string>
                     {
                         { "deviceId", solarPanelSystem.Id.ToString() }
                     };
-                solarPanelSystemService.AddProductionMeasurement(solarPanelSystemDataInflux, solarPanelSystemDataTags);
+                solarPanelSystemService.AddProductionMeasurement(fields, tags);
             }
         }
     }

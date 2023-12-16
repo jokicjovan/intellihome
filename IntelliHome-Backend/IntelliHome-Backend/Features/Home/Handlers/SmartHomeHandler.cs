@@ -47,7 +47,7 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                 return;
             }
             string smartHomeId = topic_parts[1];
-            _ = smartHomeHubContext.Clients.Group(smartHomeId).ReceiveSmartHomeUsageData(e.ApplicationMessage.ConvertPayloadToString());
+            _ = smartHomeHubContext.Clients.Group(smartHomeId).ReceiveSmartHomeData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
             var smartHomeService = scope.ServiceProvider.GetRequiredService<ISmartHomeService>();

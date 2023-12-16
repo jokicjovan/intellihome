@@ -98,7 +98,7 @@ const SignUpForm = () => {
         <Typography mb={1} align="center" sx={{fontSize:"48px",fontWeight:"600"}}>Sign Up</Typography>
         <TextField  name="firstName" placeholder="First Name" error={errorName}  helperText={errorName?"Name is required":""} sx={styled}></TextField>
         <TextField  name="lastName" placeholder="Last Name" error={errorLastName}  helperText={errorLastName?"Lastname is required":""} sx={styled}></TextField>
-        <TextField  type="email" name="email" placeholder="Email" sx={styled} error={errorMail}  helperText={errorMail?"Email is required and must me format example@example.com":""} mb={3}></TextField>
+        <TextField  type="email" name="email" placeholder="Email" sx={styled} error={errorMail}  helperText={errorMail?"Email is required and must me format example@example.com":""}></TextField>
         <Box height="25px"/>
         <TextField  name="username" placeholder="Username" error={errorUsername}  helperText={errorUsername?"Username must be at least 5 characters long":""} sx={styled}></TextField>
         <TextField name="password" type="password" variant="outlined"  placeholder="Password" error={errorPassword}  helperText={errorPassword?"Password must have 8 characters(1 number, 1 uppercase and 1 lowercase)":""} sx={styled}></TextField>

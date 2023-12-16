@@ -29,6 +29,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                         {
                             { "brightness_limit", entity.BrightnessLimit },
                             { "power_per_hour", entity.PowerPerHour},
+                            { "is_auto", entity.IsAuto }
                         };
             bool success = await _lampHandler.ConnectToSmartDevice(entity, additionalAttributes);
             if (success)
@@ -42,7 +43,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
 
         public async Task<LampDTO> GetWithData(Guid id)
         {
-            Lamp lamp = await _lampRepository.Read(id) ?? throw new ResourceNotFoundException("Smart device not found!");
+            Lamp lamp = await _lampRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             LampDTO lampDTO = new LampDTO
             {
                 Id = lamp.Id,
@@ -51,6 +52,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 IsOn = lamp.IsOn,
                 Category = lamp.Category.ToString(),
                 Type = lamp.Type.ToString(),
+                SmartHomeId = lamp.SmartHome.Id,
                 PowerPerHour = lamp.PowerPerHour,
                 BrightnessLimit = lamp.BrightnessLimit,
             };

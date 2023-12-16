@@ -6,10 +6,6 @@ import {environment} from "../../security/Environment";
 import {useState} from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 
-
-import generatePassword from 'generate-password';
-
-
 const AdminRegistration = () => {
     const queryClient = useQueryClient()
     const initialState = {
@@ -157,7 +153,7 @@ const AdminRegistration = () => {
     return<><Box component="form" onSubmit={handleSignUp} sx={{ display: "flex", width: "100%", justifyContent: "center", flexDirection: "column" }}>
         <TextField name="firstName" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} placeholder="First Name" error={errorName} helperText={errorName ? "Name is required" : ""} sx={styled}></TextField>
         <TextField name="lastName" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} placeholder="Last Name" error={errorLastName} helperText={errorLastName ? "Lastname is required" : ""} sx={styled}></TextField>
-        <TextField type="email" name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="Email" sx={styled} error={errorMail} helperText={errorMail ? "Email is required and must be in the format example@example.com" : ""} mb={3}></TextField>
+        <TextField type="email" name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="Email" sx={styled} error={errorMail} helperText={errorMail ? "Email is required and must be in the format example@example.com" : ""}></TextField>
         <Box height="25px" />
         <TextField name="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Username" error={errorUsername} helperText={errorUsername ? "Username must be at least 5 characters long" : ""} sx={styled}></TextField>
         <TextField name="password" InputProps={{

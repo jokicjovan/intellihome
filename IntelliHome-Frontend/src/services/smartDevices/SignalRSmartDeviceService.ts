@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import {HubConnectionBuilder, HubConnection, JsonHubProtocol} from '@microsoft/signalr';
 import { environment } from '../../utils/Environment.ts';
 import {HubConnectionState} from "@microsoft/signalr/src/HubConnection.ts";
 
@@ -42,16 +42,12 @@ class SignalRSmartDeviceService {
     }
 
     public stopConnection(): Promise<void> {
-        if (this.connection && this.connection.state == HubConnectionState.Connected) {
+        if (this.connection) {
             return this.connection.stop()
-                .then(() => {
-                    console.log('SignalR connection stopped');
-                })
                 .catch((error) => {
                     console.error('Error stopping SignalR connection: ', error);
                 });
         }
-
         return Promise.resolve();
     }
 }

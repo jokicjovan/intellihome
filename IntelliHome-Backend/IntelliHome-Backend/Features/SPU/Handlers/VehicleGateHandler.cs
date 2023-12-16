@@ -48,11 +48,27 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 };
                 var vehicleGateDataTags = new Dictionary<string, string>
                 {
-                        { "actionBy", vehicleGateData.ActionBy},
                         { "licencePlate", vehicleGateData.LicencePlate },
                         { "deviceId", vehicleGate.Id.ToString() }
                 };
                 vehicleGateService.AddPoint(vehicleGateDataInflux, vehicleGateDataTags);
+
+                if (!vehicleGateData.ActionBy.Equals("System")) return;
+
+                string action = vehicleGateData.IsOpen ? "open_gate" : "close_gate";
+
+                var fields = new Dictionary<string, object>
+                {
+                    { "action", action }
+
+                };
+                var tags = new Dictionary<string, string>
+                {
+                    { "username", vehicleGateData.ActionBy},
+                    { "deviceId", vehicleGate.Id.ToString()}
+                };
+
+                vehicleGateService.SaveAction(fields, tags, vehicleGate.Id);
             }
         }
 

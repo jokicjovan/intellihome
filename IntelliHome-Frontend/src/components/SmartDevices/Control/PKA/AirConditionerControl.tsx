@@ -12,7 +12,7 @@ import React, {useEffect, useState} from "react";
 import {Add, Close, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import {environment} from "../../../../security/Environment";
@@ -30,6 +30,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
     const [isOn, setIsOn] = useState(false)
     const [isThereTimeLimit, setIsThereTimeLimit] = useState(false)
     const [open, setIsOpen] = useState(false)
+    // @ts-ignore
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
     const [scheduledMode, setScheduledMode] = useState("AUTO");
@@ -51,7 +52,6 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
             borderRadius: "10px"
         },
         margin: "8px auto", borderRadius: "10px"
-
     }
     const changeMode = (mode) => {
         axios.put(environment + `/api/AirConditioner/ChangeMode?Id=${smartDevice.id}&mode=${mode}`).then(res => {
@@ -77,7 +77,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
     const SwitchAnalog = styled((props: SwitchProps) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
             setIsOn(e.target.checked)
-        }} size="large" disableRipple {...props} />
+        }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 105,
         height: 52,
@@ -248,7 +248,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
                                }
                                    placeholder = "Duration"
                                    sx = {styledInput}
-                                   mb = {3} > < /TextField>
+                                   mb = {3} > </TextField>
                                    <FormControl sx={{width: "500px", margin: "0 auto"}}>
                                        <FormControlLabel
                                            label="Without Time Limit"

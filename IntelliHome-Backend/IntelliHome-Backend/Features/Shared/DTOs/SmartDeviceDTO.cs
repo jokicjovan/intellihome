@@ -8,8 +8,10 @@ namespace IntelliHome_Backend.Features.Shared.DTOs
         public String Name { get; set; }
         public String Category { get; set; }
         public String Type { get; set; }
+        public String Image { get; set; }
         public Boolean IsConnected { get; set; }
         public Boolean IsOn { get; set; }
+        public Guid SmartHomeId { get; set; }
 
 
         public SmartDeviceDTO()
@@ -21,6 +23,7 @@ namespace IntelliHome_Backend.Features.Shared.DTOs
             Id = smartDevice.Id;
             Name = smartDevice.Name;
             Category = smartDevice.Category.ToString();
+            Image = smartDevice.Image;
             Type = smartDevice.Type.ToString();
             IsConnected = smartDevice.IsConnected;
             IsOn = smartDevice.IsOn;
