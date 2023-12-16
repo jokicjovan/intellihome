@@ -68,7 +68,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 Category = airConditioner.Category.ToString(),
                 Type = airConditioner.Type.ToString(),
                 PowerPerHour = airConditioner.PowerPerHour,
-                Schedules = airConditioner.ScheduledWorks.Select(work => work.DateTo != null
+                Schedules = airConditioner.ScheduledWorks.Select(work => work.DateTo.Year != 1
                                 ? new AirConditionerScheduleDTO
                                 {
                                     Temperature = work.Temperature,
