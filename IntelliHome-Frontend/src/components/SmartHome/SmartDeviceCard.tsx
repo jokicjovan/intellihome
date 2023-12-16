@@ -29,7 +29,6 @@ const SmartDeviceCard = (props) => {
         navigate(`/smartDevice/${type}/${smartDevice.id}`);
     }
 
-
     return (
         <Box sx={{ background: "white", width: "25vw", height: "12vh", borderRadius: "15px", mt: "10px", display: "flex", position: "relative" }} onClick={navigateToSmartDevice}>
             {/* Rounded left edge */}
@@ -40,7 +39,7 @@ const SmartDeviceCard = (props) => {
                 <img
                     src={environment + '/' + smartDevice.image}
                     alt="Smart Home Image"
-                    style={{ width: "50px", height: "50px", border: "5px solid #343F71", borderRadius: "8px", marginLeft: "20px" }}
+                    style={{ width: "70px", height: "70px", minWidth:"70px", maxWidth:"70px", minHeight:"70px", maxHeight:"70px", border: "5px solid #343F71", borderRadius: "8px", marginLeft: "20px" }}
                 />
             </div>
             <Typography sx={{margin:"auto 15px", fontSize:"23px", fontWeight:"600", color:"#343F71"}}>{smartDevice.name}</Typography>
