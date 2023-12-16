@@ -31,7 +31,7 @@ const SmartDeviceMain = () => {
     const [isOn, setIsOn] = useState(false);
     // @ts-ignore
     const [smartDevice, setSmartDevice] = useState<SmartDevice>({});
-    const [report, setReport] = useState<ActionData>();
+    const [report, setReport] = useState<ActionData>({} as ActionData);
     const signalRSmartDeviceService = new SignalRSmartDeviceService();
 
     const smartDeviceSubscriptionResultCallback = (result) => {

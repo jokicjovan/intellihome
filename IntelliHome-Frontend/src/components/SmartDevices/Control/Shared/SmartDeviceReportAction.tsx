@@ -43,8 +43,12 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
     }, [startDate, endDate, personName]);
 
     useEffect(() => {
-        setFilteredData(inputData);
-
+        if (personName == "" || personName == [])
+            setFilteredData(inputData);
+        else
+            setFilteredData(inputData.filter(item => personName.includes(item.by)))
+        // setFilteredData(inputData);
+        setAdmins(Array.from(new Set(inputData.map(obj => obj.by))));
     }, [inputData]);
 
     const handleChangeSelect = (event: SelectChangeEvent<typeof personName>) => {

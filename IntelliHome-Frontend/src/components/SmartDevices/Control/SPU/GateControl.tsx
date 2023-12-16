@@ -185,7 +185,7 @@ const GateControl = ({device, setSmartDeviceParent}) => {
         device.allowedLicencePlates = myPlates
         device.currentLicencePlate = lastPlate
         device.licencePlate = lastPlate
-        device.isOpenByUser = isOpenedByUser
+        device.isOpenedByUser = isOpenedByUser
         setSmartDeviceParent(device)
     }, [isOpenGate, isPublic, myPlates, lastPlate, isOpenedByUser]);
 
