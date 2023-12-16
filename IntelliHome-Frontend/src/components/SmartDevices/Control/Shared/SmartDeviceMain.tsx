@@ -20,6 +20,7 @@ import SolarPanelReport from "../VEU/SolarPanelReport.tsx";
 import GateReport from "../SPU/GateReport.tsx";
 import HomeReport from "../VEU/HomeReport.tsx";
 import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSmartHomeService.ts";
+import ActionData from "../../../../models/interfaces/Action.ts";
 
 const SmartDeviceMain = () => {
     const params = useParams();
@@ -30,6 +31,7 @@ const SmartDeviceMain = () => {
     const [isOn, setIsOn] = useState(false);
     // @ts-ignore
     const [smartDevice, setSmartDevice] = useState<SmartDevice>({});
+    const [report, setReport] = useState<ActionData>();
     const signalRSmartDeviceService = new SignalRSmartDeviceService();
 
     const smartDeviceSubscriptionResultCallback = (result) => {
@@ -38,13 +40,19 @@ const SmartDeviceMain = () => {
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
-        console.log('data result:', result);
-        setSmartDevice(prevSmartDevice => ({
-            ...prevSmartDevice,
-            ...result
-        }));
-        result.isConnected !== undefined && setIsConnected(result.isConnected);
-        result.isOn !== undefined && setIsOn(result.isOn);
+
+        if(result.Action !== undefined || result.ActionBy !== undefined || result.Timestamp !== undefined){
+            setReport(result);
+        }
+        else
+        {
+            setSmartDevice(prevSmartDevice => ({
+                ...prevSmartDevice,
+                ...result
+            }));
+            result.isConnected !== undefined && setIsConnected(result.isConnected);
+            result.isOn !== undefined && setIsOn(result.isOn);
+        }
     };
 
     useEffect(() => {
@@ -184,7 +192,7 @@ const SmartDeviceMain = () => {
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
                             deviceType == "VehicleGate" ?
-                                <GateReport device={smartDevice}/> :
+                                <GateReport device={smartDevice} report={report}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
                                     <></> : <></>}
 

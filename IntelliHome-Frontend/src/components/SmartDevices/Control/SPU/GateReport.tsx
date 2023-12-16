@@ -4,11 +4,8 @@ import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
 import dayjs from "dayjs";
 
-interface GateReportProps {
-    environment: boolean
-}
 
-const GateReport = ({ device}) => {
+const GateReport = ({ device, report }) => {
     const [gate, setGate] = useState(device);
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState(dayjs());
@@ -16,13 +13,13 @@ const GateReport = ({ device}) => {
     const [historicalData, setHistoricalData] = useState([]);
 
     useEffect(() => {
+        console.log("GateReport useEffect");
         axios.get(environment + `/api/VehicleGate/GetHistoricalActionData?Id=${gate.id}&From=${startDate.toISOString()}&To=${endDate.toISOString()}`).then(res => {
                 // setHistoricalData(res.data)
                 let data = []
                 res.data.forEach((entry) => {
                     data.push({action: entry.action, by: entry.actionBy, date: new Date(entry.timestamp)})
                 })
-                console.log(data)
                 setHistoricalData(data.reverse())
             }
         ).catch(err => {
@@ -30,6 +27,19 @@ const GateReport = ({ device}) => {
         });
     }, [device.id, startDate, endDate, user]);
 
+
+    //update historicalData with new report
+    useEffect(() => {
+        console.log("GateReport useEffect");
+        let data = []
+        if(report.Action !== undefined || report.ActionBy !== undefined || report.Timestamp !== undefined){
+            data.push({action: report.Action, by: report.ActionBy, date: new Date(report.Timestamp)})
+        }
+        historicalData.forEach((entry) => {
+            data.push(entry)
+        })
+        setHistoricalData(data)
+    }, [report]);
 
     return <>
         <SmartDeviceReportAction

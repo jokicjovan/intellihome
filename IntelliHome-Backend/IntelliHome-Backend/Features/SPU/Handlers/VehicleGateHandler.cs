@@ -68,7 +68,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                     { "deviceId", vehicleGate.Id.ToString()}
                 };
 
-                vehicleGateService.SaveAction(fields, tags);
+                vehicleGateService.SaveAction(fields, tags, vehicleGate.Id);
             }
         }
 

@@ -1,10 +1,14 @@
 ﻿using Data.Models.SPU;
 using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.Shared.Hubs;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.SPU.Services
 {
@@ -13,12 +17,14 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly IVehicleGateRepository _vehicleGateRepository;
         private readonly IVehicleGateHandler _vehicleGateHandler;
         private readonly IVehicleGateDataRepository _vehicleGateDataRepository;
+        private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
 
-        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IVehicleGateHandler vehicleGateHandler, IVehicleGateDataRepository vehicleGateDataRepository)
+        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IVehicleGateHandler vehicleGateHandler, IVehicleGateDataRepository vehicleGateDataRepository, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             _vehicleGateRepository = vehicleGateRepository;
             _vehicleGateHandler = vehicleGateHandler;
             _vehicleGateDataRepository = vehicleGateDataRepository;
+            _smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async Task<VehicleGate> Create(VehicleGate entity)
@@ -100,8 +106,16 @@ namespace IntelliHome_Backend.Features.SPU.Services
             _vehicleGateDataRepository.AddPoint(fields, tags);
         }
 
-        public void SaveAction(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        public void SaveAction(Dictionary<string, object> fields, Dictionary<string, string> tags, Guid id)
         {
+            //concat fields and tags
+            ActionDataDTO actionDataDto = new()
+            {
+                Action = fields["action"].ToString(),
+                ActionBy = tags["username"],
+                Timestamp = DateTime.Now,
+            };
+            _smartDeviceHubContext.Clients.Group(id.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(actionDataDto));
             _vehicleGateDataRepository.SaveAction(fields, tags);
         }
 
@@ -141,7 +155,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 { "deviceId", id.ToString()}
             };
 
-            SaveAction(fields, tags);
+            SaveAction(fields, tags, id);
         }
 
         
@@ -163,7 +177,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 { "username", username},
                 { "deviceId", id.ToString()}
             };
-            SaveAction(fields, tags);
+            SaveAction(fields, tags, id);
 
             vehicleGate.IsPublic = isPublic;
             await _vehicleGateRepository.Update(vehicleGate);
@@ -189,7 +203,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
                 { "deviceId", id.ToString()}
             };
 
-            SaveAction(fields, tags);
+            SaveAction(fields, tags, id);
 
             vehicleGate.IsOn = turnOn;
             await _vehicleGateRepository.Update(vehicleGate);

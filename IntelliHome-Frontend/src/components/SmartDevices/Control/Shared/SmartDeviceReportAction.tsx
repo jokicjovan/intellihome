@@ -22,7 +22,6 @@ import dayjs from "dayjs";
  */
 
 const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDate, setParentUser}) => {
-    // console.log(inputData)
     type TDate = TDate | null;
     const [page, setPage] = useState(0);
     const [filteredData, setFilteredData] = useState(inputData);
@@ -41,7 +40,13 @@ const SmartDeviceReportAction = ({inputData, setParentStartDate, setParentEndDat
         setParentEndDate(endDate)
         setParentUser(personName)
         setAdmins(Array.from(new Set(inputData.map(obj => obj.by))));
-    }, [startDate, endDate, personName, inputData])
+    }, [startDate, endDate, personName]);
+
+    useEffect(() => {
+        setFilteredData(inputData);
+
+    }, [inputData]);
+
     const handleChangeSelect = (event: SelectChangeEvent<typeof personName>) => {
         const {
             target: {value},
