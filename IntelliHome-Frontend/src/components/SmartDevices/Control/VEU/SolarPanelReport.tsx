@@ -4,6 +4,7 @@ import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceReportAction from "../Shared/SmartDeviceReportAction.tsx";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
+import {Box} from "@mui/material";
 
 const SolarPanelReport = ({solarPanelSystem}) => {
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
@@ -28,12 +29,12 @@ const SolarPanelReport = ({solarPanelSystem}) => {
 
     }, [solarPanelSystem])
 
-    return <SmartDeviceReportAction
+    return <Box mt={1} overflow={"auto"}><SmartDeviceReportAction
             inputData={historicalData}
             setParentStartDate={setStartDate}
             setParentEndDate={setEndDate}
             setParentUser={setUser}
-        />
+    /></Box>
 }
 
 export default SolarPanelReport

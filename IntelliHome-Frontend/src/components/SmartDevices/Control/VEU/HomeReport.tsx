@@ -23,7 +23,13 @@ const HomeReport = ({smartHomeId}) => {
         result = JSON.parse(result);
         console.log('data result:', result);
         setRecentData((prevData: any) => {
-            const filteredData = prevData.filter((_, index) => index !== 1);
+            const filteredData = prevData.filter((item, index) => {
+                    if (index !== 0) {
+                        return new Date(item[0]).getHours() + 1 >= new Date().getHours();
+                    }
+                    return true
+                }
+            );
             return [...filteredData, [new Date(),
                 parseFloat(result.productionPerMinute),
                 parseFloat(result.consumptionPerMinute),
@@ -86,8 +92,8 @@ const HomeReport = ({smartHomeId}) => {
         title: "Recent Consumption, Production, Grid (taken/given)"
     };
 
-    return <Box mt={1} display="grid" gap="40px" overflow="auto">
-        <Box gridRow={1} display="flex" justifyContent="center">
+    return <Box mt={1} display="flex" flexDirection={"column"} overflow="auto">
+        <Box display="flex" justifyContent="center">
             <Box width="80%">
                 <Chart
                     chartType="LineChart"
@@ -98,7 +104,7 @@ const HomeReport = ({smartHomeId}) => {
                 />
             </Box>
         </Box>
-        <Box gridRow={2}>
+        <Box>
             <SmartDeviceReportValues
                 inputData={historicalData}
                 setParentStartDate={setStartDate}

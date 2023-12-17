@@ -15,7 +15,13 @@ const BatteryControl = ({batterySystem}) => {
         setCapacity(batterySystemData.capacity);
         setCurrentCapacity(batterySystemData.currentCapacity);
         setData((prevData) => {
-            const filteredData = prevData.filter((_, index) => index !== 1);
+            const filteredData = prevData.filter((item, index) => {
+                    if (index !== 0) {
+                        return new Date(item[0]).getHours() + 24 >= new Date().getHours();
+                    }
+                    return true
+                }
+            );
             return [...filteredData, [new Date().toUTCString(), currentCapacity]];
         });
     };
@@ -67,7 +73,7 @@ const BatteryControl = ({batterySystem}) => {
         vAxis: {
             title: "Capacity (KWh)",
         },
-        title: "Battery Capacity"
+        title: "Recent Battery Capacity"
     };
 
     return <><Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 5fr"
