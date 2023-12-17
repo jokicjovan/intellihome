@@ -22,6 +22,13 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
             return Ok(result);
         }
 
+        [HttpPut]
+        public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
+        {
+            await _ambientSensorService.ToggleAmbientSensor(id, turnOn);
+            return Ok();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get(Guid id)
         {

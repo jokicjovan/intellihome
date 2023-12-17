@@ -1,9 +1,11 @@
 ﻿using Data.Models.PKA;
+using Data.Models.VEU;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Exceptions;
 
 namespace IntelliHome_Backend.Features.PKA.Services
 {
@@ -18,6 +20,18 @@ namespace IntelliHome_Backend.Features.PKA.Services
             _ambientSensorRepository = ambientSensorRepository;
             _ambientSensorHandler = ambientSensorHandler;
             _ambientSensorDataRepository = ambientSensorDataRepository;
+        }
+
+        public async Task ToggleAmbientSensor(Guid id, bool turnOn = true)
+        {
+            AmbientSensor batterySystem = await _ambientSensorRepository.FindWithSmartHome(id);
+            if (batterySystem == null)
+            {
+                throw new ResourceNotFoundException("Smart device not found!");
+            }
+            await _ambientSensorHandler.ToggleSmartDevice(batterySystem, turnOn);
+            batterySystem.IsOn = turnOn;
+            _ = _ambientSensorRepository.Update(batterySystem);
         }
 
         public async Task<AmbientSensorDTO> GetWithData(Guid id)

@@ -2,6 +2,7 @@
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.Shared.Influx;
+using IntelliHome_Backend.Features.VEU.DTOs;
 
 namespace IntelliHome_Backend.Features.PKA.DataRepositories
 {
@@ -16,7 +17,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
 
         public List<AmbientSensorData> GetHistoricalData(Guid id, DateTime from, DateTime to)
         {
-            var result = _context.GetHistoricalData("ambient_sensor", id, from, to).Result;
+            var result = _context.GetHistoricalData("ambientSensor", id, from, to).Result;
             return result.Select(ConvertToAmbientSensorData).ToList();
         }
 
@@ -29,21 +30,15 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
 
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _context.WriteToInfluxAsync("ambient_sensor", fields, tags);
+            _context.WriteToInfluxAsync("ambientSensor", fields, tags);
         }
 
         public AmbientSensorData GetLastData(Guid id)
         {
            
-            var table = _context.GetLastData("ambient_sensor", id).Result;
+            var table = _context.GetLastData("ambientSensor", id).Result;
 
-            AmbientSensorData data = ConvertToAmbientSensorData(table);
-
-            return new AmbientSensorData
-            {
-                Temperature = data.Temperature,
-                Humidity = data.Humidity,
-            };
+            return table == null || table.Records.Count == 0 ? new AmbientSensorData() : ConvertToAmbientSensorData(table);
         }
 
 

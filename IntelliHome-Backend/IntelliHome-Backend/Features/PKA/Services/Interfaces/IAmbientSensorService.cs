@@ -11,5 +11,6 @@ namespace IntelliHome_Backend.Features.PKA.Services.Interfaces
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task<AmbientSensorDTO> GetWithData(Guid id);
         List<AmbientSensorData> GetLastHourData(Guid id);
+        Task ToggleAmbientSensor(Guid id, bool turnOn = true);
     }
 }

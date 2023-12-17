@@ -170,8 +170,8 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                 ':hover': {backgroundColor: selectedTab == 1 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(1)} fontSize="25px" fontWeight="500">Reports</Typography>
         </Box>
-        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDeviceId={smartDeviceId}/> :
-                deviceType == "AirConditioner" ? <AirConditionerControl/> :
+        {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
+                deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
                             deviceType == "VehicleGate" ?
@@ -180,7 +180,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                                     <></>
 
 
-            : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport ambientSensor={smartDevice}/> :
+            : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
