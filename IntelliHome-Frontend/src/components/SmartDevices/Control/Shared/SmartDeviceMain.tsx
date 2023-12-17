@@ -180,7 +180,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                                     <></>
 
 
-            : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport ambientSensor={smartDevice}/> :
+            : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :

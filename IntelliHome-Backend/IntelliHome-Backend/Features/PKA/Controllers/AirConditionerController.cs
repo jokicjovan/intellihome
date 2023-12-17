@@ -1,6 +1,10 @@
 ﻿using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.DTOs;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IntelliHome_Backend.Features.PKA.Controllers
 {
@@ -25,7 +29,14 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [HttpPost]
         public async Task<IActionResult> AddScheduledWork(ACSchedulerCreationDTO schedule)
         {
-            await _airConditionerService.AddScheduledWork(schedule.Id,schedule.Temperature,schedule.Mode,schedule.StartDate,schedule.EndDate);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _airConditionerService.AddScheduledWork(schedule.Id,schedule.Temperature,schedule.Mode,schedule.StartDate,schedule.EndDate, username);
             return Ok();
         }
 
@@ -33,7 +44,14 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [HttpPut]
         public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
         {
-            await _airConditionerService.ToggleAmbientSensor(id, turnOn);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _airConditionerService.ToggleAirConditioner(id,username, turnOn);
             return Ok();
         }
 
@@ -47,15 +65,40 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangeTemperature(Guid id, Double temperature)
         {
-            await _airConditionerService.ChangeTemperature(id, temperature);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _airConditionerService.ChangeTemperature(id, temperature,username);
             return Ok();
         }
 
         [HttpPut]
         public async Task<IActionResult> ChangeMode(Guid id, string mode)
         {
-            await _airConditionerService.ChangeMode(id, mode);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            await _airConditionerService.ChangeMode(id, mode, username);
             return Ok();
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            if (from > to)
+            {
+                return BadRequest("FROM date cant be after TO date");
+            }
+            List<ActionDataDTO> result = _airConditionerService.GetActionHistoricalData(id, from, to);
+            return Ok(result);
         }
     }
 }

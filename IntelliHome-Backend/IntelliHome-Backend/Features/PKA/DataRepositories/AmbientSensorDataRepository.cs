@@ -38,9 +38,7 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
            
             var table = _context.GetLastData("ambientSensor", id).Result;
 
-            AmbientSensorData data = ConvertToAmbientSensorData(table);
-
-            return table == null ? new AmbientSensorData() : ConvertToAmbientSensorData(table);
+            return table == null || table.Records.Count == 0 ? new AmbientSensorData() : ConvertToAmbientSensorData(table);
         }
 
 

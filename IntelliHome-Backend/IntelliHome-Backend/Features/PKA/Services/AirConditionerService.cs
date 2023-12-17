@@ -1,6 +1,7 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
 using Data.Models.SPU;
+using Data.Models.VEU;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers;
@@ -8,6 +9,7 @@ using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using System.Collections;
 
@@ -34,6 +36,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
             Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
             {
                 { "power_per_hour", entity.PowerPerHour},
+                {"schedule_list",entity.ScheduledWorks==null?entity.ScheduledWorks:new List<AirConditionerWork>() },
             };
             bool success = await _airConditionerHandler.ConnectToSmartDevice(entity, additionalAttributes);
             if (success)
@@ -44,16 +47,28 @@ namespace IntelliHome_Backend.Features.PKA.Services
             return entity;
         }
 
-        public async Task ToggleAmbientSensor(Guid id, bool turnOn = true)
+        public async Task ToggleAirConditioner(Guid id,string username, bool turnOn = true)
         {
             AirConditioner airConditioner = await _airConditionerRepository.FindWithSmartHome(id);
             if (airConditioner == null)
             {
                 throw new ResourceNotFoundException("Smart device not found!");
             }
-            await _airConditionerHandler.ToggleSmartDevice(airConditioner, turnOn);
+            _ = _airConditionerHandler.ToggleSmartDevice(airConditioner, turnOn);
             airConditioner.IsOn = turnOn;
             _ = _airConditionerRepository.Update(airConditioner);
+
+            var fields = new Dictionary<string, object>
+            {
+                { "action", turnOn ? "ON" : "OFF" }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", username},
+                { "deviceId", id.ToString()}
+            };
+            _airConditionerDataRepository.AddActionMeasurement(fields, tags);
         }
 
         public async Task<AirConditionerDTO> GetWithData(Guid id)
@@ -68,6 +83,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 Category = airConditioner.Category.ToString(),
                 Type = airConditioner.Type.ToString(),
                 PowerPerHour = airConditioner.PowerPerHour,
+                Modes = airConditioner.Modes.Select(mode => mode.ToString().ToLower()).ToList(),
                 Schedules = airConditioner.ScheduledWorks.Select(work => work.DateTo.Year != 1
                                 ? new AirConditionerScheduleDTO
                                 {
@@ -81,6 +97,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
                                     Mode = work.Mode.ToString(),
                                     Date = $"{work.DateFrom.ToString("dd/MM/yyyy")} {work.Start.ToString("HH:mm")}"
                                 }).ToList() ,
+                SmartHomeId = airConditioner.SmartHome.Id,
                 MaxTemp =airConditioner.MaxTemperature,
                 MinTemp=airConditioner.MinTemperature,
             };
@@ -98,15 +115,26 @@ namespace IntelliHome_Backend.Features.PKA.Services
 
         #region DataHistory
 
-        public async Task ChangeTemperature(Guid id, double temperature)
+        public async Task ChangeTemperature(Guid id, double temperature,string username)
         {
             AirConditioner airConditioner= await _airConditionerRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             _airConditionerHandler.ChangeTemperature(airConditioner, temperature);
             airConditioner.CurrentTemperature = temperature;
+            var fields = new Dictionary<string, object>
+            {
+                { "action", $"CHANGE TEMPERATURE {temperature}C" }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", username},
+                { "deviceId", id.ToString()}
+            };
+            _airConditionerDataRepository.AddActionMeasurement(fields, tags);
             await _airConditionerRepository.Update(airConditioner);
         }
 
-        public async Task ChangeMode(Guid id, string mode)
+        public async Task ChangeMode(Guid id, string mode, string username)
         {
             AirConditioner airConditioner = await _airConditionerRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             _airConditionerHandler.ChangeMode(airConditioner, mode);
@@ -121,7 +149,23 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 case "cool":
                     airConditioner.CurrentMode = AirConditionerMode.COOL; break;
             }
+            var fields = new Dictionary<string, object>
+            {
+                { "action", $"CHANGE MODE {airConditioner.CurrentMode.ToString()}" }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", username},
+                { "deviceId", id.ToString()}
+            };
+            _airConditionerDataRepository.AddActionMeasurement(fields, tags);
             await _airConditionerRepository.Update(airConditioner);
+        }
+
+        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _airConditionerDataRepository.GetActionHistoricalData(id, from, to);
         }
 
         private AirConditionerData GetLastData(Guid id)
@@ -145,7 +189,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
             _airConditionerDataRepository.AddPoint(fields, tags);
         }
 
-        public async Task AddScheduledWork(String id,double temperature, string mode, string startDate, string endDate)
+        public async Task AddScheduledWork(String id,double temperature, string mode, string startDate, string endDate,string username)
         {
             AirConditioner airConditioner = await _airConditionerRepository.FindWithSmartHome(Guid.Parse(id)) ?? throw new ResourceNotFoundException("Smart device not found!");
             AirConditionerMode airConditionerMode = AirConditionerMode.AUTO;
@@ -194,6 +238,17 @@ namespace IntelliHome_Backend.Features.PKA.Services
                 AirConditioner updated = await _airConditionerRepository.Update(airConditioner);
                 _airConditionerHandler.AddSchedule(updated, startDate, mode, temperature);
             }
+            var fields = new Dictionary<string, object>
+            {
+                { "action", $"SCHEDULE MODE:{mode.ToUpper()}, TEMP:{temperature}C" }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", username},
+                { "deviceId", id.ToString()}
+            };
+            _airConditionerDataRepository.AddActionMeasurement(fields, tags);
 
         }
 

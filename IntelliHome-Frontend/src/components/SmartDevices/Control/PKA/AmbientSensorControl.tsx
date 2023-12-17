@@ -4,15 +4,11 @@ import {Chart} from "react-google-charts";
 import axios from "axios";
 import {environment} from "../../../../security/Environment";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType";
-import {Box, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
-import {LineChart} from "@mui/x-charts";
-import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 
 const AmbientSensorControl = ({smartDevice}) => {
     const [temperature, setTemperature] = useState(smartDevice.temperature)
     const [humidity, setHumidity] = useState(smartDevice.humidity)
-    const [data, setData] = useState([["Date", "Temperature", "Humidity"]])
+    const [data, setData] = useState([["Date", "Temperature", "Humidity"], [0, 0, 0]])
     const options = {
         hAxis: {
             title: "Time",
@@ -27,32 +23,41 @@ const AmbientSensorControl = ({smartDevice}) => {
         setHumidity(smartDevice.humidity)
 
         setData((prevData) => {
-            const filteredData = prevData.filter((_, index) => index !== 1);
-            return [...filteredData, [new Date().toUTCString(), smartDevice.temperature,smartDevice.humidity]];
+
+            const filteredData = prevData.filter((item, index) => {
+                    if (index !== 0) {
+                        if (new Date(item[0]).getHours()+1>= new Date().getHours()) return true
+                        else return false
+                    }
+                    else return true
+                }
+            );
+            console.log(filteredData)
+            return [...filteredData, [new Date(), smartDevice.temperature, smartDevice.humidity]];
         });
     }, [smartDevice])
-    console.log(data)
     const getHistoricalData = async () => {
         if (Object.keys(smartDevice).length === 0) {
             return;
         }
         const startDate = new Date();
-        startDate.setUTCHours(0, 0, 0, 0);
+        startDate.setHours(startDate.getHours() - 1)
         const endDate = new Date();
-        endDate.setDate(startDate.getDate() + 1);
+        console.log(startDate)
+        console.log(endDate)
         axios.get(
             environment +
             `/api/${SmartDeviceType[smartDevice.type]}/GetHistoricalData?Id=${smartDevice.id}&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
         ).then((res) => {
             console.log(res)
-            const transformedData = [
+            const transformedData = res.data.length > 0 ? [
                 ["Date", "Temperature", "Humidity"],
                 ...res.data.map((o) => [
-                    new Date(o.timestamp).toUTCString(),
+                    new Date(o.timestamp),
                     o.temperature,
                     o.humidity
                 ]),
-            ];
+            ] : [["Date", "Temperature", "Humidity"], [0, 0, 0]];
 
             setData(transformedData);
         }).catch((err) => {

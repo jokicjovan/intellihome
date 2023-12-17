@@ -1,6 +1,7 @@
 ﻿using InfluxDB.Client.Core.Flux.Domain;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Influx;
 
 namespace IntelliHome_Backend.Features.PKA.DataRepositories
@@ -31,14 +32,21 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
         {
             _context.WriteToInfluxAsync("airConditioner", fields, tags);
         }
+        public void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _context.WriteToInfluxAsync("airConditionerAction", fields, tags);
+        }
 
         public AirConditionerData GetLastData(Guid id)
         {
             var table = _context.GetLastData("airConditioner", id).Result;
-            AirConditionerData data = ConvertToAirConditionerData(table);
-            return table == null ? new AirConditionerData() : ConvertToAirConditionerData(table);
+            return table == null || table.Records.Count == 0 ? new AirConditionerData() : ConvertToAirConditionerData(table);
         }
-
+        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            var result = _context.GetHistoricalData("airConditionerAction", id, from, to).Result;
+            return result.Select(ConvertToActionDataDTO).ToList();
+        }
 
         private AirConditionerData ConvertToAirConditionerData(FluxTable table)
         {
@@ -59,6 +67,26 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
                 Mode=mode,
                 Timestamp = timestamp,
             };
+        }
+        private ActionDataDTO ConvertToActionDataDTO(FluxTable table)
+        {
+            var rows = table.Records;
+            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
+            TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
+            timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
+
+            var actionRecord = rows.FirstOrDefault(r => r.Row.Contains("action"));
+            string action = actionRecord != null ? actionRecord.GetValueByKey("_value").ToString() : "";
+
+            string actionBy = rows[0].GetValueByKey("actionBy") != null ? rows[0].GetValueByKey("actionBy").ToString() : "";
+
+            return new ActionDataDTO
+            {
+                Timestamp = timestamp,
+                Action = action,
+                ActionBy = actionBy
+            };
+
         }
     }
 }

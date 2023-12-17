@@ -27,6 +27,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
     const [minTemperature, setMinTemperature] = useState(smartDevice.minTemp)
     const [maxTemperature, setMaxTemperature] = useState(smartDevice.maxTemp)
     const [selectedMode, setSelecteedMod] = useState(smartDevice.mode)
+    const [availableModes, setAvailableModes] = useState([])
     const [isOn, setIsOn] = useState(false)
     const [isThereTimeLimit, setIsThereTimeLimit] = useState(false)
     const [open, setIsOpen] = useState(false)
@@ -53,6 +54,17 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
         },
         margin: "8px auto", borderRadius: "10px"
     }
+
+    function parseDateString(dateString: string): Date | null {
+        const parts = dateString.split(' ');
+        const [day, month, year] = parts[0].split('/').map(part => parseInt(part, 10))
+        const [hour,minute] = parts[1].split(':').map(part => parseInt(part, 10))
+
+        const parsedDate = new Date(year, month - 1, day,hour,minute);
+
+        return parsedDate;
+    }
+
     const changeMode = (mode) => {
         axios.put(environment + `/api/AirConditioner/ChangeMode?Id=${smartDevice.id}&mode=${mode}`).then(res => {
         }).catch(err => {
@@ -126,23 +138,23 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
             }),
         },
     }));
-
     useEffect(() => {
         setCurrentTemperature(smartDevice.currentTemperature)
         setMaxTemperature(smartDevice.maxTemp)
         setMinTemperature(smartDevice.minTemp)
         setSelecteedMod(smartDevice.mode)
         setScheduled(smartDevice.schedules)
+        setModalTemperature(smartDevice.minTemp)
+        setAvailableModes(smartDevice.modes??[])
     }, [smartDevice.id])
     useEffect(() => {
         setCurrentTemperature(smartDevice.temperature ?? smartDevice.currentTemperature)
         setSelecteedMod(smartDevice.mode)
         setScheduled(smartDevice.schedules)
     }, [smartDevice])
-    console.log(smartDevice.schedules)
 
     const handleAddSchedule = () => {
-        if (isThereTimeLimit){
+        if (isThereTimeLimit) {
             axios.post(environment + '/api/AirConditioner/AddScheduledWork', {
                 id: smartDevice.id,
                 temperature: modalTemperature,
@@ -151,7 +163,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
             })
                 .then((res) => {
                     if (res.status == 200) {
-                        smartDevice.schedules = [...smartDevice.schedules,{
+                        smartDevice.schedules = [...smartDevice.schedules, {
                             date: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm').toString(),
                             mode: scheduledMode,
                             temperature: modalTemperature
@@ -166,7 +178,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
                 .catch((error) => {
                     console.log(error);
                 });
-        }else {
+        } else {
             axios.post(environment + '/api/AirConditioner/AddScheduledWork', {
                 id: smartDevice.id,
                 temperature: modalTemperature,
@@ -176,7 +188,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
             })
                 .then((res) => {
                     if (res.status == 200) {
-                        smartDevice.schedules = [...smartDevice.schedules,{
+                        smartDevice.schedules = [...smartDevice.schedules, {
                             date: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm').toString() + " - " + value.add(modalDuration, 'minutes').subtract(1, 'hour').format('DD/MM/YYYY HH:mm'),
                             mode: scheduledMode,
                             temperature: modalTemperature
@@ -226,182 +238,192 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
                         }}
 
                     >
-                        <MenuItem value={"AUTO"}>AUTO</MenuItem>
-                        <MenuItem value={"HEAT"}>HEAT</MenuItem>
-                        <MenuItem value={"COOL"}>COOL</MenuItem>
-                        <MenuItem value={"FAN"}>FAN</MenuItem>
+                        {availableModes.includes("auto") && <MenuItem value={"AUTO"}>AUTO</MenuItem>}
+                        {availableModes.includes("heat") && <MenuItem value={"HEAT"}>HEAT</MenuItem>}
+                        {availableModes.includes("cool") && <MenuItem value={"COOL"}>COOL</MenuItem>}
+                        {availableModes.includes("fan") && <MenuItem value={"FAN"}>FAN</MenuItem>}
                     </Select>
                     <TextField value={modalTemperature} fullWidth type="number" name="temperatureSchedule"
                                onChange={(e) => {
-                                   setModalTemperature(e.target.value as number)
+                                   if (minTemperature <= e.target.value as number && maxTemperature >= e.target.value as number)
+                                       setModalTemperature(e.target.value as number)
                                }}
-                               InputProps={{endAdornment: <InputAdornment position="start">°C</InputAdornment>}}
+                               InputProps={{
+                                   inputProps: {min: minTemperature, max: maxTemperature},
+                                   endAdornment: <InputAdornment position="start">°C</InputAdornment>
+                               }}
                                placeholder="Desired temperature" sx={styledInput} mb={3}></TextField>
                     <TextField value={modalDuration} fullWidth disabled={isThereTimeLimit} type="number"
                                name="durationSchedule"
                                onChange={(e) => {
-                                   setModalDuration(e.target.value as number)}}
-                                   InputProps = {
+                                   setModalDuration(e.target.value as number)
+                               }}
+                               InputProps={
                                    {
+                                       inputProps: {min: 0},
                                        endAdornment: <InputAdornment position="start">min</InputAdornment>
                                    }
                                }
-                                   placeholder = "Duration"
-                                   sx = {styledInput}
-                                   mb = {3} > </TextField>
-                                   <FormControl sx={{width: "500px", margin: "0 auto"}}>
-                                       <FormControlLabel
-                                           label="Without Time Limit"
-                                           control={
-                                               <Checkbox
-                                                   checked={isThereTimeLimit}
-                                                   onChange={() => setIsThereTimeLimit(!isThereTimeLimit)}
-                                               />
-                                           }
-                                       />
-                                   </FormControl>
-                               </Grid>
-                                   <Grid item xs={12} display="flex" alignItems="flex-end" justifyContent="end">
-                                       <Button onClick={() => setIsOpen(false)} type="submit" sx={{
-                                           backgroundColor: "transparent",
-                                           border: "1px solid #EDB90D",
-                                           color: "black",
-                                           paddingY: "10px",
-                                           borderRadius: "7px",
-                                       }}>Cancel</Button>
-                                       <Button type="submit" onClick={() => handleAddSchedule()} sx={{
-                                           backgroundColor: "#FBC40E",
-                                           color: "black",
-                                           paddingY: "10px",
-                                           borderRadius: "7px",
-                                           ml: "10px",
-                                           ':hover': {backgroundColor: "#EDB90D"}
-                                       }}>Create</Button>
+                               placeholder="Duration"
+                               sx={styledInput}
+                               mb={3}> </TextField>
+                    <FormControl sx={{width: "500px", margin: "0 auto"}}>
+                        <FormControlLabel
+                            label="Without Time Limit"
+                            control={
+                                <Checkbox
+                                    checked={isThereTimeLimit}
+                                    onChange={() => setIsThereTimeLimit(!isThereTimeLimit)}
+                                />
+                            }
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} display="flex" alignItems="flex-end" justifyContent="end">
+                    <Button onClick={() => setIsOpen(false)} type="submit" sx={{
+                        backgroundColor: "transparent",
+                        border: "1px solid #EDB90D",
+                        color: "black",
+                        paddingY: "10px",
+                        borderRadius: "7px",
+                    }}>Cancel</Button>
+                    <Button type="submit" onClick={() => handleAddSchedule()} sx={{
+                        backgroundColor: "#FBC40E",
+                        color: "black",
+                        paddingY: "10px",
+                        borderRadius: "7px",
+                        ml: "10px",
+                        ':hover': {backgroundColor: "#EDB90D"}
+                    }}>Create</Button>
 
-                                   </Grid>
-                               </Grid>
-                               </Modal>
-                                   <Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 6fr"
-                                        gridTemplateRows="170px 170px 170px 170px">
+                </Grid>
+            </Grid>
+        </Modal>
+        <Box mt={1} display="grid" gap="10px" gridTemplateColumns="4fr 6fr"
+             gridTemplateRows="170px 170px 170px 170px">
 
-                                       <Box gridColumn={1} gridRow={3} display="grid" gap="10px"
-                                            gridTemplateColumns="5fr 5fr"
-                                            gridTemplateRows="170px 170px"
-                                            height="350px" borderRadius="25px">
-                                           <Box gridColumn={1} gridRow={1} display="flex" justifyContent="center"
-                                                flexDirection="column"
-                                                alignItems="center" bgcolor="white" borderRadius="25px">
-                                               <Typography fontSize="30px" fontWeight="600"> MIN TEMP</Typography>
-                                               <Typography fontSize="60px"
-                                                           fontWeight="700">{minTemperature}°C</Typography>
-                                           </Box>
-                                           <Box gridColumn={1} gridRow={2} display="flex" justifyContent="center"
-                                                flexDirection="column"
-                                                alignItems="center" bgcolor="white" borderRadius="25px">
-                                               <Typography fontSize="30px" fontWeight="600"> MAX TEMP</Typography>
-                                               <Typography fontSize="60px"
-                                                           fontWeight="700">{maxTemperature}°C</Typography>
-                                           </Box>
-                                           <Box gridColumn={2} gridRow={1} height="350px" display="flex"
-                                                justifyContent="center"
-                                                flexDirection="column"
-                                                alignItems="center" bgcolor="white" borderRadius="25px">
-                                               <Typography fontSize="25px" fontWeight="500">MODE</Typography>
-                                               <Typography my={1.8} fontSize={selectedMode == "auto" ? "40px" : "30px"}
-                                                           color={selectedMode == "auto" ? "#343F71" : "black"}
-                                                           sx={{cursor: "pointer"}}
-                                                           onClick={() => {
-                                                               setSelecteedMod("auto");
-                                                               changeMode("auto")
-                                                           }} fontWeight="600">AUTO</Typography>
-                                               <Typography my={1.8} fontSize={selectedMode == "cool" ? "40px" : "30px"}
-                                                           color={selectedMode == "cool" ? "#343F71" : "black"}
-                                                           sx={{cursor: "pointer"}}
-                                                           onClick={() => {
-                                                               setSelecteedMod("cool");
-                                                               changeMode("cool")
-                                                           }} fontWeight="600">COOL</Typography>
-                                               <Typography my={1.8} fontSize={selectedMode == "heat" ? "40px" : "30px"}
-                                                           color={selectedMode == "heat" ? "#343F71" : "black"}
-                                                           sx={{cursor: "pointer"}}
-                                                           onClick={() => {
-                                                               setSelecteedMod("heat");
-                                                               changeMode("heat")
-                                                           }} fontWeight="600">HEAT</Typography>
-                                               <Typography my={1.8} fontSize={selectedMode == "fan" ? "40px" : "30px"}
-                                                           color={selectedMode == "fan" ? "#343F71" : "black"}
-                                                           sx={{cursor: "pointer"}}
-                                                           onClick={() => {
-                                                               setSelecteedMod("fan");
-                                                               changeMode("fan")
-                                                           }} fontWeight="600">FAN</Typography>
-                                           </Box>
+            <Box gridColumn={1} gridRow={3} display="grid" gap="10px"
+                 gridTemplateColumns="5fr 5fr"
+                 gridTemplateRows="170px 170px"
+                 height="350px" borderRadius="25px">
+                <Box gridColumn={1} gridRow={1} display="flex" justifyContent="center"
+                     flexDirection="column"
+                     alignItems="center" bgcolor="white" borderRadius="25px">
+                    <Typography fontSize="30px" fontWeight="600"> MIN TEMP</Typography>
+                    <Typography fontSize="60px"
+                                fontWeight="700">{minTemperature}°C</Typography>
+                </Box>
+                <Box gridColumn={1} gridRow={2} display="flex" justifyContent="center"
+                     flexDirection="column"
+                     alignItems="center" bgcolor="white" borderRadius="25px">
+                    <Typography fontSize="30px" fontWeight="600"> MAX TEMP</Typography>
+                    <Typography fontSize="60px"
+                                fontWeight="700">{maxTemperature}°C</Typography>
+                </Box>
+                <Box gridColumn={2} gridRow={1} height="350px" display="flex"
+                     justifyContent="center"
+                     flexDirection="column"
+                     alignItems="center" bgcolor="white" borderRadius="25px">
+                    <Typography fontSize="25px" fontWeight="500">MODE</Typography>
+                    {availableModes.includes("auto") &&<Typography my={1.8} fontSize={selectedMode == "auto" ? "40px" : "30px"}
+                                color={selectedMode == "auto" ? "#343F71" : "black"}
+                                sx={{cursor: "pointer"}}
+                                onClick={() => {
+                                    setSelecteedMod("auto");
+                                    changeMode("auto")
+                                }} fontWeight="600">AUTO</Typography>}
+                    {availableModes.includes("cool") &&<Typography my={1.8} fontSize={selectedMode == "cool" ? "40px" : "30px"}
+                                color={selectedMode == "cool" ? "#343F71" : "black"}
+                                sx={{cursor: "pointer"}}
+                                onClick={() => {
+                                    setSelecteedMod("cool");
+                                    changeMode("cool")
+                                }} fontWeight="600">COOL</Typography>}
+                    {availableModes.includes("heat") &&<Typography my={1.8} fontSize={selectedMode == "heat" ? "40px" : "30px"}
+                                color={selectedMode == "heat" ? "#343F71" : "black"}
+                                sx={{cursor: "pointer"}}
+                                onClick={() => {
+                                    setSelecteedMod("heat");
+                                    changeMode("heat")
+                                }} fontWeight="600">HEAT</Typography>}
+                    {availableModes.includes("fan") &&<Typography my={1.8} fontSize={selectedMode == "fan" ? "40px" : "30px"}
+                                color={selectedMode == "fan" ? "#343F71" : "black"}
+                                sx={{cursor: "pointer"}}
+                                onClick={() => {
+                                    setSelecteedMod("fan");
+                                    changeMode("fan")
+                                }} fontWeight="600">FAN</Typography>}
+                </Box>
 
-                                       </Box>
+            </Box>
 
-                                       <Box gridColumn={1} gridRow={1} display="flex" justifyContent="center"
-                                            flexDirection="column"
-                                            alignItems="center" bgcolor="white" borderRadius="25px" height="350px">
-                                           <Typography fontSize="30px" fontWeight="600"> DESIRED
-                                               TEMPERATURE</Typography>
-                                           <Box display="flex" flexDirection="row" justifyContent="center"
-                                                alignItems="center">
-                                               <Typography fontSize="110px"
-                                                           fontWeight="700">{currentTemperature}°C</Typography>
-                                               <Box display="flex" flexDirection="column">
-                                                   <IconButton
-                                                       onClick={() => {
-                                                           changeTemp(currentTemperature + 1);
-                                                           setCurrentTemperature(currentTemperature + 1);
-                                                       }}><KeyboardArrowUp/></IconButton>
-                                                   <IconButton
-                                                       onClick={() => {
-                                                           changeTemp(currentTemperature - 1);
-                                                           setCurrentTemperature(currentTemperature - 1);
-                                                       }}><KeyboardArrowDown/></IconButton>
+            <Box gridColumn={1} gridRow={1} display="flex" justifyContent="center"
+                 flexDirection="column"
+                 alignItems="center" bgcolor="white" borderRadius="25px" height="350px">
+                <Typography fontSize="30px" fontWeight="600"> DESIRED
+                    TEMPERATURE</Typography>
+                <Box display="flex" flexDirection="row" justifyContent="center"
+                     alignItems="center">
+                    <Typography fontSize="110px"
+                                fontWeight="700">{currentTemperature}°C</Typography>
+                    <Box display="flex" flexDirection="column">
+                        <IconButton
+                            onClick={() => {
+                                if (currentTemperature + 1 <= maxTemperature) {
+                                    changeTemp(currentTemperature + 1);
+                                    setCurrentTemperature(currentTemperature + 1);
+                                }
+                            }}><KeyboardArrowUp/></IconButton>
+                        <IconButton
+                            onClick={() => {
+                                if (currentTemperature - 1 >= minTemperature) {
+                                    changeTemp(currentTemperature - 1);
+                                    setCurrentTemperature(currentTemperature - 1);
+                                }
+                            }}><KeyboardArrowDown/></IconButton>
 
-                                               </Box>
-                                           </Box>
-                                       </Box>
-
-
-                                       <Box gridColumn={2} gridRow={1} height="710px" display="flex"
-                                            flexDirection="column"
-                                            bgcolor="white" borderRadius="25px">
-                                           <Box display="flex" mt={1} justifyContent={"center"}
-                                                flexDirection="row">
-                                               <Typography fontSize="30px" fontWeight="600"> SCHEDULED</Typography>
-                                               <IconButton onClick={() => setIsOpen(true)}
-                                                           sx={{
-                                                               height: "40px",
-                                                               width: "40px",
-                                                               marginTop: "2px",
-                                                               marginLeft: 2
-                                                           }}><Add/></IconButton>
-                                           </Box>
-                                           <Box display="flex" width="100%" flexDirection="column" overflow="auto">
-                                               {scheduled && scheduled.length>0 && scheduled.map((item) => <Box key={uuidv4()}>
-                                                   <Box width="98%" margin="0 auto" height={"2px"}
-                                                        bgcolor="rgba(0, 0, 0, 0.20)"/>
-                                                   <Box width={"100%"} my={1} display="flex" alignItems="center"
-                                                        flexDirection={"row"}>
-                                                       <Box px={2} display="grid" width="100%"
-                                                            gridTemplateColumns="6fr 1fr 2fr">
-                                                           <Typography textAlign="left" gridColumn={1} fontSize="20px"
-                                                                       fontWeight="500"> {item.date}</Typography>
-                                                           <Typography gridColumn={2} textAlign="center" fontSize="20px"
-                                                                       fontWeight="500"> {item.temperature}</Typography>
-                                                           <Typography gridColumn={3} textAlign="right" fontSize="20px"
-                                                                       fontWeight="500"> {item.mode}</Typography>
-                                                       </Box>
-                                                   </Box>
-                                               </Box>)}
-                                           </Box>
-                                       </Box>
+                    </Box>
+                </Box>
+            </Box>
 
 
-                                   </Box>
-                               </>
-                               }
+            <Box gridColumn={2} gridRow={1} height="710px" display="flex"
+                 flexDirection="column"
+                 bgcolor="white" borderRadius="25px">
+                <Box display="flex" mt={1} justifyContent={"center"}
+                     flexDirection="row">
+                    <Typography fontSize="30px" fontWeight="600"> SCHEDULED</Typography>
+                    <IconButton onClick={() => setIsOpen(true)}
+                                sx={{
+                                    height: "40px",
+                                    width: "40px",
+                                    marginTop: "2px",
+                                    marginLeft: 2
+                                }}><Add/></IconButton>
+                </Box>
+                <Box display="flex" width="100%" flexDirection="column" overflow="auto">
+                    {scheduled && scheduled.length > 0 && scheduled.sort((a, b) => parseDateString(b.date.split('-')[0]).getTime() - parseDateString(a.date.split('-')[0]).getTime()).map((item) => <Box key={uuidv4()}>
+                        <Box width="98%" margin="0 auto" height={"2px"}
+                             bgcolor="rgba(0, 0, 0, 0.20)"/>
+                        <Box width={"100%"} my={1} display="flex" alignItems="center"
+                             flexDirection={"row"}>
+                            <Box px={2} display="grid" width="100%"
+                                 gridTemplateColumns="6fr 1fr 2fr">
+                                <Typography textAlign="left" gridColumn={1} fontSize="20px"
+                                            fontWeight="500"> {item.date}</Typography>
+                                <Typography gridColumn={2} textAlign="center" fontSize="20px"
+                                            fontWeight="500"> {item.temperature}</Typography>
+                                <Typography gridColumn={3} textAlign="right" fontSize="20px"
+                                            fontWeight="500"> {item.mode}</Typography>
+                            </Box>
+                        </Box>
+                    </Box>)}
+                </Box>
+            </Box>
 
-                                   export default AirConditionerControl;
+
+        </Box>
+    </>
+}
+
+export default AirConditionerControl;
