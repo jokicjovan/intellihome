@@ -26,11 +26,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public async Task<BatterySystem> Create(BatterySystem entity)
         {
             entity = await _batterySystemRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "capacity", entity.Capacity }
-                        };
-            bool success = await _batterySystemHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _batterySystemHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

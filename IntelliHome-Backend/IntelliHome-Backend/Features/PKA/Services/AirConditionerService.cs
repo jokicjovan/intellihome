@@ -1,17 +1,12 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
-using Data.Models.SPU;
-using Data.Models.VEU;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
-using IntelliHome_Backend.Features.PKA.Handlers;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
-using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
-using System.Collections;
 
 namespace IntelliHome_Backend.Features.PKA.Services
 {
@@ -33,12 +28,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
         public async Task<AirConditioner> Create(AirConditioner entity)
         {
             entity = await _airConditionerRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-            {
-                { "power_per_hour", entity.PowerPerHour},
-                {"schedule_list",entity.ScheduledWorks==null?entity.ScheduledWorks:new List<AirConditionerWork>() },
-            };
-            bool success = await _airConditionerHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _airConditionerHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

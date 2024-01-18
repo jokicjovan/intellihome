@@ -8,6 +8,7 @@ using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.Home.Handlers;
+using Data.Models.SPU;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
@@ -23,6 +24,27 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
         {
             Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
             return Task.CompletedTask;
+        }
+
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            Sprinkler sprinkler = (Sprinkler)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", sprinkler.PowerPerHour},
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
     }
 }

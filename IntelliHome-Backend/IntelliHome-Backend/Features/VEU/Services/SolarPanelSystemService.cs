@@ -29,12 +29,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public async Task<SolarPanelSystem> Create(SolarPanelSystem entity)
         {
             entity = await _solarPanelSystemRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-            {
-                { "area", entity.Area },
-                { "efficiency", entity.Efficiency }
-            };
-            bool success = await _solarPanelSystemHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _solarPanelSystemHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

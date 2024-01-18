@@ -6,7 +6,6 @@ using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
-using Data.Models.VEU;
 using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.Home.Handlers
@@ -46,7 +45,7 @@ namespace IntelliHome_Backend.Features.Home.Handlers
             return mqttService.PublishAsync(topic, payload);
         }
 
-        public Task<bool> ConnectToSmartDevice(SmartDevice smartDevice, Dictionary<string, object> additionalAttributes)
+        public virtual Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
         {
             var requestBody = new
             {
@@ -56,8 +55,7 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                 device_type = smartDevice.Type.ToString(),
                 host = "localhost",
                 port = 1883,
-                keepalive = 30,
-                kwargs = additionalAttributes
+                keepalive = 30
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }

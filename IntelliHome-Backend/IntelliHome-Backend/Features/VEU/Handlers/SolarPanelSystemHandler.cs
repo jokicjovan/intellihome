@@ -11,6 +11,7 @@ using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Handlers;
+using Data.Models.VEU;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -49,6 +50,28 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     };
                 solarPanelSystemService.AddProductionMeasurement(fields, tags);
             }
+        }
+
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            SolarPanelSystem solarPanelSystem = (SolarPanelSystem)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "area", solarPanelSystem.Area },
+                            { "efficiency", solarPanelSystem.Efficiency }
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
     }
 }

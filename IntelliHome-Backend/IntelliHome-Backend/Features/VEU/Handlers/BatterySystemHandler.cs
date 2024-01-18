@@ -11,6 +11,7 @@ using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.Home.Handlers;
+using Data.Models.VEU;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -50,6 +51,26 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     };
                 batterySystemService.AddCapacityMeasurement(fields, tags);
             }
+        }
+
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice) {
+            BatterySystem batterySystem = (BatterySystem)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "capacity", batterySystem.Capacity }
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
     }
 }

@@ -57,6 +57,29 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 
         }
 
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            Lamp lamp = (Lamp)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "brightness_limit", lamp.BrightnessLimit },
+                            { "is_auto", lamp.IsAuto},
+                            { "power_per_hour", lamp.PowerPerHour},
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
+        }
+
         public void ChangeMode(Lamp lamp, bool isAuto)
         {
             string action = isAuto ? "auto" : "manual";

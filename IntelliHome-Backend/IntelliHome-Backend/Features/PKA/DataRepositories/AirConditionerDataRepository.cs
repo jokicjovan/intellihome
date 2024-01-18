@@ -27,7 +27,6 @@ namespace IntelliHome_Backend.Features.PKA.DataRepositories
             return result.Select(ConvertToAirConditionerData).ToList();
         }
 
-
         public void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
             _context.WriteToInfluxAsync("airConditioner", fields, tags);

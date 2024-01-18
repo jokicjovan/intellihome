@@ -12,8 +12,6 @@ using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Handlers;
 using Data.Models.PKA;
 using IntelliHome_Backend.Features.PKA.DTOs;
-using IntelliHome_Backend.Features.PKA.Services;
-using Data.Models.SPU;
 using System.Globalization;
 
 namespace IntelliHome_Backend.Features.PKA.Handlers
@@ -56,6 +54,43 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
             }
         }
+
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            var scope = serviceProvider.CreateScope();
+            var airConditionerService = scope.ServiceProvider.GetRequiredService<IAirConditionerService>();
+            AirConditioner airConditioner = airConditionerService.GetWithHome(smartDevice.Id).Result;
+            var result = airConditioner.ScheduledWorks
+                .SelectMany(work => work.DateTo != null
+                    ? new[]
+                    {
+                                    new { timestamp = $"{work.DateFrom.ToString("dd/MM/yyyy")} {work.Start.ToString("HH:mm")}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature },
+                                    new { timestamp = $"{work.DateTo.ToString("dd/MM/yyyy")} {work.End.ToString("HH:mm")}", mode = "turn_off", temperature = work.Temperature }
+                    }
+                    : new[]
+                    {
+                                    new { timestamp = $"{work.DateFrom} {work.Start}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature }
+                    })
+                .ToList().Where(work => DateTime.ParseExact(work.timestamp, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) > DateTime.UtcNow).ToList();
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            {"power_per_hour", airConditioner.PowerPerHour},
+                            {"schedule_list", result }
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
+        }
+
         public void ChangeTemperature(AirConditioner airConditioner, double temperature)
         {
             string action = $"set_current_temperature";

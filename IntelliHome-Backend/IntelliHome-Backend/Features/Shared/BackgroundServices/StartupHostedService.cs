@@ -1,17 +1,10 @@
-﻿using Data.Models.PKA;
-using Data.Models.Shared;
-using Data.Models.SPU;
-using Data.Models.VEU;
+﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
-using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
-using NodaTime.Extensions;
-using System.Globalization;
-using System.Linq;
 
 namespace IntelliHome_Backend.Features.Shared.BackgroundServices
 {
@@ -54,7 +47,6 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
-                IAirConditionerService airConditionerService= scope.ServiceProvider.GetRequiredService<IAirConditionerService>();
                 IAmbientSensorHandler ambientSensorHandler = scope.ServiceProvider.GetRequiredService<IAmbientSensorHandler>();
                 IAirConditionerHandler airConditionerHandler = scope.ServiceProvider.GetRequiredService<IAirConditionerHandler>();
                 IWashingMachineHandler washingMachineHandler = scope.ServiceProvider.GetRequiredService<IWashingMachineHandler>();
@@ -66,105 +58,45 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 IVehicleChargerHandler vehicleChargerHandler = scope.ServiceProvider.GetRequiredService<IVehicleChargerHandler>();
 
                 List<SmartDevice> smartDevices = smartDeviceService.GetAllWithHome().ToList();
-                foreach (SmartDevice smartDevice in smartDevices)
+                var connectTasks = smartDevices.Select(async smartDevice =>
                 {
-                    if (smartDevice.Type == SmartDeviceType.AMBIENTSENSOR)
+                    bool isConnected = false;
+                    switch (smartDevice.Type)
                     {
-                        AmbientSensor ambientSensor = (AmbientSensor)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "power_per_hour", ambientSensor.PowerPerHour},
-                        };
-                        smartDevice.IsConnected = await ambientSensorHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
+                        case SmartDeviceType.AMBIENTSENSOR:
+                            isConnected = await ambientSensorHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.AIRCONDITIONER:
+                            isConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.WASHINGMACHINE:
+                            isConnected = await washingMachineHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.LAMP:
+                            isConnected = await lampHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.VEHICLEGATE:
+                            isConnected = await vehicleGateHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.SPRINKLER:
+                            isConnected = await sprinklerHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.BATTERYSYSTEM:
+                            isConnected = await batterySystemHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.SOLARPANELSYSTEM:
+                            isConnected = await solarPanelSystemHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        case SmartDeviceType.VEHICLECHARGER:
+                            isConnected = await vehicleChargerHandler.ConnectToSmartDevice(smartDevice);
+                            break;
+                        default:
+                            Console.WriteLine($"Unsupported SmartDeviceType: {smartDevice.Type}");
+                            break;
                     }
-                    else if (smartDevice.Type == SmartDeviceType.AIRCONDITIONER)
-                    {
-                        AirConditioner airConditioner =await airConditionerService.GetWithHome(smartDevice.Id);
-                        var result = airConditioner.ScheduledWorks
-                            .SelectMany(work => work.DateTo != null
-                                ? new[]
-                                {
-                                    new { timestamp = $"{work.DateFrom.ToString("dd/MM/yyyy")} {work.Start.ToString("HH:mm")}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature },
-                                    new { timestamp = $"{work.DateTo.ToString("dd/MM/yyyy")} {work.End.ToString("HH:mm")}", mode = "turn_off", temperature = work.Temperature }
-                                }
-                                : new[]
-                                {
-                                    new { timestamp = $"{work.DateFrom} {work.Start}", mode = work.Mode.ToString().ToLower(), temperature = work.Temperature }
-                                })
-                            .ToList().Where(work => DateTime.ParseExact(work.timestamp,"dd/MM/yyyy HH:mm",CultureInfo.InvariantCulture) > DateTime.UtcNow).ToList();
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            {"power_per_hour", airConditioner.PowerPerHour},
-                            {"schedule_list", result }
-                        };
-                        smartDevice.IsConnected = await airConditionerHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-                    else if (smartDevice.Type == SmartDeviceType.WASHINGMACHINE)
-                    {
-                        WashingMachine washingMachine = (WashingMachine)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "power_per_hour", washingMachine.PowerPerHour},
-                        };
-                        smartDevice.IsConnected = await washingMachineHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-
-                    else if (smartDevice.Type == SmartDeviceType.LAMP)
-                    {
-                        Lamp lamp = (Lamp)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "brightness_limit", lamp.BrightnessLimit },
-                            { "is_auto", lamp.IsAuto},
-                            { "power_per_hour", lamp.PowerPerHour},
-                        };
-                        smartDevice.IsConnected = await lampHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-                    else if (smartDevice.Type == SmartDeviceType.VEHICLEGATE)
-                    {
-                        VehicleGate vehicleGate = (VehicleGate)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "is_public", vehicleGate.IsPublic },
-                            { "allowed_licence_plates", vehicleGate.AllowedLicencePlates },
-                            { "power_per_hour", vehicleGate.PowerPerHour }
-                        };
-                        smartDevice.IsConnected = await vehicleGateHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-                    else if (smartDevice.Type == SmartDeviceType.SPRINKLER)
-                    {
-                        Sprinkler sprinkler = (Sprinkler)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "power_per_hour", sprinkler.PowerPerHour},
-                        };
-                        smartDevice.IsConnected = await sprinklerHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-
-                    else if (smartDevice.Type == SmartDeviceType.BATTERYSYSTEM)
-                    {
-                        BatterySystem batterySystem = (BatterySystem)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "capacity", batterySystem.Capacity }
-                        };
-                        smartDevice.IsConnected = await batterySystemHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-                    else if (smartDevice.Type == SmartDeviceType.SOLARPANELSYSTEM)
-                    {
-                        SolarPanelSystem solarPanelSystem = (SolarPanelSystem)smartDevice;
-                        Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "area", solarPanelSystem.Area },
-                            { "efficiency", solarPanelSystem.Efficiency }
-                        };
-                        smartDevice.IsConnected = await solarPanelSystemHandler.ConnectToSmartDevice(smartDevice, additionalAttributes);
-                    }
-                    else if (smartDevice.Type == SmartDeviceType.VEHICLECHARGER)
-                    {
-                        smartDevice.IsConnected = await vehicleChargerHandler.ConnectToSmartDevice(smartDevice, new Dictionary<string, object>());
-                    }
-                }
+                    smartDevice.IsConnected = isConnected;
+                }).ToList();
+                await Task.WhenAll(connectTasks);
                 smartDeviceService.UpdateAll(smartDevices);
             }
         }

@@ -24,7 +24,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public async Task<VehicleCharger> Create(VehicleCharger entity)
         {
             entity = await _vehicleChargerRepository.Create(entity);
-            bool success = await _vehicleChargerHandler.ConnectToSmartDevice(entity, new Dictionary<string, object>());
+            bool success = await _vehicleChargerHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

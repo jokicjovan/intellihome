@@ -30,13 +30,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
         public async Task<VehicleGate> Create(VehicleGate entity)
         {
             entity = await _vehicleGateRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "is_public", entity.IsPublic },
-                            { "allowed_licence_plates", entity.AllowedLicencePlates },
-                            { "power_per_hour", entity.PowerPerHour }
-                        };
-            bool success = await _vehicleGateHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _vehicleGateHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

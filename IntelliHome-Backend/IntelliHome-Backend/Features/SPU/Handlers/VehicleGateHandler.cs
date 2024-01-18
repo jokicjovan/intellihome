@@ -72,6 +72,29 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
             }
         }
 
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            VehicleGate vehicleGate = (VehicleGate)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "is_public", vehicleGate.IsPublic },
+                            { "allowed_licence_plates", vehicleGate.AllowedLicencePlates },
+                            { "power_per_hour", vehicleGate.PowerPerHour }
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
+        }
+
         public void ChangeMode(VehicleGate vehicle, bool isPublic)
         {
             string action = isPublic ? "public" : "private";

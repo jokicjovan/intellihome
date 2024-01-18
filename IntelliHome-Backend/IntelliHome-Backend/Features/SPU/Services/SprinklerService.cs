@@ -18,11 +18,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
         public async Task<Sprinkler> Create(Sprinkler entity)
         {
             entity = await _sprinklerRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "power_per_hour", entity.PowerPerHour},
-                        };
-            bool success = await _sprinklerHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _sprinklerHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

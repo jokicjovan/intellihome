@@ -25,13 +25,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
         public async Task<Lamp> Create(Lamp entity)
         {
             entity = await _lampRepository.Create(entity);
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
-                        {
-                            { "brightness_limit", entity.BrightnessLimit },
-                            { "power_per_hour", entity.PowerPerHour},
-                            { "is_auto", entity.IsAuto }
-                        };
-            bool success = await _lampHandler.ConnectToSmartDevice(entity, additionalAttributes);
+            bool success = await _lampHandler.ConnectToSmartDevice(entity);
             if (success)
             {
                 entity.IsConnected = true;

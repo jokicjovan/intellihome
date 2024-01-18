@@ -50,5 +50,26 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
                 ambientSensorService.AddPoint(ambientSensorDataInflux, ambientSensorDataTags);
             }
         }
+
+        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        {
+            AmbientSensor ambientSensor = (AmbientSensor)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+                        {
+                            { "power_per_hour", ambientSensor.PowerPerHour},
+                        };
+            var requestBody = new
+            {
+                device_id = smartDevice.Id,
+                smart_home_id = smartDevice.SmartHome.Id,
+                device_category = smartDevice.Category.ToString(),
+                device_type = smartDevice.Type.ToString(),
+                host = "localhost",
+                port = 1883,
+                keepalive = 30,
+                kwargs = additionalAttributes
+            };
+            return simualtionsHandler.AddDeviceToSimulator(requestBody);
+        }
     }
 }
