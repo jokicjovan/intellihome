@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -71,6 +72,13 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
             string username = identity.FindFirst(ClaimTypes.Name).Value;
             await _sprinklerService.ToggleSprinklerSpraying(id, username, turnOn);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            List<ActionDataDTO> result = _sprinklerService.GetActionHistoricalData(id, from, to);
+            return Ok(result);
         }
 
 

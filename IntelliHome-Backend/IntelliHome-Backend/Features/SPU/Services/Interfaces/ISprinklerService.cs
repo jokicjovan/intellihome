@@ -1,5 +1,6 @@
 ﻿using Data.Models.PKA;
 using Data.Models.SPU;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
 
@@ -14,5 +15,6 @@ namespace IntelliHome_Backend.Features.SPU.Services.Interfaces
         Task<SprinklerDTO> GetWithData(Guid id);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task ToggleSprinklerSpraying(Guid id, string username, bool turnOn);
+        List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
     }
 }

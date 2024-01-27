@@ -1,4 +1,5 @@
 ﻿using InfluxDB.Client.Core.Flux.Domain;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Influx;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
@@ -37,6 +38,11 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             return table == null || table.Records.Count == 0 ? new SprinklerData() : ConvertToSprinklerData(table);
         }
 
+        public void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _context.WriteToInfluxAsync("sprinklerAction", fields, tags);
+        }
+
         private SprinklerData ConvertToSprinklerData(FluxTable table)
         {
             var rows = table.Records;
@@ -52,6 +58,32 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
             {
                 Timestamp = timestamp,
                 IsSpraying = isSpraying
+            };
+        }
+
+        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            var result = _context.GetHistoricalData("sprinklerAction", id, from, to).Result;
+            return result.Select(ConvertToActionDataDTO).ToList();
+        }
+
+        private ActionDataDTO ConvertToActionDataDTO(FluxTable table)
+        {
+            var rows = table.Records;
+            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
+            TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
+            timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
+
+            var actionRecord = rows.FirstOrDefault(r => r.Row.Contains("action"));
+            string action = actionRecord != null ? actionRecord.GetValueByKey("_value").ToString() : "";
+
+            string actionBy = rows[0].GetValueByKey("actionBy") != null ? rows[0].GetValueByKey("actionBy").ToString() : "";
+
+            return new ActionDataDTO
+            {
+                Timestamp = timestamp,
+                Action = action,
+                ActionBy = actionBy
             };
         }
     }

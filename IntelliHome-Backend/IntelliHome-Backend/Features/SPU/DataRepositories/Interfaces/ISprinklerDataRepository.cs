@@ -1,4 +1,5 @@
-﻿using IntelliHome_Backend.Features.SPU.DTOs;
+﻿using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.SPU.DTOs;
 
 namespace IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces
 {
@@ -8,5 +9,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces
         List<SprinklerData> GetLastHourData(Guid id);
         void AddPoint(Dictionary<string, object> fields, Dictionary<string, string> tags);
         SprinklerData GetLastData(Guid id);
+        void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
     }
 }
