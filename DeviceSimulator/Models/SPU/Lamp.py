@@ -24,7 +24,8 @@ def generate_lumens():
 
 
 class Lamp(SmartDevice):
-    def __init__(self, device_id, smart_home_id, device_category, device_type, brightness_limit, power_per_hour, is_auto, is_shining=False):
+    def __init__(self, device_id, smart_home_id, device_category, device_type, brightness_limit, power_per_hour,
+                 is_auto, is_shining=False):
         super().__init__(device_id, smart_home_id, device_category, device_type)
         self.brightness_limit = brightness_limit
         self.power_per_hour = power_per_hour
@@ -48,11 +49,11 @@ class Lamp(SmartDevice):
                 self.is_shining = False
 
     async def send_data(self):
-        while True:
-            if not self.is_on:
-                break
+        while self.is_on.is_set():
             lumens = generate_lumens()
-            print(f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}, is shining: {self.is_shining}")
+            print(
+                f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}, is shining: "
+                f"{self.is_shining}")
             if self.is_auto:
                 self.is_shining = lumens < self.brightness_limit
 
@@ -60,5 +61,5 @@ class Lamp(SmartDevice):
                                                              "isShining": self.is_shining,
                                                              "isAuto": self.is_auto,
                                                              "consumptionPerMinute": round(self.power_per_hour / 60,
-                                                                                                4)}), retain=False)
+                                                                                           4)}), retain=False)
             await asyncio.sleep(10)

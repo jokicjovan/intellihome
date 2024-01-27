@@ -10,7 +10,7 @@ class SmartDevice:
         self.smart_home = smart_home
         self.device_category = device_category
         self.device_type = device_type
-        self.is_on = False
+        self.is_on = asyncio.Event()
         self.client = mqtt.Client(client_id=device_id, clean_session=True)
         self.send_topic = (
             f"FromDevice/{self.smart_home.smart_home_id}/{self.device_category.value}/{self.device_type.value}/"
@@ -25,7 +25,6 @@ class SmartDevice:
     def on_data_receive(self, client, user_data, msg):
         if msg.topic == self.receive_topic:
             data = json.loads(msg.payload.decode())
-            print(data)
             if data.get("action", None) == "turn_on":
                 if not self.is_on:
                     self.smart_home.event_loop.create_task(self.turn_on())
@@ -43,11 +42,11 @@ class SmartDevice:
         self.client.loop_start()
 
     async def turn_on(self):
-        self.is_on = True
+        self.is_on.set()
         asyncio.create_task(self.send_data())
 
     async def turn_off(self):
-        self.is_on = False
+        self.is_on.clear()
 
     def disconnect(self):
         self.client.loop_stop()
