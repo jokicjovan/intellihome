@@ -100,6 +100,7 @@ builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataReposi
 builder.Services.AddScoped<IAirConditionerDataRepository, AirConditionerDataRepository>();
 builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 builder.Services.AddScoped<IVehicleGateDataRepository, VehicleGateDataRepository>();
+builder.Services.AddScoped<ISprinklerDataRepository, SprinklerDataRepository>();
 builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
 builder.Services.AddScoped<ISolarPanelSystemDataRepository, SolarPanelSystemDataRepository>();
 builder.Services.AddScoped<ISmartHomeDataRepository, SmartHomeDataRepository>();
@@ -117,6 +118,7 @@ builder.Services.AddScoped<IWashingMachineRepository, WashingMachineRepository>(
 builder.Services.AddScoped<IWashingMachineModeRepository, WashingMachineModeRepository>();
 builder.Services.AddScoped<ILampRepository, LampRepository>();
 builder.Services.AddScoped<ISprinklerRepository, SprinklerRepository>();
+builder.Services.AddScoped<ISprinklerWorkRepository, SprinklerWorkRepository>();
 builder.Services.AddScoped<IVehicleGateRepository, VehicleGateRepository>();
 builder.Services.AddScoped<IBatterySystemRepository, BatterySystemRepository>();
 builder.Services.AddScoped<ISolarPanelSystemRepository, SolarPanelSystemRepository>();
