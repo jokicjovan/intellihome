@@ -37,14 +37,12 @@ class AirConditioner(SmartDevice):
                     {"timestamp": current_timestamp, "temperature": current_temp, "mode": current_mode})
 
     async def send_data(self):
-        while True:
-            if not self.is_on:
-                return
+        while self.is_on.is_set():
             for item in self.schedule_list:
                 if datetime.strptime(item['timestamp'], '%d/%m/%Y %H:%M') <= datetime.utcnow():
                     if item['mode'] == 'turn_off':
                         self.schedule_list.remove(item)
-                        self.is_on = False
+                        await self.turn_off()
                     else:
                         self.current_mode = item['mode']
                         self.current_temp = item['temperature']
@@ -56,4 +54,5 @@ class AirConditioner(SmartDevice):
                                 retain=False)
             print({"mode": self.current_mode, "temperature": self.current_temp,
                    "consumptionPerMinute": round(self.power_per_hour / 60, 4), "scheduledTasks": self.schedule_list})
-            await asyncio.sleep(3)
+
+            await asyncio.sleep(10)

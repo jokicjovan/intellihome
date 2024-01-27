@@ -28,9 +28,7 @@ class Sprinkler(SmartDevice):
                 self.schedule_list.append({"timestamp": current_timestamp, "set_spraying": set_spraying})
 
     async def send_data(self):
-        while True:
-            if not self.is_on:
-                return
+        while self.is_on.is_set():
             for item in self.schedule_list:
                 if datetime.strptime(item['timestamp'], '%d/%m/%Y %H:%M') <= datetime.utcnow():
                     self.is_spraying = item['set_spraying']

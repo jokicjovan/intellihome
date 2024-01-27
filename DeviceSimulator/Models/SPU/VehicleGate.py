@@ -46,13 +46,13 @@ class VehicleGate(SmartDevice):
                 self.user = data.get("user", None)
                 self.is_opened_by_user = True
                 self.is_open = True
-                self.publish_data("", False)
+                self.publish_data("", False)        # TODO: salje se visak conumption
                 print("Gate is opened by user {}".format(self.user))
             elif data.get("action", None) == "close_by_user":
                 self.user = data.get("user", None)
                 self.is_opened_by_user = False
                 self.is_open = False
-                self.publish_data("", False)
+                self.publish_data("", False)        # TODO: salje se visak conumption
                 print("Gate is closed by user {}".format(self.user))
             elif data.get("action", None) == "add_licence_plate":
                 licence_plate_to_add = data.get("licence_plate", None)
@@ -73,10 +73,7 @@ class VehicleGate(SmartDevice):
                             retain=False)
 
     async def send_data(self):
-        while True:
-            if not self.is_on:
-                break
-
+        while self.is_on.is_set():
             print("Allowed licence plates: {}".format(self.allowed_licence_plates))
             print("Licence plates in home: {}".format(self.licence_plates_in_home))
 
