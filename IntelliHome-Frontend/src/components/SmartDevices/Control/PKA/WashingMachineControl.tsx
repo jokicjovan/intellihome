@@ -1,29 +1,17 @@
 import {
-    Box, Button, Checkbox, FormControl,
-    FormControlLabel,
-    Grid,
+    Box, Button, Grid,
     IconButton, MenuItem, Modal, Select,
-    styled,
-    Switch,
-    SwitchProps, TextField,
     Typography
 } from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {
     Add,
-    Close,
-    KeyboardArrowDown,
-    KeyboardArrowUp,
-    PlayArrow,
     PlayArrowRounded,
     StopRounded
 } from "@mui/icons-material";
 import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import InputAdornment from "@mui/material/InputAdornment";
-import axios from "axios";
-import {environment} from "../../../../security/Environment";
 import {v4 as uuidv4} from 'uuid';
 
 

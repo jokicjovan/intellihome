@@ -1,16 +1,16 @@
 import {useEffect, useState} from "react";
 
-const WashingMachineReport = ({device}) => {
-    const [washingMachine, setWashingMachine] = useState(device);
+const SprinklerReport = ({device}) => {
+    const [sprinkler, setSprinkler] = useState(device);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [historicalData, setHistoricalData] = useState([]);
 
     useEffect(() => {
-        if (washingMachine!==undefined) {
+        if (sprinkler!==undefined) {
             //axios get
         }
-    }, [washingMachine.id, startDate, endDate]);
+    }, [sprinkler.id, startDate, endDate]);
 
 
     return <>
@@ -25,4 +25,4 @@ const WashingMachineReport = ({device}) => {
     </>
 }
 
-export default WashingMachineReport
+export default SprinklerReport
