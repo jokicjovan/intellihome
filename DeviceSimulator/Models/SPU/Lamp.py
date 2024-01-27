@@ -5,21 +5,38 @@ import asyncio
 import json
 
 
+# def generate_lumens():
+#     current_time = datetime.now().time()
+#     hours, minutes, seconds = current_time.hour, current_time.minute, current_time.second
+#
+#     lumens = 0
+#
+#     if 8 <= hours <= 18:
+#         lumens = 1000
+#     elif 19 <= hours <= 21 or 6 <= hours <= 7:
+#         lumens = 500
+#     elif 22 <= hours <= 23:
+#         lumens = 100
+#     elif 0 <= hours <= 5:
+#         lumens = 0
+#
+#     return lumens
+
+
+# nisam testirao ovu funkciju, malo ne radi
 def generate_lumens():
     current_time = datetime.now().time()
-    hours, minutes, seconds = current_time.hour, current_time.minute, current_time.second
+    hours = current_time.hour + current_time.minute / 60
 
-    lumens = 0
+    time_rad = 2 * math.pi * hours / 24
 
-    if 8 <= hours <= 18:
-        lumens = 1000
-    elif 19 <= hours <= 21 or 6 <= hours <= 7:
-        lumens = 500
-    elif 22 <= hours <= 23:
-        lumens = 100
-    elif 0 <= hours <= 5:
-        lumens = 0
+    sine_val = math.sin(time_rad)
 
+    adjusted_sine_val = (sine_val + 1) / 2
+
+    lumens = adjusted_sine_val * 1000
+
+    lumens = round(lumens, 2)
     return lumens
 
 

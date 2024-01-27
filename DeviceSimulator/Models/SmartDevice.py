@@ -44,7 +44,7 @@ class SmartDevice:
 
     async def turn_on(self):
         self.is_on = True
-        asyncio.create_task(self.send_data())
+        await asyncio.create_task(self.send_data())
 
     async def turn_off(self):
         self.is_on = False

@@ -3,9 +3,13 @@ import json
 import asyncio
 from datetime import datetime
 
+
 class Sprinkler(SmartDevice):
-    def __init__(self, device_id, smart_home_id, device_category, device_type, power_per_hour, is_spraying=False, schedule_list=[]):
+    def __init__(self, device_id, smart_home_id, device_category, device_type, power_per_hour, is_spraying=False,
+                 schedule_list=None):
         super().__init__(device_id, smart_home_id, device_category, device_type)
+        if schedule_list is None:
+            schedule_list = []
         self.power_per_hour = power_per_hour
         self.is_spraying = is_spraying
         self.schedule_list = schedule_list
@@ -32,13 +36,9 @@ class Sprinkler(SmartDevice):
                     self.is_spraying = item['set_spraying']
                     self.schedule_list.remove(item)
 
-            self.client.publish(self.send_topic, json.dumps({"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4)}), retain=False)
-            print({"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4), "scheduledTasks": self.schedule_list})
+            self.client.publish(self.send_topic, json.dumps(
+                {"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4)}),
+                                retain=False)
+            print({"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4),
+                   "scheduledTasks": self.schedule_list})
             await asyncio.sleep(3)
-
-
-
-
-
-
-
