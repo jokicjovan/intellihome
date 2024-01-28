@@ -1,15 +1,11 @@
-﻿using Data.Models.SPU;
-using Data.Models.VEU;
+﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs;
-using IntelliHome_Backend.Features.VEU.Handlers;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
-using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
-using System;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -95,7 +91,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return _solarPanelSystemDataRepository.GetProductionHistoricalData(id, from, to);
         }
 
-        public async Task ToggleSolarPanelSystem(Guid id, String togglerUsername, bool turnOn = true)
+        public async Task Toggle(Guid id, String togglerUsername, bool turnOn = true)
         {
             SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
             if (solarPanelSystem == null)

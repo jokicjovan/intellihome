@@ -78,7 +78,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Name = dto.Name,
                 Category = SmartDeviceCategory.VEU,
                 Type = SmartDeviceType.VEHICLECHARGER,
-                Power = dto.Power,
+                PowerPerHour = dto.PowerPerHour,
                 ChargingPoints = Enumerable.Range(0, dto.NumberOfChargingPoints).Select(_ => new VehicleChargingPoint { IsFree = true }).ToList(),
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };

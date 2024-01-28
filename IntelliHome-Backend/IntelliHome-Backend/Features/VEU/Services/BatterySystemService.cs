@@ -94,7 +94,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             _batterySystemDataRepository.AddCapacityMeasurement(fields, tags);
         }
 
-        public async Task ToggleBatterySystem(Guid id, bool turnOn = true)
+        public async Task Toggle(Guid id, bool turnOn = true)
         {
             BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
             if ( batterySystem == null ) {

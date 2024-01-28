@@ -21,18 +21,18 @@ class ChargingPoint:
     start_time: datetime.datetime = datetime.datetime.now()
     end_time: datetime.datetime = datetime.datetime.min
     status: ChargingStatus = ChargingStatus.CHARGING
-    consumption: float = 0
+    total_consumption: float = 0
 
     def serialize(self):
         return {
-            "charging_point_id": self.charging_point_id,
+            "chargingPointId": self.charging_point_id,
             "capacity": round(self.capacity, 4),
-            "current_capacity": round(self.current_capacity, 4),
-            "charge_limit": round(self.charge_limit, 4),
-            "start_time": self.start_time.isoformat(),
-            "end_time": self.end_time.isoformat(),
+            "currentCapacity": round(self.current_capacity, 4),
+            "chargeLimit": round(self.charge_limit, 4),
+            "startTime": self.start_time.isoformat(),
+            "endTime": self.end_time.isoformat(),
             "status": self.status,
-            "consumption": round(self.consumption, 4)
+            "totalConsumption": round(self.total_consumption, 4)
         }
 
 
@@ -82,7 +82,7 @@ class VehicleCharger(SmartDevice):
                             charging_point.status = ChargingStatus.FINISHED
 
                         charging_point.current_capacity += current_charge_per_point
-                        charging_point.consumption += current_charge_per_point
+                        charging_point.total_consumption += current_charge_per_point
                         consumption_per_minute += current_charge_per_point
 
             serialized_data = [charging_point.serialize() for charging_point in

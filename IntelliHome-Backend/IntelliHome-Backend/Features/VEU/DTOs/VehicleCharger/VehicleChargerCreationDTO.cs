@@ -7,7 +7,7 @@ namespace IntelliHome_Backend.Features.VEU.DTOs
     {
         [Required(ErrorMessage = "Power is required.")]
         [Range(1, 1000, ErrorMessage = "Power should be between 1.4KW and 1000KW")]
-        public Double Power { get; set; }
+        public Double PowerPerHour { get; set; }
 
         [Required(ErrorMessage = "Power is required.")]
         [Range(1, 4, ErrorMessage = "Number of charging points should be between 1 and 4")]

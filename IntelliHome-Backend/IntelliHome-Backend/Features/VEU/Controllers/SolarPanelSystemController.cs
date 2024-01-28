@@ -46,7 +46,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
             }
             ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
             string username = identity.FindFirst(ClaimTypes.Name).Value;
-            await _solarPanelSystemService.ToggleSolarPanelSystem(id, username, turnOn);
+            await _solarPanelSystemService.Toggle(id, username, turnOn);
             return Ok();
         }
 

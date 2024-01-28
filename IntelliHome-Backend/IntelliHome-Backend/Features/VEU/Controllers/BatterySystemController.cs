@@ -40,7 +40,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
         {
-            await _batterySystemService.ToggleBatterySystem(id, turnOn);
+            await _batterySystemService.Toggle(id, turnOn);
             return Ok();
         }
     }

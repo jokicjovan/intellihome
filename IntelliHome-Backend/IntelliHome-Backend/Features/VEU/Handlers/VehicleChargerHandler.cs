@@ -8,6 +8,11 @@ using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.Home.Handlers;
+using Data.Models.VEU;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
+using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Newtonsoft.Json;
+using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -19,15 +24,48 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.VEHICLECHARGER}/+", HandleMessageFromDevice);
         }
 
-        protected override Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
+        protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.ApplicationMessage.ConvertPayloadToString());
-            return Task.CompletedTask;
+            String[] topic_parts = e.ApplicationMessage.Topic.Split('/');
+            if (topic_parts.Length < 5)
+            {
+                Console.WriteLine("Error handling topic");
+                return;
+            }
+            string vehicleChargerId = topic_parts.Last();
+            _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+
+            using var scope = serviceProvider.CreateScope();
+            var vehicleChargerService = scope.ServiceProvider.GetRequiredService<IVehicleChargerService>();
+            var vehicleCharger = await vehicleChargerService.Get(Guid.Parse(vehicleChargerId));
+            var vehicleChargerData = JsonConvert.DeserializeObject<VehicleChargerDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            if (vehicleCharger != null && vehicleChargerData != null)
+            {
+                foreach(VehicleChargingPointDataDTO chargingPointdataDTO in vehicleChargerData.BusyChargingPoints) {
+                    var fields = new Dictionary<string, object>
+                    {
+                        { "totalConsumption", chargingPointdataDTO.TotalConsumption},
+                        { "currentCapacity", chargingPointdataDTO.CurrentCapacity},
+                        { "status", chargingPointdataDTO.Status},
+                    };
+                    var tags = new Dictionary<string, string>
+                    {
+                        { "deviceId", vehicleCharger.Id.ToString() },
+                        { "charginPointId", chargingPointdataDTO.ChargingPointId.ToString()}
+                    };
+                    //vehicleChargerService.AddProductionMeasurement(fields, tags);
+                }
+            };
         }
 
         public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
         {
-            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>();
+            VehicleCharger vehicleCharger = (VehicleCharger)smartDevice;
+            Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
+            {
+                            { "power_per_hour", vehicleCharger.PowerPerHour },
+                            { "charging_points_ids", vehicleCharger.ChargingPoints.Select(e => e.Id).ToList()}
+                        };
             var requestBody = new
             {
                 device_id = smartDevice.Id,

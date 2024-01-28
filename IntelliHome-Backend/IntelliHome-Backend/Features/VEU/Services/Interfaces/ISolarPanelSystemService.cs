@@ -11,6 +11,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to);
         List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
         Task<SolarPanelSystemDTO> GetWithProductionData(Guid id);
-        Task ToggleSolarPanelSystem(Guid id, String togglerUsername, bool turnOn = true);
+        Task Toggle(Guid id, String togglerUsername, bool turnOn = true);
     }
 }

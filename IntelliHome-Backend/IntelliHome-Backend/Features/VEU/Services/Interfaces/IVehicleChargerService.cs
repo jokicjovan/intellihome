@@ -6,5 +6,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
     public interface IVehicleChargerService : ICrudService<VehicleCharger>
     {
+        Task Toggle(Guid id, String togglerUsername, bool turnOn = true);
     }
 }
