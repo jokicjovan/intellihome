@@ -18,6 +18,7 @@ import GateReport from "../SPU/GateReport.tsx";
 import HomeReport from "../VEU/HomeReport.tsx";
 import ActionData from "../../../../models/interfaces/Action.ts";
 import SprinklerControl from "../SPU/SprinklerControl.tsx";
+import SprinklerReport from "../SPU/SprinklerReport.tsx";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -186,9 +187,9 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ?
-                                <GateReport device={smartDevice} report={report}/> :
+                            deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
+                                    deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                     <></> : <></>}
 
     </>
