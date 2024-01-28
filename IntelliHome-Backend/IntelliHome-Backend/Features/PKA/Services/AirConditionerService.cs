@@ -1,5 +1,6 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
@@ -16,24 +17,39 @@ namespace IntelliHome_Backend.Features.PKA.Services
         private readonly IAirConditionerHandler _airConditionerHandler;
         private readonly IAirConditionerDataRepository _airConditionerDataRepository;
         private readonly IAirConditionerWorkRepository _airConditionerWorkRepository;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public AirConditionerService(IAirConditionerRepository airConditionerRepository,IAirConditionerWorkRepository airConditionerWorkRepository, IAirConditionerHandler airConditionerHandler,IAirConditionerDataRepository airConditionerDataRepository)
+        public AirConditionerService(
+            IAirConditionerRepository airConditionerRepository,
+            IAirConditionerWorkRepository airConditionerWorkRepository, 
+            IAirConditionerHandler airConditionerHandler,
+            IAirConditionerDataRepository airConditionerDataRepository,
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _airConditionerRepository = airConditionerRepository;
             _airConditionerHandler = airConditionerHandler;
             _airConditionerDataRepository = airConditionerDataRepository;
             _airConditionerWorkRepository = airConditionerWorkRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<AirConditioner> Create(AirConditioner entity)
         {
             entity = await _airConditionerRepository.Create(entity);
             bool success = await _airConditionerHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _airConditionerRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _airConditionerRepository.Update(entity);
-            }
+                { "isConnected", true }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

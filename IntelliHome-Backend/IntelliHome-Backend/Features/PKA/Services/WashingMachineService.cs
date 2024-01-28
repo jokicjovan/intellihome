@@ -1,4 +1,5 @@
 ﻿using Data.Models.PKA;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
@@ -11,13 +12,16 @@ namespace IntelliHome_Backend.Features.PKA.Services
         private readonly IWashingMachineRepository _washingMachineRepository;
         private readonly IWashingMachineModeRepository _washingMachineModeRepository;
         private readonly IWashingMachineHandler _washingMachineHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
         public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
-            IWashingMachineModeRepository washingMachineModeRepository, IWashingMachineHandler washingMachineHandler)
+            IWashingMachineModeRepository washingMachineModeRepository, IWashingMachineHandler washingMachineHandler,
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _washingMachineRepository = washingMachineRepository;
             _washingMachineModeRepository = washingMachineModeRepository;
             _washingMachineHandler = washingMachineHandler;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public List<WashingMachineMode> GetWashingMachineModes(List<Guid> modesIds)
@@ -34,11 +38,19 @@ namespace IntelliHome_Backend.Features.PKA.Services
         {
             entity = await _washingMachineRepository.Create(entity);
             bool success = await _washingMachineHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _washingMachineRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _washingMachineRepository.Update(entity);
-            }
+                { "isConnected", true }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

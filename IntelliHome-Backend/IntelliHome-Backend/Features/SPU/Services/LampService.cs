@@ -1,5 +1,6 @@
 ﻿using Data.Models.Shared;
 using Data.Models.SPU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.SPU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.DTOs;
@@ -14,23 +15,37 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly ILampRepository _lampRepository;
         private readonly ILampDataRepository _lampDataRepository;
         private readonly ILampHandler _lampHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public LampService(ILampRepository lampRepository, ILampHandler lampHandler, ILampDataRepository lampDataRepository)
+        public LampService(
+            ILampRepository lampRepository, 
+            ILampHandler lampHandler, 
+            ILampDataRepository lampDataRepository, 
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _lampRepository = lampRepository;
             _lampHandler = lampHandler;
             _lampDataRepository = lampDataRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<Lamp> Create(Lamp entity)
         {
             entity = await _lampRepository.Create(entity);
             bool success = await _lampHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _lampRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _lampRepository.Update(entity);
-            }
+                { "isConnected", true }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

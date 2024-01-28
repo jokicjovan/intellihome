@@ -1,4 +1,5 @@
 ﻿using Data.Models.Shared;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
@@ -11,11 +12,13 @@ namespace IntelliHome_Backend.Features.Home.Services
     {
         private readonly ISmartDeviceRepository _smartDeviceRepository;
         private readonly ISmartDeviceHandler _smartDeviceHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository; 
 
-        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler)
+        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler, ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _smartDeviceRepository = smartDeviceRepository;
             _smartDeviceHandler = smartDeviceHandler;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public Task<SmartDevice> Create(SmartDevice entity)
@@ -51,6 +54,24 @@ namespace IntelliHome_Backend.Features.Home.Services
         public IEnumerable<SmartDevice> UpdateAll(List<SmartDevice> smartDevices)
         {
             return _smartDeviceRepository.UpdateAll(smartDevices);
+        }
+
+        public void UpdateAvailability(List<Guid> smartDevices, Boolean isConnected)
+        {
+            foreach (var smartDevice in smartDevices)
+            {
+                var fields = new Dictionary<string, object>
+                {
+                    { "isConnected", isConnected }
+
+                };
+                var tags = new Dictionary<string, string>
+                {
+                    { "deviceId", smartDevice.ToString()}
+                };
+                _smartDeviceDataRepository.AddPoint(fields, tags);
+            }
+            
         }
 
         public async Task<(IEnumerable<SmartDeviceDTO>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize)

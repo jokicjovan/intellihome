@@ -13,5 +13,6 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         IEnumerable<SmartDevice> GetSmartDevicesForSmartHome(Guid smartHomeId);
         Task<bool> IsUserAllowed(Guid smartDeviceId, Guid userId);
         Task TurnOnSmartDevice(Guid id, bool turnOn);
+        void UpdateAvailability(List<Guid> smartDevices, Boolean isConnected);
     }
 }

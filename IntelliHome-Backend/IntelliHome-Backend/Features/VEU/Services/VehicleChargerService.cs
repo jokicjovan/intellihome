@@ -1,4 +1,5 @@
 ﻿using Data.Models.VEU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories;
@@ -12,24 +13,37 @@ namespace IntelliHome_Backend.Features.VEU.Services
         private readonly IVehicleChargerRepository _vehicleChargerRepository;
         private readonly IVehicleChargingPointRepository _vehicleChargingPointRepository;
         private readonly IVehicleChargerHandler _vehicleChargerHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public VehicleChargerService(IVehicleChargerRepository vehicleChargerRepository, IVehicleChargingPointRepository vehicleChargingPointRepository,
-            IVehicleChargerHandler vehicleChargerHandler)
+        public VehicleChargerService(
+            IVehicleChargerRepository vehicleChargerRepository, 
+            IVehicleChargingPointRepository vehicleChargingPointRepository,
+            IVehicleChargerHandler vehicleChargerHandler, 
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _vehicleChargerRepository = vehicleChargerRepository;
             _vehicleChargingPointRepository = vehicleChargingPointRepository;
             _vehicleChargerHandler = vehicleChargerHandler;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<VehicleCharger> Create(VehicleCharger entity)
         {
             entity = await _vehicleChargerRepository.Create(entity);
             bool success = await _vehicleChargerHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _vehicleChargerRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _vehicleChargerRepository.Update(entity);
-            }
+                { "isConnected", true }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

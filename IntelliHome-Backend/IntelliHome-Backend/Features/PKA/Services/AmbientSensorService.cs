@@ -1,5 +1,6 @@
 ﻿using Data.Models.PKA;
 using Data.Models.VEU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
@@ -14,12 +15,18 @@ namespace IntelliHome_Backend.Features.PKA.Services
         private readonly IAmbientSensorRepository _ambientSensorRepository;
         private readonly IAmbientSensorHandler _ambientSensorHandler;
         private readonly IAmbientSensorDataRepository _ambientSensorDataRepository;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public AmbientSensorService(IAmbientSensorRepository ambientSensorRepository, IAmbientSensorHandler ambientSensorHandler, IAmbientSensorDataRepository ambientSensorDataRepository)
+        public AmbientSensorService(
+            IAmbientSensorRepository ambientSensorRepository, 
+            IAmbientSensorHandler ambientSensorHandler, 
+            IAmbientSensorDataRepository ambientSensorDataRepository,
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _ambientSensorRepository = ambientSensorRepository;
             _ambientSensorHandler = ambientSensorHandler;
             _ambientSensorDataRepository = ambientSensorDataRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task ToggleAmbientSensor(Guid id, bool turnOn = true)
@@ -89,11 +96,19 @@ namespace IntelliHome_Backend.Features.PKA.Services
         {
             entity = await _ambientSensorRepository.Create(entity);
             bool success = await _ambientSensorHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _ambientSensorRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _ambientSensorRepository.Update(entity);
-            }
+                { "isConnected", true }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

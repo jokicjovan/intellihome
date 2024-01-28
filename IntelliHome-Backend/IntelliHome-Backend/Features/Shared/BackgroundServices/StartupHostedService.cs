@@ -98,6 +98,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 }).ToList();
                 await Task.WhenAll(connectTasks);
                 smartDeviceService.UpdateAll(smartDevices);
+                smartDeviceService.UpdateAvailability(smartDevices.Select(s => s.Id).ToList(), true);
             }
         }
     }
