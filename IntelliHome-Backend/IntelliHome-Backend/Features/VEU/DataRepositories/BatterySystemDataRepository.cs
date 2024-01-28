@@ -1,7 +1,7 @@
 ﻿using InfluxDB.Client.Core.Flux.Domain;
 using IntelliHome_Backend.Features.Shared.Influx;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 
 namespace IntelliHome_Backend.Features.VEU.DataRepositories
 {

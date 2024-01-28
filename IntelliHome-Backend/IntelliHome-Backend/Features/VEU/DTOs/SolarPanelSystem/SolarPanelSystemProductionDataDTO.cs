@@ -1,8 +1,8 @@
-﻿namespace IntelliHome_Backend.Features.VEU.DTOs
+﻿namespace IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem
 {
     public class SolarPanelSystemProductionDataDTO
     {
         public DateTime? Timestamp { get; set; }
-        public Double ProductionPerMinute { get; set; }
+        public double ProductionPerMinute { get; set; }
     }
 }

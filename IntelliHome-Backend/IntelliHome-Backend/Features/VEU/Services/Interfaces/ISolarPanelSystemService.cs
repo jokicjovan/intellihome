@@ -1,7 +1,7 @@
 ﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 
 namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {

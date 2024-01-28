@@ -2,7 +2,9 @@
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
+using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,5 @@
 ﻿using IntelliHome_Backend.Features.Shared.DTOs;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;

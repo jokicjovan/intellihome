@@ -2,7 +2,7 @@
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;

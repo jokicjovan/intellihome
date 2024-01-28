@@ -1,4 +1,4 @@
-﻿using IntelliHome_Backend.Features.VEU.DTOs;
+﻿using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

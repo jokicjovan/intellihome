@@ -2,7 +2,7 @@
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
