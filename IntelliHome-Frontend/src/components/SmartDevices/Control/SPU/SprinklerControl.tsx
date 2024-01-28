@@ -3,7 +3,7 @@ import {
     IconButton, MenuItem, Modal, Select, styled, Switch, SwitchProps, TextField,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Add
 } from "@mui/icons-material";
@@ -12,19 +12,22 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import {v4 as uuidv4} from 'uuid';
+import axios from "axios";
+import {environment} from "../../../../security/Environment.tsx";
 
 
-const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
+const SprinklerControl = ({smartDevice, setSmartDeviceParent}) => {
 
 
     const [isThereTimeLimit, setIsThereTimeLimit] = useState(false)
     const [modalDuration, setModalDuration] = useState(0)
     const [isOn, setIsOn] = useState(false)
+    const [isSpraying, setIsSpraying] = useState(smartDevice.isSpraying || false)
     const [open, setIsOpen] = useState(false)
     // @ts-ignore
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
-    const [scheduled, setScheduled] = useState([]);
+    const [scheduled, setScheduled] = useState(smartDevice.scheduledTasks || []);
     const DatePickerStyle = {
         "& .MuiPickersLayout-actionBar": {display: "none"},
         minHeight: "520px"
@@ -44,9 +47,22 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
         margin: "8px auto", borderRadius: "10px"
     }
 
+    const setSprayingEvent = (isSprayingEvent: boolean) => {
+        console.log(smartDevice.id);
+
+        axios.put(environment + `/api/Sprinkler/ToggleSprinklerSpraying?Id=${smartDevice.id}&TurnOn=${isSprayingEvent}`).then(res => {
+                setIsSpraying(isSprayingEvent);
+                smartDevice.isSpraying = isSprayingEvent;
+                setSmartDeviceParent(smartDevice);
+            }
+        ).catch(err => {
+            console.log(err)
+        });
+    }
+
     const SwitchPower = styled((props: SwitchProps) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isOn} onChange={(e) => {
-            setIsOn(e.target.checked);
+        <Switch focusVisibleClassName=".Mui-focusVisible" checked={isSpraying} onChange={(e) => {
+            setSprayingEvent(e.target.checked);
         }} size="medium" disableRipple {...props} />
     ))(({theme}) => ({
         width: 210,
@@ -97,6 +113,17 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
         },
     }));
 
+    useEffect(() => {
+        setIsSpraying(smartDevice.isSpraying || false);
+        setScheduled(smartDevice.scheduledTasks || []);
+    }, [smartDevice]);
+
+    useEffect(() => {
+        smartDevice.scheduledTasks = scheduled;
+        smartDevice.isSpraying = isSpraying;
+        setSmartDeviceParent(smartDevice);
+    }, [scheduled, isSpraying]);
+
     function parseDateString(dateString: string): Date | null {
         const parts = dateString.split(' ');
         const [day, month, year] = parts[0].split('/').map(part => parseInt(part, 10))
@@ -107,6 +134,53 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
         return parsedDate;
     }
 
+    const handleAddSchedule = () => {
+        console.log(isThereTimeLimit)
+        if (isThereTimeLimit) {
+            axios.post(environment + '/api/Sprinkler/AddScheduledWork', {
+                id: smartDevice.id,
+                isSpraying: true,
+                startDate: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm'),
+            })
+                .then((res) => {
+                    if (res.status == 200) {
+                        smartDevice.schedules = [...smartDevice.schedules, {
+                            timestamp: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm').toString(),
+                            isSpraying: true,
+                        }]
+                        setSmartDeviceParent(smartDevice)
+                        setModalDuration(30)
+                        setValue(dayjs() as TDate)
+                        setIsOpen(false)
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            axios.post(environment + '/api/Sprinkler/AddScheduledWork', {
+                id: smartDevice.id,
+                isSpraying: true,
+                startDate: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm'),
+                endDate: value.add(modalDuration, 'minutes').subtract(1, 'hour').format('DD/MM/YYYY HH:mm')
+            })
+                .then((res) => {
+                    if (res.status == 200) {
+                        smartDevice.schedules = [...smartDevice.schedules, {
+                            timestamp: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm').toString() + " - " + value.add(modalDuration, 'minutes').subtract(1, 'hour').format('DD/MM/YYYY HH:mm'),
+                            isSpraying: true,
+                        }]
+                        setSmartDeviceParent(smartDevice)
+                        setModalDuration(30)
+                        setValue(dayjs() as TDate)
+                        setIsOpen(false)
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
 
     return <>
         <Modal
@@ -121,7 +195,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
             }}>
                 <Grid item xs={12}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Add Schedule For Air Conditioner
+                        Add Schedule For Sprinkler
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -170,8 +244,8 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                         paddingY: "10px",
                         borderRadius: "7px",
                     }}>Cancel</Button>
-                    <Button type="submit" onClick={() => {
-                    }} sx={{
+                    <Button type="submit" onClick={() => handleAddSchedule()
+                    } sx={{
                         backgroundColor: "#FBC40E",
                         color: "black",
                         paddingY: "10px",
@@ -209,7 +283,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                 }}><Add/></IconButton>
                 </Box>
                 <Box display="flex" width="100%" flexDirection="column" overflow="auto">
-                    {scheduled && scheduled.length > 0 && scheduled.sort((a, b) => parseDateString(b.date.split('-')[0]).getTime() - parseDateString(a.date.split('-')[0]).getTime()).map((item) =>
+                    {scheduled && scheduled.length > 0 && scheduled.sort((a, b) => parseDateString(a.timestamp) - parseDateString(b.timestamp)).map((item) =>
                         <Box key={uuidv4()}>
                             <Box width="98%" margin="0 auto" height={"2px"}
                                  bgcolor="rgba(0, 0, 0, 0.20)"/>
@@ -218,11 +292,10 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                 <Box px={2} display="grid" width="100%"
                                      gridTemplateColumns="6fr 1fr 2fr">
                                     <Typography textAlign="left" gridColumn={1} fontSize="20px"
-                                                fontWeight="500"> {item.date}</Typography>
-                                    <Typography gridColumn={2} textAlign="center" fontSize="20px"
-                                                fontWeight="500"> {item.temperature}</Typography>
-                                    <Typography gridColumn={3} textAlign="right" fontSize="20px"
-                                                fontWeight="500"> {item.mode}</Typography>
+                                                fontWeight="500"> {item.timestamp}</Typography>
+                                    <Typography textAlign="right" gridColumn={3} fontSize="20px"
+                                                fontWeight="500"> {item.set_spraying ? "ON" : "OFF"}</Typography>
+
                                 </Box>
                             </Box>
                         </Box>)}
@@ -232,6 +305,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
 
         </Box>
     </>
+
 }
 
-export default WashingMachineControl;
+export default SprinklerControl;

@@ -39,11 +39,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
 
         public async Task ToggleAirConditioner(Guid id,string username, bool turnOn = true)
         {
-            AirConditioner airConditioner = await _airConditionerRepository.FindWithSmartHome(id);
-            if (airConditioner == null)
-            {
-                throw new ResourceNotFoundException("Smart device not found!");
-            }
+            AirConditioner airConditioner = await _airConditionerRepository.FindWithSmartHome(id) ?? throw new ResourceNotFoundException("Smart device not found!");
             _ = _airConditionerHandler.ToggleSmartDevice(airConditioner, turnOn);
             airConditioner.IsOn = turnOn;
             _ = _airConditionerRepository.Update(airConditioner);

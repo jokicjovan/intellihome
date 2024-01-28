@@ -5,5 +5,6 @@ namespace IntelliHome_Backend.Features.SPU.Repositories.Interfaces
 {
     public interface ISprinklerRepository : ICrudRepository<Sprinkler>
     {
+        Task<Sprinkler> ReadWithSmartHome(Guid id);
     }
 }
