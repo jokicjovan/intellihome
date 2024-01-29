@@ -1,7 +1,6 @@
-﻿using IntelliHome_Backend.Features.Shared.DTOs;
-using IntelliHome_Backend.Features.VEU.DTOs;
+﻿using Data.Models.VEU;
+using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
-using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,19 +18,6 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         public VehicleChargerController(IVehicleChargerService vehicleChargerService)
         {
             _vehicleChargerService = vehicleChargerService;
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to)
-        {
-            if (from > to)
-            {
-                return BadRequest("FROM date cant be after TO date");
-            }
-            //List<BatterySystemCapacityDataDTO> result = _batterySystemService.GetCapacityHistoricalData(id, from, to);
-            //return Ok(result);
-            return Ok();
         }
 
         [HttpGet]
@@ -67,6 +53,30 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
             }
             List<ActionDataDTO> result = _vehicleChargerService.GetActionHistoricalData(id, from, to);
             return Ok(result);
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPointCreationDTO vehicleChargingPointCreationDTO)
+        {
+            VehicleChargingPoint vehicleChargingPoint = new VehicleChargingPoint
+            {
+                ChargeLimit = vehicleChargingPointCreationDTO.ChargeLimit,
+                IsFree = false,
+                Capacity = vehicleChargingPointCreationDTO.Capacity,
+                InitialCapacity = vehicleChargingPointCreationDTO.InitialCapacity
+            };
+            await _vehicleChargerService.ConnectToCharger(vehicleChargerId, vehicleChargingPoint);
+            return Ok();
+        }
+
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> DisconnectToCharger(Guid vehicleChargerId, Guid vehicleChargingPointId)
+        {
+            await _vehicleChargerService.DisconnectCharger(vehicleChargerId, vehicleChargingPointId);
+            return Ok();
         }
     }
 }

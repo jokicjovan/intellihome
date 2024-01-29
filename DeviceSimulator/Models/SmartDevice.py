@@ -26,7 +26,7 @@ class SmartDevice:
         if msg.topic == self.receive_topic:
             data = json.loads(msg.payload.decode())
             if data.get("action", None) == "turn_on":
-                if not self.is_on:
+                if not self.is_on.is_set():
                     self.smart_home.event_loop.create_task(self.turn_on())
             elif data.get("action", None) == "turn_off":
                 self.smart_home.event_loop.create_task(self.turn_off())

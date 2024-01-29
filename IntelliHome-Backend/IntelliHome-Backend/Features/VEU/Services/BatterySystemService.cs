@@ -50,6 +50,16 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return batterySystem;
         }
 
+        public async Task<BatterySystem> GetWithHome(Guid id)
+        {
+            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
+            if (batterySystem == null)
+            {
+                throw new ResourceNotFoundException("Battery system with provided Id not found!");
+            }
+            return batterySystem;
+        }
+
         public Task<IEnumerable<BatterySystem>> GetAll()
         {
             throw new NotImplementedException();
@@ -62,7 +72,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<BatterySystemDTO> GetWithCapacityData(Guid id)
         {
-            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
+            BatterySystem batterySystem = await GetWithHome(id);
             BatterySystemDTO batterySystemDTO = new BatterySystemDTO
             {
                 Id = batterySystem.Id,

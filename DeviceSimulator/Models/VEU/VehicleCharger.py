@@ -21,6 +21,7 @@ class ChargingPoint:
     start_time: datetime.datetime = datetime.datetime.now()
     end_time: datetime.datetime = datetime.datetime.min
     status: ChargingStatus = ChargingStatus.CHARGING
+
     # total_consumption: float = 0
 
     def serialize(self):
@@ -49,14 +50,15 @@ class VehicleCharger(SmartDevice):
             data = json.loads(msg.payload.decode())
             if data.get("action") == "chargingPointConnected":
                 if len(self.free_charging_points) > 0:
-                    self.busy_charging_points[data.get("id")] = ChargingPoint(data.get("id"),
-                                                                              float(data.get("capacity")),
-                                                                              float(data.get("current_capacity")),
-                                                                              float(data.get("charge_limit")))
-                    self.free_charging_points.remove(data.get("id"))
+                    self.busy_charging_points[data.get("charging_pointId")] = (
+                        ChargingPoint(data.get("chargingPointId"),
+                                      float(data.get("capacity")),
+                                      float(data.get("currentCapacity")),
+                                      float(data.get("chargeLimit"))))
+                    self.free_charging_points.remove(data.get("chargingPointId"))
             elif data.get("action") == "chargingPointDisconnected":
-                self.busy_charging_points.pop(data.get("id"))
-                self.free_charging_points.append(data.get("id"))
+                self.busy_charging_points.pop(data.get("chargingPointId"))
+                self.free_charging_points.append(data.get("chargingPointId"))
 
     async def send_data(self):
         while self.is_on.is_set():

@@ -13,5 +13,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
         Task Toggle(Guid id, String togglerUsername, bool turnOn = true);
+        Task<SolarPanelSystem> GetWithHome(Guid id);
     }
 }

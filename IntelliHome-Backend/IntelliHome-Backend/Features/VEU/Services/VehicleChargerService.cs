@@ -1,14 +1,14 @@
 ﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
-using IntelliHome_Backend.Features.VEU.DataRepositories;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Newtonsoft.Json;
+using System;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -57,6 +57,16 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return vehicleCharger;
         }
 
+        public async Task<VehicleCharger> GetWithHome(Guid id)
+        {
+            VehicleCharger vehicleCharger = await _vehicleChargerRepository.FindWithSmartHome(id);
+            if (vehicleCharger == null)
+            {
+                throw new ResourceNotFoundException("Vehicle charger with provided Id not found!");
+            }
+            return vehicleCharger;
+        }
+
         public Task<IEnumerable<VehicleCharger>> GetAll()
         {
             throw new NotImplementedException();
@@ -69,7 +79,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<VehicleChargerDTO> GetWithChargingPointsData(Guid id)
         {
-            VehicleCharger vehicleCharger = await _vehicleChargerRepository.FindWithSmartHome(id);
+            VehicleCharger vehicleCharger = await GetWithHome(id);
             VehicleChargerDTO vehicleChargerDTO = new VehicleChargerDTO
             {
                 Id = vehicleCharger.Id,
@@ -89,7 +99,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                     Id = vehicleChargingPoint.Id,
                     ChargeLimit = vehicleChargingPoint.ChargeLimit,
                     InitialCapacity = vehicleChargingPoint.InitialCapacity,
-                    MaxCapacity = vehicleChargingPoint.MaxCapacity,
+                    Capacity = vehicleChargingPoint.Capacity,
                     CurrentCapacity = vehicleChargingPointDataDTO.CurrentCapacity,
                     StartTime = vehicleChargingPointDataDTO.StartTime,
                     EndTime = vehicleChargingPointDataDTO.EndTime,
@@ -143,6 +153,57 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public List<VehicleChargingPointDataDTO> GetVehicleChargingPointHistoricalData(Guid id, DateTime from, DateTime to)
         {
             return _vehicleChargingPointDataRepository.GetVehicleChargingPointHistoricalData(id, from, to);
+        }
+
+        public async Task<VehicleCharger> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPoint vehicleChargingPoint)
+        {
+            VehicleCharger vehicleCharger = await GetWithHome(vehicleChargerId);
+            foreach (VehicleChargingPoint candidate in vehicleCharger.ChargingPoints)
+            {
+                if (candidate.IsFree)
+                {
+                    candidate.IsFree = false;
+                    candidate.ChargeLimit = vehicleChargingPoint.ChargeLimit;
+                    candidate.Capacity = vehicleChargingPoint.Capacity;
+                    candidate.InitialCapacity = vehicleChargingPoint.InitialCapacity;
+                    vehicleCharger = await _vehicleChargerRepository.Update(vehicleCharger);
+
+                    Dictionary<string, object> payload = new Dictionary<string, object>
+                    {
+                        { "action", "chargingPointConnected" },
+                        { "chargingPointId", candidate.Id.ToString()},
+                        { "capacity", candidate.Capacity},
+                        { "currentCapacity", candidate.InitialCapacity},
+                        { "chargeLimit", candidate.ChargeLimit},
+                    };
+                    await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
+                    return vehicleCharger;
+                }
+            }
+            throw new ResourceNotFoundException("Vehicle charger with provided Id does not have free charging points!");
+        }
+
+        public async Task<VehicleCharger> DisconnectCharger(Guid vehicleChargerId, Guid vehicleChargingPointId) {
+            VehicleCharger vehicleCharger = await Get(vehicleChargerId);
+            foreach (VehicleChargingPoint candidate in vehicleCharger.ChargingPoints)
+            {
+                if (candidate.Id == vehicleChargingPointId)
+                {
+                    candidate.IsFree = true;
+                    candidate.ChargeLimit = null;
+                    candidate.Capacity = null;
+                    candidate.InitialCapacity = null;
+                    vehicleCharger = await _vehicleChargerRepository.Update(vehicleCharger);
+
+                    Dictionary<string, object> payload = new Dictionary<string, object>
+                    {
+                        { "action", "chargingPointDisconnected" }
+                    };
+                    await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
+                    return vehicleCharger;
+                }
+            }
+            throw new ResourceNotFoundException("Vehicle charger with provided Id does not have charging point with provided Id!");
         }
     }
 }

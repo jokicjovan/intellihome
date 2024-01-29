@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Data.Models.Shared;
 
 namespace Data.Models.VEU
@@ -7,9 +8,10 @@ namespace Data.Models.VEU
     {
         public Guid Id { get; set; }
         public Boolean IsFree { get; set; }
-        public double InitialCapacity { get; set; }
-        public double MaxCapacity { get; set; }
-        public double ChargeLimit { get; set; }
+        public double? InitialCapacity { get; set; }
+        public double? Capacity { get; set; }
+        public double? ChargeLimit { get; set; }
+        [JsonIgnore]
         public VehicleCharger VehicleCharger { get; set; }
 
         public VehicleChargingPoint()

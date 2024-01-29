@@ -65,7 +65,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 return;
             };
 
-            var vehicleChargingPointActionData = JsonConvert.DeserializeObject<VehicleChargingPointActionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            var vehicleChargingPointActionData = JsonConvert.DeserializeObject<VehicleChargerActionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
             if (vehicleChargingPointActionData != null)
             {
                 var fields = new Dictionary<string, object>
@@ -82,14 +82,16 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             }
         }
 
-        public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
+        public override async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
         {
-            VehicleCharger vehicleCharger = (VehicleCharger)smartDevice;
+            using var scope = serviceProvider.CreateScope();
+            var vehicleChargerService = scope.ServiceProvider.GetRequiredService<IVehicleChargerService>();
+            VehicleCharger vehicleCharger = await vehicleChargerService.GetWithHome(smartDevice.Id);
             Dictionary<string, object> additionalAttributes = new Dictionary<string, object>
             {
-                            { "power_per_hour", vehicleCharger.PowerPerHour },
-                            { "charging_points_ids", vehicleCharger.ChargingPoints.Select(e => e.Id).ToList()}
-                        };
+                { "power_per_hour", vehicleCharger.PowerPerHour },
+                { "charging_points_ids", vehicleCharger.ChargingPoints.Select(e => e.Id).ToList()}
+            };
             var requestBody = new
             {
                 device_id = smartDevice.Id,
@@ -101,7 +103,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 keepalive = 30,
                 kwargs = additionalAttributes
             };
-            return simualtionsHandler.AddDeviceToSimulator(requestBody);
+            return await simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
     }
 }

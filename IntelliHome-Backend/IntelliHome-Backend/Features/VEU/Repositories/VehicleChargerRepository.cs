@@ -12,7 +12,11 @@ namespace IntelliHome_Backend.Features.VEU.Repositories
 
         public Task<VehicleCharger> FindWithSmartHome(Guid id)
         {
-            return _entities.Include(e => e.SmartHome).FirstOrDefaultAsync(e => e.Id == id);
+            return _entities.Include(e => e.ChargingPoints).Include(e => e.SmartHome).FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public override Task<VehicleCharger> Read(Guid id) {
+            return _entities.Include(e => e.ChargingPoints).FirstOrDefaultAsync(e => e.Id == id);
         }
     }
 }

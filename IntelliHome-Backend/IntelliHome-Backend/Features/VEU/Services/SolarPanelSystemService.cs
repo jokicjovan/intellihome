@@ -49,6 +49,16 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return solarPanelSystem;
         }
 
+        public async Task<SolarPanelSystem> GetWithHome(Guid id)
+        {
+            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
+            if (solarPanelSystem == null)
+            {
+                throw new ResourceNotFoundException("Solar panel system with provided Id not found!");
+            }
+            return solarPanelSystem;
+        }
+
         public Task<IEnumerable<SolarPanelSystem>> GetAll()
         {
             throw new NotImplementedException();
@@ -61,7 +71,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<SolarPanelSystemDTO> GetWithProductionData(Guid id)
         {
-            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
+            SolarPanelSystem solarPanelSystem = await GetWithHome(id);
             SolarPanelSystemDTO solarPanelSystemDTO = new SolarPanelSystemDTO
             {
                 Id = solarPanelSystem.Id,
@@ -103,11 +113,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task Toggle(Guid id, String togglerUsername, bool turnOn = true)
         {
-            SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
-            if (solarPanelSystem == null)
-            {
-                throw new ResourceNotFoundException("Smart device not found!");
-            }
+            SolarPanelSystem solarPanelSystem = await GetWithHome(id);
             _ = _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
             solarPanelSystem.IsOn = turnOn;
             _ = _solarPanelSystemRepository.Update(solarPanelSystem);

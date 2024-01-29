@@ -10,5 +10,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task<BatterySystemDTO> GetWithCapacityData(Guid id);
         Task Toggle(Guid id, bool turnOn);
+        Task<BatterySystem> GetWithHome(Guid id);
     }
 }
