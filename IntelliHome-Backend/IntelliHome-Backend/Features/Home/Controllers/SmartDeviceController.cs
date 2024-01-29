@@ -39,9 +39,9 @@ namespace IntelliHome_Backend.Features.Home.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAvailabilityData(Guid id, DateTime from, DateTime to)
+        public async Task<ActionResult> GetAvailabilityData(Guid id, string h)
         {
-            List<AvailabilityData> result = _smartDeviceService.GetAvailabilityData(id, from, to);
+            List<AvailabilityData> result = _smartDeviceService.GetAvailabilityData(id, h);
             return Ok(result);
         }
 

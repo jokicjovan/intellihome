@@ -54,28 +54,31 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             }
         }
 
-        public async Task<IEnumerable<FluxTable>> GetHistoricalAvailability(Guid deviceId, DateTime from, DateTime to)
+        public async Task<IEnumerable<FluxTable>> GetHistoricalAvailability(Guid deviceId, string h)
         {
-            if (to == from)
-            {
-                to = to.AddSeconds(1);
-            }
-            // var query = $"from(bucket: \"{_bucket}\") " +
-            //             $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
-            //             $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\" and r._measurement == \"availability\") " +
-            //             $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+            string aggregation;
+            string unit;
+            string multiplier;
+            string dorh;
 
-            // var query = $"from(bucket: \"{_bucket}\") " +
-            //             $"|> range(start: -1d) " +
-            //             $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\") " +
-            //             $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")  " +
-            //             $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")  " +
-            //             $"|> aggregateWindow(every: 1m, fn: last, createEmpty: true) " +
-            //             $"|> yield(name: \"last\")";
+            if (h is not ("7d" or "30d"))
+            {
+                aggregation = "1h";
+                unit = "1m";
+                multiplier = "60";
+                dorh = "h";
+            }
+            else
+            {
+                aggregation = "1d";
+                unit = "1h";
+                multiplier = "24";
+                dorh = "d";
+            }
 
             var query = $"import \"interpolate\"" +
                          $"from(bucket: \"{_bucket}\")" +
-                         $"|> range(start: -2d)" +
+                         $"|> range(start: -{h})" +
                          $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\")" +
                          $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")" +
                          $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")" +
@@ -88,14 +91,14 @@ namespace IntelliHome_Backend.Features.Shared.Influx
                          $"      r with" +
                          $"      _value: if r._value > 0.5 then 1.0 else 0.0" +
                          $"  }}))" +
-                         $"|> window(every: 1h, createEmpty: true)" +
-                         $"|> stateDuration(fn: (r) => r._value == 1, unit:1m)" +
+                         $"|> window(every: {aggregation}, createEmpty: true)" +
+                         $"|> stateDuration(fn: (r) => r._value == 1, unit: {unit})" +
                          $"|> last()" +
                          $"|> map(fn: (r) => ({{" +
                          $"      time: r._time," +
                          $"      duration: r.stateDuration + 1," +
-                         $"      percentage: (r.stateDuration + 1) * 100 / 60," +
-                         $"      units: \"d\"" +
+                         $"      percentage: (r.stateDuration + 1) * 100 / {multiplier}," +
+                         $"      units: \"{dorh}\"" +
                          $"  }}))" +
                          $"|> group(columns: [\"time\"])";
 

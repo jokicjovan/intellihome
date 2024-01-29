@@ -21,9 +21,9 @@ namespace IntelliHome_Backend.Features.Home.DataRepository
         }
 
 
-        public List<AvailabilityData> GetAvailabilityData(Guid id, DateTime from, DateTime to)
+        public List<AvailabilityData> GetAvailabilityData(Guid id, string h)
         {
-            var result = _context.GetHistoricalAvailability(id, from, to).Result;
+            var result = _context.GetHistoricalAvailability(id, h).Result;
             return result.Select(ConvertToAvailability).ToList();   
         }
 

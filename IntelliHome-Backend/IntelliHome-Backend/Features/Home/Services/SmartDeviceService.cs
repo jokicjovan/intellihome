@@ -75,9 +75,9 @@ namespace IntelliHome_Backend.Features.Home.Services
             
         }
 
-        public List<AvailabilityData> GetAvailabilityData(Guid id, DateTime from, DateTime to)
+        public List<AvailabilityData> GetAvailabilityData(Guid id, string h)
         {
-            return _smartDeviceDataRepository.GetAvailabilityData(id, from, to);
+            return _smartDeviceDataRepository.GetAvailabilityData(id, h);
         }
 
         public async Task<(IEnumerable<SmartDeviceDTO>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize)
