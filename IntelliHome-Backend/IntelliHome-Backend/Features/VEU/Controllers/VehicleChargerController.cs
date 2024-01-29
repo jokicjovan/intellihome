@@ -57,10 +57,11 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPointCreationDTO vehicleChargingPointCreationDTO)
+        public async Task<ActionResult> ConnectToCharger(Guid vehicleChargerId, Guid vehicleChargingPointId, VehicleChargingPointCreationDTO vehicleChargingPointCreationDTO)
         {
             VehicleChargingPoint vehicleChargingPoint = new VehicleChargingPoint
             {
+                Id = vehicleChargingPointId,
                 ChargeLimit = vehicleChargingPointCreationDTO.ChargeLimit,
                 IsFree = false,
                 Capacity = vehicleChargingPointCreationDTO.Capacity,

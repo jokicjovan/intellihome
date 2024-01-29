@@ -155,36 +155,40 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return _vehicleChargingPointDataRepository.GetVehicleChargingPointHistoricalData(id, from, to);
         }
 
-        public async Task<VehicleCharger> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPoint vehicleChargingPoint)
+        public async Task<VehicleCharger> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPoint newVehicleChargingPoint)
         {
             VehicleCharger vehicleCharger = await GetWithHome(vehicleChargerId);
-            foreach (VehicleChargingPoint candidate in vehicleCharger.ChargingPoints)
-            {
-                if (candidate.IsFree)
-                {
-                    candidate.IsFree = false;
-                    candidate.ChargeLimit = vehicleChargingPoint.ChargeLimit;
-                    candidate.Capacity = vehicleChargingPoint.Capacity;
-                    candidate.InitialCapacity = vehicleChargingPoint.InitialCapacity;
-                    vehicleCharger = await _vehicleChargerRepository.Update(vehicleCharger);
 
-                    Dictionary<string, object> payload = new Dictionary<string, object>
-                    {
-                        { "action", "chargingPointConnected" },
-                        { "chargingPointId", candidate.Id.ToString()},
-                        { "capacity", candidate.Capacity},
-                        { "currentCapacity", candidate.InitialCapacity},
-                        { "chargeLimit", candidate.ChargeLimit},
-                    };
-                    await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
-                    return vehicleCharger;
-                }
+            var vehicleChargingPoint = vehicleCharger.ChargingPoints.FirstOrDefault(e => e.Id == newVehicleChargingPoint.Id);
+
+            if (vehicleChargingPoint == null) {
+                throw new ResourceNotFoundException("Vehicle charging point with provided Id does not exist on charger!");
             }
-            throw new ResourceNotFoundException("Vehicle charger with provided Id does not have free charging points!");
+
+            if (!vehicleChargingPoint.IsFree) {
+                throw new ResourceNotFoundException("Vehicle charging point is not free!");
+            }
+
+            vehicleChargingPoint.IsFree = false;
+            vehicleChargingPoint.ChargeLimit = newVehicleChargingPoint.ChargeLimit;
+            vehicleChargingPoint.Capacity = newVehicleChargingPoint.Capacity;
+            vehicleChargingPoint.InitialCapacity = newVehicleChargingPoint.InitialCapacity;
+            vehicleCharger = await _vehicleChargerRepository.Update(vehicleCharger);
+
+            Dictionary<string, object> payload = new Dictionary<string, object>
+            {
+                { "action", "chargingPointConnected" },
+                { "chargingPointId", vehicleChargingPoint.Id.ToString()},
+                { "capacity", vehicleChargingPoint.Capacity},
+                { "currentCapacity", vehicleChargingPoint.InitialCapacity},
+                { "chargeLimit", vehicleChargingPoint.ChargeLimit},
+            };
+            await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
+            return vehicleCharger;
         }
 
         public async Task<VehicleCharger> DisconnectCharger(Guid vehicleChargerId, Guid vehicleChargingPointId) {
-            VehicleCharger vehicleCharger = await Get(vehicleChargerId);
+            VehicleCharger vehicleCharger = await GetWithHome(vehicleChargerId);
             foreach (VehicleChargingPoint candidate in vehicleCharger.ChargingPoints)
             {
                 if (candidate.Id == vehicleChargingPointId)

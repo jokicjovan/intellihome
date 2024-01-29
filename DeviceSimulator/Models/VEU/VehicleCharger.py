@@ -56,6 +56,9 @@ class VehicleCharger(SmartDevice):
                                       float(data.get("currentCapacity")),
                                       float(data.get("chargeLimit"))))
                     self.free_charging_points.remove(data.get("chargingPointId"))
+                    self.client.publish(self.send_topic, json.dumps({
+                        "action": "chargingStarted", "chargingPointId": data.get("chargingPointId")}), retain=False)
+
             elif data.get("action") == "chargingPointDisconnected":
                 self.busy_charging_points.pop(data.get("chargingPointId"))
                 self.free_charging_points.append(data.get("chargingPointId"))

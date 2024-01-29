@@ -44,7 +44,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             }
 
             var vehicleChargerData = JsonConvert.DeserializeObject<VehicleChargerDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            if (vehicleChargerData != null)
+            if (vehicleChargerData.BusyChargingPoints != null)
             {
                 foreach (VehicleChargingPointDataDTO chargingPointdataDTO in vehicleChargerData.BusyChargingPoints)
                 {
