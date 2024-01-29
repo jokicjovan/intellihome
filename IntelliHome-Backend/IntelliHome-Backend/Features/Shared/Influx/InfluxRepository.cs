@@ -54,6 +54,62 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             }
         }
 
+        public async Task<IEnumerable<FluxTable>> GetHistoricalAvailability(Guid deviceId, string h)
+        {
+            string aggregation;
+            string unit;
+            string multiplier;
+            string dorh;
+
+            if (h is not ("7d" or "30d"))
+            {
+                aggregation = "1h";
+                unit = "1m";
+                multiplier = "60";
+                dorh = "h";
+            }
+            else
+            {
+                aggregation = "1d";
+                unit = "1h";
+                multiplier = "24";
+                dorh = "d";
+            }
+
+            var query = $"import \"interpolate\"" +
+                         $"from(bucket: \"{_bucket}\")" +
+                         $"|> range(start: -30d)" +
+                         $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\")" +
+                         $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")" +
+                         $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      r with" +
+                         $"      _value: if exists r._value then float(v: r._value) else 0.0" +
+                         $"  }}))  " +
+                         $"|> interpolate.linear(every: 1m)" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      r with" +
+                         $"      _value: if r._value > 0.5 then 1.0 else 0.0" +
+                         $"  }}))" +
+                         $"|> range(start: -{h})" +
+                         $"|> window(every: {aggregation}, createEmpty: true)" +
+                         $"|> stateDuration(fn: (r) => r._value == 1, unit: {unit})" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      _time: r._time," +
+                         $"      duration: r.stateDuration + 1," +
+                         $"      percentage: (r.stateDuration + 1) * 100 / {multiplier}," +
+                         $"      units: \"{dorh}\"" +
+                         $"  }}))" +
+                         $"|> group(columns: [\"time\"])" +
+                         $"|> window(every: {aggregation}, createEmpty: true)" +
+                         $"|> max(column: \"percentage\")";
+
+
+
+            return await QueryFromInfluxAsync(query);
+        
+        }
+
         public async Task<IEnumerable<FluxTable>> GetHistoricalData(string measurement, Guid deviceId, DateTime from, DateTime to)
         {
             if (to == from)

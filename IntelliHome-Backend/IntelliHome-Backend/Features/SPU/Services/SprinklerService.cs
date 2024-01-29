@@ -1,5 +1,6 @@
 ﻿using Data.Models.Shared;
 using Data.Models.SPU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
@@ -17,13 +18,20 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly ISprinklerHandler _sprinklerHandler;
         private readonly ISprinklerDataRepository _sprinklerDataRepository;
         private readonly ISprinklerWorkRepository _sprinklerWorkRepository;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public SprinklerService(ISprinklerRepository sprinklerRepository, ISprinklerHandler sprinklerHandler, ISprinklerWorkRepository sprinklerWorkRepository, ISprinklerDataRepository sprinklerDataRepository)
+        public SprinklerService(
+            ISprinklerRepository sprinklerRepository, 
+            ISprinklerHandler sprinklerHandler, 
+            ISprinklerWorkRepository sprinklerWorkRepository,
+            ISprinklerDataRepository sprinklerDataRepository, 
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _sprinklerRepository = sprinklerRepository;
             _sprinklerHandler = sprinklerHandler;
             _sprinklerWorkRepository = sprinklerWorkRepository;
             _sprinklerDataRepository = sprinklerDataRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<Sprinkler> Create(Sprinkler entity)
@@ -33,6 +41,16 @@ namespace IntelliHome_Backend.Features.SPU.Services
             if (!success) return entity;
             entity.IsConnected = true;
             await _sprinklerRepository.Update(entity);
+            var fields = new Dictionary<string, object>
+            {
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

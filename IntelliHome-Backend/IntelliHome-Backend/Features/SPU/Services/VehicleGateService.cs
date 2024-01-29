@@ -1,4 +1,5 @@
 ﻿using Data.Models.SPU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
@@ -8,6 +9,7 @@ using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.SPU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Newtonsoft.Json;
 
 namespace IntelliHome_Backend.Features.SPU.Services
@@ -18,24 +20,39 @@ namespace IntelliHome_Backend.Features.SPU.Services
         private readonly IVehicleGateHandler _vehicleGateHandler;
         private readonly IVehicleGateDataRepository _vehicleGateDataRepository;
         private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public VehicleGateService(IVehicleGateRepository vehicleGateRepository, IVehicleGateHandler vehicleGateHandler, IVehicleGateDataRepository vehicleGateDataRepository, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public VehicleGateService(
+            IVehicleGateRepository vehicleGateRepository, 
+            IVehicleGateHandler vehicleGateHandler, 
+            IVehicleGateDataRepository vehicleGateDataRepository, 
+            IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext, 
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _vehicleGateRepository = vehicleGateRepository;
             _vehicleGateHandler = vehicleGateHandler;
             _vehicleGateDataRepository = vehicleGateDataRepository;
             _smartDeviceHubContext = smartDeviceHubContext;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<VehicleGate> Create(VehicleGate entity)
         {
             entity = await _vehicleGateRepository.Create(entity);
             bool success = await _vehicleGateHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _vehicleGateRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _vehicleGateRepository.Update(entity);
-            }
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

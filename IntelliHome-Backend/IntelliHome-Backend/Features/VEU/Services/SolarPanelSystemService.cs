@@ -10,6 +10,7 @@ using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using System;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -18,23 +19,37 @@ namespace IntelliHome_Backend.Features.VEU.Services
         private readonly ISolarPanelSystemRepository _solarPanelSystemRepository;
         private readonly ISolarPanelSystemDataRepository _solarPanelSystemDataRepository;
         private readonly ISolarPanelSystemHandler _solarPanelSystemHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public SolarPanelSystemService(ISolarPanelSystemRepository solarPanelSystemRepository, ISolarPanelSystemDataRepository solarPanelSystemDataRepository, ISolarPanelSystemHandler solarPanelSystemHandler)
+        public SolarPanelSystemService(
+            ISolarPanelSystemRepository solarPanelSystemRepository, 
+            ISolarPanelSystemDataRepository solarPanelSystemDataRepository,
+            ISolarPanelSystemHandler solarPanelSystemHandler,
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _solarPanelSystemRepository = solarPanelSystemRepository;
             _solarPanelSystemDataRepository = solarPanelSystemDataRepository;
             _solarPanelSystemHandler = solarPanelSystemHandler;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<SolarPanelSystem> Create(SolarPanelSystem entity)
         {
             entity = await _solarPanelSystemRepository.Create(entity);
             bool success = await _solarPanelSystemHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _solarPanelSystemRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _solarPanelSystemRepository.Update(entity);
-            }
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 
