@@ -6,7 +6,6 @@ using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
-using System;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 
 namespace IntelliHome_Backend.Features.VEU.Services
