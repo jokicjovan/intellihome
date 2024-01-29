@@ -11,6 +11,7 @@ import React, {useEffect, useState} from "react";
 import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import axios from "axios";
 import {environment} from "../../../../security/Environment.tsx";
+import SmartDeviceAvailabilityPie from "../Shared/SmartDeviceAvailabilityPie.tsx";
 
 const LampControl = ({device, setSmartDeviceParent}) => {
     console.log(device)
@@ -212,6 +213,8 @@ const LampControl = ({device, setSmartDeviceParent}) => {
                 <Typography fontSize="50px" fontWeight="700" display="flex" alignItems="flex-end"> {brightness}<Typography mb={2} fontSize="20px" >nit</Typography></Typography>
 
             </Box>
+
+            <SmartDeviceAvailabilityPie deviceId={device.id} h={"2d"} width="350" height="350"/>
         </Box>
     </>
 }
