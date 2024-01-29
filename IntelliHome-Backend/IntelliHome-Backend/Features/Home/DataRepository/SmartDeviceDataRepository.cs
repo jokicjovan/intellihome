@@ -30,18 +30,24 @@ namespace IntelliHome_Backend.Features.Home.DataRepository
         public AvailabilityData ConvertToAvailability(FluxTable table)
         {
             var rows = table.Records;
-            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("time").ToString());
+            if (rows == null || rows.Count == 0)
+            {
+                return null;
+            }   
+            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
             TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
             float duration = float.Parse(rows[0].GetValueByKey("duration").ToString());
             float percentage = float.Parse(rows[0].GetValueByKey("percentage").ToString());
+            string units = rows[0].GetValueByKey("units").ToString();
 
             return new AvailabilityData
             {
                 Timestamp = timestamp,
                 Duration = duration,
-                Percentage = percentage
+                Percentage = percentage,
+                Units = units
             };
         }
 

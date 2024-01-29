@@ -5,5 +5,6 @@
         public DateTime Timestamp { get; set; }
         public float Duration { get; set; }
         public float Percentage { get; set; }
+        public string Units { get; set; }
     }
 }

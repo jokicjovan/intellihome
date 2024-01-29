@@ -214,7 +214,6 @@ const LampControl = ({device, setSmartDeviceParent}) => {
 
             </Box>
 
-            <SmartDeviceAvailabilityPie deviceId={device.id} h={"2d"} width="350" height="350"/>
         </Box>
     </>
 }

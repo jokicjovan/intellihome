@@ -78,12 +78,12 @@ namespace IntelliHome_Backend.Features.Shared.Influx
 
             var query = $"import \"interpolate\"" +
                          $"from(bucket: \"{_bucket}\")" +
-                         $"|> range(start: -{h})" +
+                         $"|> range(start: -30d)" +
                          $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\")" +
                          $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")" +
                          $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")" +
                          $"|> map(fn: (r) => ({{" +
-                         $"      r with" + 
+                         $"      r with" +
                          $"      _value: if exists r._value then float(v: r._value) else 0.0" +
                          $"  }}))  " +
                          $"|> interpolate.linear(every: 1m)" +
@@ -91,16 +91,18 @@ namespace IntelliHome_Backend.Features.Shared.Influx
                          $"      r with" +
                          $"      _value: if r._value > 0.5 then 1.0 else 0.0" +
                          $"  }}))" +
+                         $"|> range(start: -{h})" +
                          $"|> window(every: {aggregation}, createEmpty: true)" +
                          $"|> stateDuration(fn: (r) => r._value == 1, unit: {unit})" +
-                         $"|> last()" +
                          $"|> map(fn: (r) => ({{" +
-                         $"      time: r._time," +
+                         $"      _time: r._time," +
                          $"      duration: r.stateDuration + 1," +
                          $"      percentage: (r.stateDuration + 1) * 100 / {multiplier}," +
                          $"      units: \"{dorh}\"" +
                          $"  }}))" +
-                         $"|> group(columns: [\"time\"])";
+                         $"|> group(columns: [\"time\"])" +
+                         $"|> window(every: {aggregation}, createEmpty: true)" +
+                         $"|> max(column: \"percentage\")";
 
 
 
