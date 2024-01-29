@@ -35,7 +35,8 @@ namespace IntelliHome_Backend.Features.VEU.Services
             bool success = await _solarPanelSystemHandler.ConnectToSmartDevice(entity);
             if (!success) return entity;
             entity.IsConnected = true;
-            await _solarPanelSystemRepository.Update(entity);
+            entity = await _solarPanelSystemRepository.Update(entity);
+
             var fields = new Dictionary<string, object>
             {
                 { "isConnected", 1 }
@@ -46,6 +47,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 { "deviceId", entity.Id.ToString()}
             };
             _smartDeviceDataRepository.AddPoint(fields, tags);
+
             return entity;
         }
 

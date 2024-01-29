@@ -1,17 +1,15 @@
 import {
-    Box, Button, Checkbox, FormControl, FormControlLabel, Grid,
-    IconButton, MenuItem, Modal, Select, TextField,
-    Typography
+    Box, Button, Grid,
+    Modal, TextField, Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./baterry.css"
-import {ArrowRightAltRounded, Battery20Rounded, BatteryFullRounded, EvStation, EvStationRounded, Schedule} from "@mui/icons-material";
+import {ArrowRightAltRounded, Battery20Rounded, BatteryFullRounded, EvStationRounded, Schedule} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import InputAdornment from "@mui/material/InputAdornment";
 
 
-const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
-
+const EVChargerControl = ({vehicleCharger}) => {
     const [open, setOpen] = useState(false)
     const [chargerPower, setChargerPower] = useState(150)
     const [maxVehicles, setMaxVehicles] = useState(2)
@@ -19,6 +17,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
     const [modalCurrentCapacity, setModalCurrentCapacity] = useState(0)
     const [modalMaxCapacity, setModalMaxCapacity] = useState(0)
     const [modalPercentage, setModalPercentage] = useState(0)
+    const [chargingPointsIds, setChargingPointsIds] = useState([])
     const styledInput = {
         "& label.Mui-focused": {
             color: "#FBC40E"
@@ -38,17 +37,32 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
         const parts = dateString.split(' ');
         const [day, month, year] = parts[0].split('/').map(part => parseInt(part, 10))
         const [hour, minute] = parts[1].split(':').map(part => parseInt(part, 10))
-
         const parsedDate = new Date(year, month - 1, day, hour, minute);
-
         return parsedDate;
     }
 
+    const setVehicleChargerData = (vehicleChargerData) => {
+        setChargerPower(vehicleChargerData.powerPerHour);
+        setMaxVehicles(vehicleChargerData.chargingPoints.length);
+        setChargingPointsIds(vehicleChargerData.chargingPoints.map(obj => obj.id))
+        console.log(chargingPointsIds.sort())
+        console.log(vehicleChargerData)
+    };
+
+    const handleVehicleChargerDataChange = async (newVehicleChargerData) => {
+        if (Object.keys(newVehicleChargerData).length !== 0) {
+            setVehicleChargerData(newVehicleChargerData);
+        }
+    };
+
+    useEffect(() => {
+        handleVehicleChargerDataChange(vehicleCharger);
+    }, [vehicleCharger]);
 
     return <>
         <Modal
             open={open}
-            onClose={() => setIsOpen(false)}
+            onClose={() => setOpen(false)}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
@@ -66,21 +80,20 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                name="currentCapacity"
                                label="Current Capacity"
                                onChange={(e) => {
-                                   setModalCurrentCapacity(e.target.value as number)
+                                   setModalCurrentCapacity(e.target.value as unknown as number)
                                }}
                                InputProps={{
                                    endAdornment: <InputAdornment position="end">kWh</InputAdornment>
                                }}
                                placeholder="Current Capacity"
-                               sx={styledInput}
-                               mb={3}/>
+                               sx={styledInput}/>
                 </Grid>
                 <Grid item xs={12}>
                     <TextField value={modalMaxCapacity} fullWidth type="number"
                                name="maxCapacity"
                                label="Max Capacity"
                                onChange={(e) => {
-                                   setModalMaxCapacity(e.target.value as number)
+                                   setModalMaxCapacity(e.target.value as unknown as number)
                                }}
                                InputProps={
                                    {
@@ -88,15 +101,14 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                    }
                                }
                                placeholder="Current Capacity"
-                               sx={styledInput}
-                               mb={3}/>
+                               sx={styledInput}/>
                 </Grid>
                 <Grid item xs={12}>
                     <TextField value={modalPercentage} fullWidth type="number"
                                name="percentage"
                                label="Desired percentage"
                                onChange={(e) => {
-                                   setModalPercentage(e.target.value as number)
+                                   setModalPercentage(e.target.value as unknown as number)
                                }}
                                InputProps={
                                    {
@@ -105,8 +117,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                    }
                                }
                                placeholder="Current Capacity"
-                               sx={styledInput}
-                               mb={3}/>
+                               sx={styledInput}/>
                 </Grid>
 
             <Grid item xs={12} display="flex" alignItems="flex-end" justifyContent="end">
@@ -207,4 +218,4 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
     </>
 }
 
-export default WashingMachineControl;
+export default EVChargerControl;

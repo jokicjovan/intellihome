@@ -34,7 +34,6 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 return;
             }
             string vehicleChargerId = topic_parts.Last();
-            _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
             var vehicleChargerService = scope.ServiceProvider.GetRequiredService<IVehicleChargerService>();
@@ -61,6 +60,9 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                         { "deviceId", chargingPointdataDTO.ChargingPointId.ToString() }
                     };
                     vehicleChargerService.AddVehicleChargingPointMeasurement(fields, tags);
+
+                    // put this above when client is optimized for actions
+                    _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
                 }
                 return;
             };

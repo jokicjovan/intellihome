@@ -20,6 +20,7 @@ import ActionData from "../../../../models/interfaces/Action.ts";
 import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
 import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
+import EVChargerControl from "../VEU/EVChargerControl.tsx";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -182,10 +183,11 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                        deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                                 deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
-                                    deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                    deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
+                                        deviceType == "VehicleCharger" ? <EVChargerControl vehicleCharger={smartDevice}/> :
                                     <></>
 
 
