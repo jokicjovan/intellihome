@@ -38,5 +38,12 @@ namespace IntelliHome_Backend.Features.Home.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetAvailabilityData(Guid id, DateTime from, DateTime to)
+        {
+            List<AvailabilityData> result = _smartDeviceService.GetAvailabilityData(id, from, to);
+            return Ok(result);
+        }
+
     }
 }

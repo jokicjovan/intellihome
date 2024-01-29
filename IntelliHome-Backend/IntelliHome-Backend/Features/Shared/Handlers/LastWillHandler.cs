@@ -37,7 +37,6 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             smartDevice.IsConnected = false;
             await smartDeviceService.Update(smartDevice);
 
-            //TODO: Sent to influx
             smartDeviceService.UpdateAvailability(new List<Guid> { deviceId }, false);
 
             _smartDeviceHubContext.Clients.Group(deviceId.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isConnected = smartDevice.IsConnected }));

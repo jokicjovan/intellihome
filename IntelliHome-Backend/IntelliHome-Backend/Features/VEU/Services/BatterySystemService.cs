@@ -38,7 +38,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             await _batterySystemRepository.Update(entity);
             var fields = new Dictionary<string, object>
             {
-                { "isConnected", true }
+                { "isConnected", 1 }
 
             };
             var tags = new Dictionary<string, string>

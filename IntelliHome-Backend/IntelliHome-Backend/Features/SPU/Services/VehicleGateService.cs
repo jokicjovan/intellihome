@@ -45,7 +45,7 @@ namespace IntelliHome_Backend.Features.SPU.Services
             await _vehicleGateRepository.Update(entity);
             var fields = new Dictionary<string, object>
             {
-                { "isConnected", true }
+                { "isConnected", 1 }
 
             };
             var tags = new Dictionary<string, string>

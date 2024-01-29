@@ -1,5 +1,6 @@
 ﻿using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Repositories.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
@@ -62,7 +63,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             {
                 var fields = new Dictionary<string, object>
                 {
-                    { "isConnected", isConnected }
+                    { "isConnected", isConnected ? 1 : 0 }
 
                 };
                 var tags = new Dictionary<string, string>
@@ -72,6 +73,11 @@ namespace IntelliHome_Backend.Features.Home.Services
                 _smartDeviceDataRepository.AddPoint(fields, tags);
             }
             
+        }
+
+        public List<AvailabilityData> GetAvailabilityData(Guid id, DateTime from, DateTime to)
+        {
+            return _smartDeviceDataRepository.GetAvailabilityData(id, from, to);
         }
 
         public async Task<(IEnumerable<SmartDeviceDTO>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize)

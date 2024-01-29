@@ -43,7 +43,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
             await _washingMachineRepository.Update(entity);
             var fields = new Dictionary<string, object>
             {
-                { "isConnected", true }
+                { "isConnected", 1 }
 
             };
             var tags = new Dictionary<string, string>

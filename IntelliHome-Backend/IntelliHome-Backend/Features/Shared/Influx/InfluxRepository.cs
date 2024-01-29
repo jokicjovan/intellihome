@@ -54,6 +54,57 @@ namespace IntelliHome_Backend.Features.Shared.Influx
             }
         }
 
+        public async Task<IEnumerable<FluxTable>> GetHistoricalAvailability(Guid deviceId, DateTime from, DateTime to)
+        {
+            if (to == from)
+            {
+                to = to.AddSeconds(1);
+            }
+            // var query = $"from(bucket: \"{_bucket}\") " +
+            //             $"|> range(start: {from:yyyy-MM-ddTHH:mm:ssZ}, stop: {to:yyyy-MM-ddTHH:mm:ssZ}) " +
+            //             $"|> filter(fn: (r) => r.deviceId == \"{deviceId}\" and r._measurement == \"availability\") " +
+            //             $"|> group(columns: [\"_time\", \"_measurement\", \"deviceId\"])";
+
+            // var query = $"from(bucket: \"{_bucket}\") " +
+            //             $"|> range(start: -1d) " +
+            //             $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\") " +
+            //             $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")  " +
+            //             $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")  " +
+            //             $"|> aggregateWindow(every: 1m, fn: last, createEmpty: true) " +
+            //             $"|> yield(name: \"last\")";
+
+            var query = $"import \"interpolate\"" +
+                         $"from(bucket: \"{_bucket}\")" +
+                         $"|> range(start: -2d)" +
+                         $"|> filter(fn: (r) => r[\"_measurement\"] == \"availability\")" +
+                         $"|> filter(fn: (r) => r[\"_field\"] == \"isConnected\")" +
+                         $"|> filter(fn: (r) => r[\"deviceId\"] == \"{deviceId}\")" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      r with" + 
+                         $"      _value: if exists r._value then float(v: r._value) else 0.0" +
+                         $"  }}))  " +
+                         $"|> interpolate.linear(every: 1m)" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      r with" +
+                         $"      _value: if r._value > 0.5 then 1.0 else 0.0" +
+                         $"  }}))" +
+                         $"|> window(every: 1h, createEmpty: true)" +
+                         $"|> stateDuration(fn: (r) => r._value == 1, unit:1m)" +
+                         $"|> last()" +
+                         $"|> map(fn: (r) => ({{" +
+                         $"      time: r._time," +
+                         $"      duration: r.stateDuration + 1," +
+                         $"      percentage: (r.stateDuration + 1) * 100 / 60," +
+                         $"      units: \"d\"" +
+                         $"  }}))" +
+                         $"|> group(columns: [\"time\"])";
+
+
+
+            return await QueryFromInfluxAsync(query);
+        
+        }
+
         public async Task<IEnumerable<FluxTable>> GetHistoricalData(string measurement, Guid deviceId, DateTime from, DateTime to)
         {
             if (to == from)

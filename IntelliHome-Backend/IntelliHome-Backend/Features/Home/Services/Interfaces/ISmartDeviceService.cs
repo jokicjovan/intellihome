@@ -1,4 +1,5 @@
 ﻿using Data.Models.Shared;
+using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,5 +15,6 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task<bool> IsUserAllowed(Guid smartDeviceId, Guid userId);
         Task TurnOnSmartDevice(Guid id, bool turnOn);
         void UpdateAvailability(List<Guid> smartDevices, Boolean isConnected);
+        List<AvailabilityData> GetAvailabilityData(Guid id, DateTime from, DateTime to);
     }
 }
