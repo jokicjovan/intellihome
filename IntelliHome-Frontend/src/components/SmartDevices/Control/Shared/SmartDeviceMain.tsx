@@ -17,6 +17,9 @@ import SolarPanelReport from "../VEU/SolarPanelReport.tsx";
 import GateReport from "../SPU/GateReport.tsx";
 import HomeReport from "../VEU/HomeReport.tsx";
 import ActionData from "../../../../models/interfaces/Action.ts";
+import SprinklerControl from "../SPU/SprinklerControl.tsx";
+import SprinklerReport from "../SPU/SprinklerReport.tsx";
+import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -45,6 +48,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }));
             result.isConnected !== undefined && setIsConnected(result.isConnected);
             result.isOn !== undefined && setIsOn(result.isOn);
+            console.log(result)
         }
     };
 
@@ -166,17 +170,22 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }} onClick={() => setSelectedTab(0)} fontSize="25px" fontWeight="500">Control</Typography>
             <Typography px={2} py={1} sx={{
                 backgroundColor: selectedTab == 1 ? "#FBC40E" : "#D0D2E1",
-                borderRadius: "0px 12px 12px 0px",
+                borderRadius: "0px",
                 ':hover': {backgroundColor: selectedTab == 1 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(1)} fontSize="25px" fontWeight="500">Reports</Typography>
+            <Typography px={2} py={1} sx={{
+                backgroundColor: selectedTab == 2 ? "#FBC40E" : "#D0D2E1",
+                borderRadius: "0px 12px 12px 0px",
+                ':hover': {backgroundColor: selectedTab == 2 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
+            }} onClick={() => setSelectedTab(2)} fontSize="25px" fontWeight="500">Availability</Typography>
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                     deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ?
-                                <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                                 deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
+                                    deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
                                     <></>
 
 
@@ -184,10 +193,12 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ?
-                                <GateReport device={smartDevice} report={report}/> :
+                            deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
-                                    <></> : <></>}
+                                    deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
+                                    <></>
+                : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
+                : <></>}
 
     </>
 }

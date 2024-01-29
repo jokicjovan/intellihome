@@ -30,15 +30,16 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
 
         private async Task HandleLastWillMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
-                Guid deviceId = Guid.Parse(e.ApplicationMessage.ConvertPayloadToString());
-                SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
-                smartDevice.IsConnected = false;
-                await smartDeviceService.Update(smartDevice);
-                _smartDeviceHubContext.Clients.Group(deviceId.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isConnected = smartDevice.IsConnected }));
-            }
+            using var scope = _serviceProvider.CreateScope();
+            ISmartDeviceService smartDeviceService = scope.ServiceProvider.GetRequiredService<ISmartDeviceService>();
+            Guid deviceId = Guid.Parse(e.ApplicationMessage.ConvertPayloadToString());
+            SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
+            smartDevice.IsConnected = false;
+            await smartDeviceService.Update(smartDevice);
+
+            smartDeviceService.UpdateAvailability(new List<Guid> { deviceId }, false);
+
+            _smartDeviceHubContext.Clients.Group(deviceId.ToString()).ReceiveSmartDeviceData(JsonConvert.SerializeObject(new { isConnected = smartDevice.IsConnected }));
         }
 
     }

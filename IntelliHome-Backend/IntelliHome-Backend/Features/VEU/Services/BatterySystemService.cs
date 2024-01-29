@@ -1,5 +1,6 @@
 ﻿using Data.Models.SPU;
 using Data.Models.VEU;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
@@ -14,24 +15,37 @@ namespace IntelliHome_Backend.Features.VEU.Services
         private readonly IBatterySystemRepository _batterySystemRepository;
         private readonly IBatterySystemDataRepository _batterySystemDataRepository;
         private readonly IBatterySystemHandler _batterySystemHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
-        public BatterySystemService(IBatterySystemRepository batterySystemRepository, IBatterySystemHandler batterySystemHandler,
-            IBatterySystemDataRepository batterySystemDataRepository)
+        public BatterySystemService(
+            IBatterySystemRepository batterySystemRepository, 
+            IBatterySystemHandler batterySystemHandler,
+            IBatterySystemDataRepository batterySystemDataRepository, 
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _batterySystemRepository = batterySystemRepository;
             _batterySystemHandler = batterySystemHandler;
             _batterySystemDataRepository = batterySystemDataRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public async Task<BatterySystem> Create(BatterySystem entity)
         {
             entity = await _batterySystemRepository.Create(entity);
             bool success = await _batterySystemHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _batterySystemRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _batterySystemRepository.Update(entity);
-            }
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

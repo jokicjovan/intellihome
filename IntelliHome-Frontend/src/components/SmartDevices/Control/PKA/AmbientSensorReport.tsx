@@ -11,9 +11,7 @@ const AmbientSensorReport = ({device}) => {
 
     useEffect(() => {
         if (ambientSensor!==undefined) {
-            console.log("USO")
             axios.get(environment + `/api/AmbientSensor/GetHistoricalData?Id=${ambientSensor.id}&From=${startDate.toISOString()}&To=${endDate.toISOString()}`).then(res => {
-                    // setHistoricalData(res.data)
                     let data = [['date', 'temperature', 'humidity']]
                     res.data.forEach((entry) => {
                         data.push([new Date(entry.timestamp), entry.temperature, entry.humidity])

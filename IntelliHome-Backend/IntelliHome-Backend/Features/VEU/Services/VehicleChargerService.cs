@@ -34,11 +34,19 @@ namespace IntelliHome_Backend.Features.VEU.Services
         {
             entity = await _vehicleChargerRepository.Create(entity);
             bool success = await _vehicleChargerHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _vehicleChargerRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _vehicleChargerRepository.Update(entity);
-            }
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 
