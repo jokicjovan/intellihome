@@ -91,6 +91,16 @@ namespace IntelliHome_Backend.Features.VEU.Services
             return _solarPanelSystemDataRepository.GetProductionHistoricalData(id, from, to);
         }
 
+        public void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
+        {
+            _solarPanelSystemDataRepository.AddActionMeasurement(fields, tags);
+        }
+
+        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            return _solarPanelSystemDataRepository.GetActionHistoricalData(id, from, to);
+        }
+
         public async Task Toggle(Guid id, String togglerUsername, bool turnOn = true)
         {
             SolarPanelSystem solarPanelSystem = await _solarPanelSystemRepository.FindWithSmartHome(id);
@@ -112,11 +122,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 { "actionBy", togglerUsername},
                 { "deviceId", id.ToString()}
             };
-            _solarPanelSystemDataRepository.AddActionMeasurement(fields, tags);
-        }
-        public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
-        {
-            return _solarPanelSystemDataRepository.GetActionHistoricalData(id, from, to);
+            AddActionMeasurement(fields, tags);
         }
     }
 }

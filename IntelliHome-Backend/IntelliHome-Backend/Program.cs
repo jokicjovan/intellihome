@@ -103,6 +103,8 @@ builder.Services.AddScoped<IVehicleGateDataRepository, VehicleGateDataRepository
 builder.Services.AddScoped<IBatterySystemDataRepository, BatterySystemDataRepository>();
 builder.Services.AddScoped<ISolarPanelSystemDataRepository, SolarPanelSystemDataRepository>();
 builder.Services.AddScoped<ISmartHomeDataRepository, SmartHomeDataRepository>();
+builder.Services.AddScoped<IVehicleChargerDataRepository, VehicleChargerDataRepository>();
+builder.Services.AddScoped<IVehicleChargingPointDataRepository, VehicleChargingPointDataRepository>();
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

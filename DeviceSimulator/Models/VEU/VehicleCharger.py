@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import json
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 
 from Models.SmartDevice import SmartDevice
@@ -21,18 +21,18 @@ class ChargingPoint:
     start_time: datetime.datetime = datetime.datetime.now()
     end_time: datetime.datetime = datetime.datetime.min
     status: ChargingStatus = ChargingStatus.CHARGING
-    total_consumption: float = 0
+    # total_consumption: float = 0
 
     def serialize(self):
         return {
             "chargingPointId": self.charging_point_id,
             "capacity": round(self.capacity, 4),
+            "chargeLimit": round(self.charge_limit, 2),
             "currentCapacity": round(self.current_capacity, 4),
-            "chargeLimit": round(self.charge_limit, 4),
+            # "totalConsumption": round(self.total_consumption, 4),
             "startTime": self.start_time.isoformat(),
             "endTime": self.end_time.isoformat(),
-            "status": self.status,
-            "totalConsumption": round(self.total_consumption, 4)
+            "status": self.status
         }
 
 
@@ -80,9 +80,12 @@ class VehicleCharger(SmartDevice):
 
                             charging_point.end_time = datetime.datetime.now()
                             charging_point.status = ChargingStatus.FINISHED
+                            self.client.publish(self.send_topic, json.dumps({
+                                "action": "chargingFinished", "chargingPointId": charging_point.charging_point_id}),
+                                                retain=False)
 
                         charging_point.current_capacity += current_charge_per_point
-                        charging_point.total_consumption += current_charge_per_point
+                        # charging_point.total_consumption += current_charge_per_point
                         consumption_per_minute += current_charge_per_point
 
             serialized_data = [charging_point.serialize() for charging_point in

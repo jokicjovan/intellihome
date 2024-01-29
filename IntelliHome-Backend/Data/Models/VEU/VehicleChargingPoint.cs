@@ -6,8 +6,10 @@ namespace Data.Models.VEU
     public class VehicleChargingPoint : IBaseEntity
     {
         public Guid Id { get; set; }
-        [NotMapped]
-        public Boolean IsFree { get; set; } = false;
+        public Boolean IsFree { get; set; }
+        public double InitialCapacity { get; set; }
+        public double MaxCapacity { get; set; }
+        public double ChargeLimit { get; set; }
         public VehicleCharger VehicleCharger { get; set; }
 
         public VehicleChargingPoint()

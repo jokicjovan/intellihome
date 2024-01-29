@@ -1,4 +1,6 @@
-﻿using IntelliHome_Backend.Features.VEU.DTOs;
+﻿using IntelliHome_Backend.Features.Shared.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Services;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -36,9 +38,8 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<IActionResult> Get(Guid id)
         {
-            //BatterySystemDTO result = await _batterySystemService.GetWithCapacityData(id);
-            //return Ok(result);
-            return Ok();
+            VehicleChargerDTO result = await _vehicleChargerService.GetWithChargingPointsData(id);
+            return Ok(result);
         }
 
         [HttpPut]
@@ -54,6 +55,18 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
             string username = identity.FindFirst(ClaimTypes.Name).Value;
             await _vehicleChargerService.Toggle(id, username,turnOn);
             return Ok();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
+        {
+            if (from > to)
+            {
+                return BadRequest("FROM date cant be after TO date");
+            }
+            List<ActionDataDTO> result = _vehicleChargerService.GetActionHistoricalData(id, from, to);
+            return Ok(result);
         }
     }
 }

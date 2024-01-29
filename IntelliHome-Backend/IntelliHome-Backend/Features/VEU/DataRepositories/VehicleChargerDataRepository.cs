@@ -21,21 +21,10 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             _influxRepository.WriteToInfluxAsync("vehicleChargerAction", fields, tags);
         }
 
-        public void AddVehicleChargingPointMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags)
-        {
-            _influxRepository.WriteToInfluxAsync("vehicleChargingPoint", fields, tags);
-        }
-
         public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
         {
             var result = _influxRepository.GetHistoricalData("vehicleChargerAction", id, from, to).Result;
             return result.Select(ConvertToActionDataDTO).ToList();
-        }
-
-        public List<VehicleChargingPointDataDTO> GetVehicleChargingPointHistoricalData(Guid id, DateTime from, DateTime to)
-        {
-            var result = _influxRepository.GetHistoricalData("vehicleChargingPoint", id, from, to).Result;
-            return result.Select(ConvertToVehicleChargingPointDataDTO).ToList();
         }
 
         private ActionDataDTO ConvertToActionDataDTO(FluxTable table)
@@ -55,24 +44,6 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
                 Timestamp = timestamp,
                 Action = action,
                 ActionBy = actionBy
-            };
-        }
-
-        private VehicleChargingPointDataDTO ConvertToVehicleChargingPointDataDTO(FluxTable table)
-        {
-            var rows = table.Records;
-            DateTime timestamp = DateTime.Parse(rows[0].GetValueByKey("_time").ToString());
-            TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
-            timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
-
-            var currentCapacityRecord = rows.FirstOrDefault(r => r.Row.Contains("currentCapacity"));
-            double currentCapacity = currentCapacityRecord != null ? Convert.ToDouble(currentCapacityRecord.GetValueByKey("_value")) : 0.0;
-
-            return new VehicleChargingPointDataDTO
-            {
-                Timestamp = timestamp,
-                CurrentCapacity = currentCapacity
-
             };
         }
     }

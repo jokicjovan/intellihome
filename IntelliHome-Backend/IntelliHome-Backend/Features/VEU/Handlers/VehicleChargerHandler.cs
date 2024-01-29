@@ -13,6 +13,7 @@ using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
+using IntelliHome_Backend.Features.VEU.Services;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -38,24 +39,47 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             using var scope = serviceProvider.CreateScope();
             var vehicleChargerService = scope.ServiceProvider.GetRequiredService<IVehicleChargerService>();
             var vehicleCharger = await vehicleChargerService.Get(Guid.Parse(vehicleChargerId));
+            if (vehicleCharger == null) {
+                return;
+            }
+
             var vehicleChargerData = JsonConvert.DeserializeObject<VehicleChargerDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
-            if (vehicleCharger != null && vehicleChargerData != null)
+            if (vehicleChargerData != null)
             {
-                foreach(VehicleChargingPointDataDTO chargingPointdataDTO in vehicleChargerData.BusyChargingPoints) {
+                foreach (VehicleChargingPointDataDTO chargingPointdataDTO in vehicleChargerData.BusyChargingPoints)
+                {
+
                     var fields = new Dictionary<string, object>
                     {
-                        { "totalConsumption", chargingPointdataDTO.TotalConsumption},
+                        { "startTime", chargingPointdataDTO.StartTime},
+                        { "endTime", chargingPointdataDTO.EndTime},
                         { "currentCapacity", chargingPointdataDTO.CurrentCapacity},
                         { "status", chargingPointdataDTO.Status},
                     };
                     var tags = new Dictionary<string, string>
                     {
-                        { "deviceId", vehicleCharger.Id.ToString() },
-                        { "charginPointId", chargingPointdataDTO.ChargingPointId.ToString()}
+                        { "deviceId", chargingPointdataDTO.ChargingPointId.ToString() }
                     };
-                    //vehicleChargerService.AddProductionMeasurement(fields, tags);
+                    vehicleChargerService.AddVehicleChargingPointMeasurement(fields, tags);
                 }
+                return;
             };
+
+            var vehicleChargingPointActionData = JsonConvert.DeserializeObject<VehicleChargingPointActionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
+            if (vehicleChargingPointActionData != null)
+            {
+                var fields = new Dictionary<string, object>
+                {
+                    { "action", vehicleChargingPointActionData.Action }
+
+                };
+                var tags = new Dictionary<string, string>
+                {
+                    { "actionBy", "SYSTEM"},
+                    { "deviceId", vehicleCharger.Id.ToString()}
+                };
+                vehicleChargerService.AddActionMeasurement(fields, tags);
+            }
         }
 
         public override Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)

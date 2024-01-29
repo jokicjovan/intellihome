@@ -9,8 +9,9 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
     {
         void AddProductionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         List<SolarPanelSystemProductionDataDTO> GetProductionHistoricalData(Guid id, DateTime from, DateTime to);
-        List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
         Task<SolarPanelSystemDTO> GetWithProductionData(Guid id);
+        void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
+        List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
         Task Toggle(Guid id, String togglerUsername, bool turnOn = true);
     }
 }
