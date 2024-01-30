@@ -11,6 +11,9 @@ namespace Data.Models.VEU
         public double? InitialCapacity { get; set; }
         public double? Capacity { get; set; }
         public double? ChargeLimit { get; set; }
+        public String? Status { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         [JsonIgnore]
         public VehicleCharger VehicleCharger { get; set; }
 

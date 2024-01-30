@@ -67,17 +67,17 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Capacity = vehicleChargingPointCreationDTO.Capacity,
                 InitialCapacity = vehicleChargingPointCreationDTO.InitialCapacity
             };
-            await _vehicleChargerService.ConnectToCharger(vehicleChargerId, vehicleChargingPoint);
-            return Ok();
+            VehicleCharger vehicleCharger = await _vehicleChargerService.ConnectToCharger(vehicleChargerId, vehicleChargingPoint);
+            return Ok("Successfully connected to charger (charging point)!");
         }
 
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> DisconnectToCharger(Guid vehicleChargerId, Guid vehicleChargingPointId)
+        public async Task<ActionResult> DisconnectFromCharger(Guid vehicleChargerId, Guid vehicleChargingPointId)
         {
-            await _vehicleChargerService.DisconnectCharger(vehicleChargerId, vehicleChargingPointId);
-            return Ok();
+            await _vehicleChargerService.DisconnectFromCharger(vehicleChargerId, vehicleChargingPointId);
+            return Ok("Successfully disconnected from charger (charging point)!");
         }
     }
 }

@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import json
 from dataclasses import dataclass
 from enum import Enum
@@ -16,23 +15,20 @@ class ChargingStatus(str, Enum):
 class ChargingPoint:
     charging_point_id: str
     capacity: float
+    initial_capacity: float
     current_capacity: float
     charge_limit: float
-    start_time: datetime.datetime = datetime.datetime.now()
-    end_time: datetime.datetime = datetime.datetime.min
     status: ChargingStatus = ChargingStatus.CHARGING
 
     # total_consumption: float = 0
 
     def serialize(self):
         return {
-            "chargingPointId": self.charging_point_id,
+            "id": self.charging_point_id,
             "capacity": round(self.capacity, 4),
             "chargeLimit": round(self.charge_limit, 2),
             "currentCapacity": round(self.current_capacity, 4),
-            # "totalConsumption": round(self.total_consumption, 4),
-            "startTime": self.start_time.isoformat(),
-            "endTime": self.end_time.isoformat(),
+            "initialCapacity": round(self.initial_capacity, 4),
             "status": self.status
         }
 
@@ -50,9 +46,10 @@ class VehicleCharger(SmartDevice):
             data = json.loads(msg.payload.decode())
             if data.get("action") == "chargingPointConnected":
                 if len(self.free_charging_points) > 0:
-                    self.busy_charging_points[data.get("charging_pointId")] = (
+                    self.busy_charging_points[data.get("chargingPointId")] = (
                         ChargingPoint(data.get("chargingPointId"),
                                       float(data.get("capacity")),
+                                      float(data.get("currentCapacity")),
                                       float(data.get("currentCapacity")),
                                       float(data.get("chargeLimit"))))
                     self.free_charging_points.remove(data.get("chargingPointId"))
@@ -83,14 +80,12 @@ class VehicleCharger(SmartDevice):
                                                          charging_point.capacity *
                                                          charging_point.charge_limit)
 
-                            charging_point.end_time = datetime.datetime.now()
                             charging_point.status = ChargingStatus.FINISHED
                             self.client.publish(self.send_topic, json.dumps({
                                 "action": "chargingFinished", "chargingPointId": charging_point.charging_point_id}),
                                                 retain=False)
 
                         charging_point.current_capacity += current_charge_per_point
-                        # charging_point.total_consumption += current_charge_per_point
                         consumption_per_minute += current_charge_per_point
 
             serialized_data = [charging_point.serialize() for charging_point in

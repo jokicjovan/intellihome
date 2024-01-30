@@ -39,26 +39,12 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
             timestamp = TimeZoneInfo.ConvertTime(timestamp, localTimeZone);
 
             var currentCapacityRecord = rows.FirstOrDefault(r => r.Row.Contains("currentCapacity"));
-            var totalConsumptionRecord = rows.FirstOrDefault(r => r.Row.Contains("totalConsumption"));
-            var startTimeRecord = rows.FirstOrDefault(r => r.Row.Contains("startTime"));
-            var endTimeRecord = rows.FirstOrDefault(r => r.Row.Contains("endTime"));
-
             double currentCapacity = currentCapacityRecord != null ? Convert.ToDouble(currentCapacityRecord.GetValueByKey("_value")) : 0.0;
-            double totalConsumption = totalConsumptionRecord != null ? Convert.ToDouble(totalConsumptionRecord.GetValueByKey("_value")) : 0.0;
-            DateTime startTime = startTimeRecord != null ? DateTime.Parse(Convert.ToString(startTimeRecord.GetValueByKey("_value"))) : DateTime.MinValue;
-            DateTime endTime = endTimeRecord != null ? DateTime.Parse(Convert.ToString(endTimeRecord.GetValueByKey("_value"))) : DateTime.MinValue;
-
-            var statusRecord = rows.FirstOrDefault(r => r.Row.Contains("status"));
-            String status = statusRecord != null ? Convert.ToString(statusRecord.GetValueByKey("_value")) : "CHARGING";
-
 
             return new VehicleChargingPointDataDTO
             {
                 Timestamp = timestamp,
-                CurrentCapacity = currentCapacity,
-                StartTime = startTime,
-                EndTime = endTime,
-                Status = status
+                CurrentCapacity = currentCapacity
             };
         }
     }

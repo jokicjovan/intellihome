@@ -9,11 +9,10 @@ using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using IntelliHome_Backend.Features.Home.Handlers;
 using Data.Models.VEU;
-using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
-using IntelliHome_Backend.Features.VEU.Services;
+using Newtonsoft.Json.Serialization;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -45,25 +44,47 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
             var vehicleChargerData = JsonConvert.DeserializeObject<VehicleChargerDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
             if (vehicleChargerData.BusyChargingPoints != null)
             {
+                List<VehicleChargingPointDTO> busyChargingPoints = new List<VehicleChargingPointDTO>();
                 foreach (VehicleChargingPointDataDTO chargingPointdataDTO in vehicleChargerData.BusyChargingPoints)
                 {
-
                     var fields = new Dictionary<string, object>
                     {
-                        { "startTime", chargingPointdataDTO.StartTime},
-                        { "endTime", chargingPointdataDTO.EndTime},
-                        { "currentCapacity", chargingPointdataDTO.CurrentCapacity},
-                        { "status", chargingPointdataDTO.Status},
+                        { "currentCapacity", chargingPointdataDTO.CurrentCapacity}
                     };
                     var tags = new Dictionary<string, string>
                     {
-                        { "deviceId", chargingPointdataDTO.ChargingPointId.ToString() }
+                        { "deviceId", chargingPointdataDTO.Id.ToString() }
                     };
                     vehicleChargerService.AddVehicleChargingPointMeasurement(fields, tags);
 
-                    // put this above when client is optimized for actions
-                    _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
+
+                    VehicleChargingPoint chargingPoint = vehicleCharger.ChargingPoints.FirstOrDefault(e => e.Id == chargingPointdataDTO.Id);
+                    if (chargingPoint == null)
+                    {
+                        continue;
+                    }
+                    VehicleChargingPointDTO busyChargingPoint = new VehicleChargingPointDTO
+                    {
+                        CurrentCapacity = chargingPointdataDTO.CurrentCapacity,
+                        Id = chargingPointdataDTO.Id,
+                        ChargeLimit = chargingPoint.ChargeLimit,
+                        Status = chargingPoint.Status,
+                        Capacity = chargingPoint.Capacity,
+                        StartTime = chargingPoint.StartTime,
+                        EndTime = chargingPoint.EndTime,
+                        InitialCapacity = chargingPoint.InitialCapacity
+                    };
+                    busyChargingPoints.Add(busyChargingPoint);
                 }
+                var serializerSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy()
+                    }
+                };
+                var payload = JsonConvert.SerializeObject(new { ConsumptionPerMinute = vehicleChargerData.ConsumptionPerMinute, BusyChargingPoints = busyChargingPoints}, serializerSettings);
+                _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(payload);
                 return;
             };
 
@@ -81,6 +102,20 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                     { "deviceId", vehicleCharger.Id.ToString()}
                 };
                 vehicleChargerService.AddActionMeasurement(fields, tags);
+
+                VehicleChargingPoint chargingPoint = vehicleCharger.ChargingPoints.FirstOrDefault(e => e.Id == vehicleChargingPointActionData.ChargingPointId);
+                if (chargingPoint == null)
+                {
+                    return;
+                }
+                if (vehicleChargingPointActionData.Action == "chargingStarted") {
+                    chargingPoint.Status = "CHARGING";
+                    chargingPoint.StartTime = DateTime.Now;
+                }
+                else if (vehicleChargingPointActionData.Action == "chargingFinished") {
+                    chargingPoint.EndTime = DateTime.Now;
+                }
+                vehicleChargerService.Update(chargingPoint);
             }
         }
 

@@ -21,6 +21,7 @@ import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
 import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
 import EVChargerControl from "../VEU/EVChargerControl.tsx";
+import EVChargerReport from "../VEU/EVChargerReport.tsx";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -37,7 +38,6 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
-
         if(result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined){
             setReport(result);
         }
@@ -49,7 +49,6 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }));
             result.isConnected !== undefined && setIsConnected(result.isConnected);
             result.isOn !== undefined && setIsOn(result.isOn);
-            console.log(result)
         }
     };
 
@@ -194,10 +193,11 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
+                        deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
+                            deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
-                                    deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
+                                    deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
+                                        deviceType == "VehicleCharger" ? <EVChargerReport vehicleCharger={smartDevice}/> :
                                     <></>
                 : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
                 : <></>}

@@ -8,6 +8,7 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
     public interface IVehicleChargerService : ICrudService<VehicleCharger>
     {
+        Task<VehicleChargingPoint> Update(VehicleChargingPoint entity);
         Task<VehicleCharger> GetWithHome(Guid id);
         Task<VehicleChargerDTO> GetWithChargingPointsData(Guid id);
         void AddActionMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
@@ -16,6 +17,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         void AddVehicleChargingPointMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         List<VehicleChargingPointDataDTO> GetVehicleChargingPointHistoricalData(Guid id, DateTime from, DateTime to);
         Task<VehicleCharger> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPoint vehicleChargingPoint);
-        Task<VehicleCharger> DisconnectCharger(Guid vehicleChargerId, Guid vehicleChargingPointId);
+        Task<VehicleCharger> DisconnectFromCharger(Guid vehicleChargerId, Guid vehicleChargingPointId);
     }
 }
