@@ -184,7 +184,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8000", "http://localhost:4173", "https://accounts.google.com")
+            builder.WithOrigins("http://localhost:8000", "http://localhost:4173", "https://accounts.google.com", "http://localhost:8800")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -228,12 +228,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 
-app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"static/")),
-    RequestPath = new PathString("/static")
-});
+// app.UseStaticFiles();
+// app.UseStaticFiles(new StaticFileOptions()
+// {
+//     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"static/")),
+//     RequestPath = new PathString("/static")
+// });
 
 app.UseMiddleware<ExceptionMiddleware>(true);
 app.UseCookiePolicy(new CookiePolicyOptions()
