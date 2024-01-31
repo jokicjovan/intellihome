@@ -70,7 +70,7 @@ namespace IntelliHome_Backend.Features.Home.Repositories
         }
 
         public Task<List<SmartHome>> GetSmartHomesByCity(Guid cityId) {
-            return _entities.Include(e => e.City).AsNoTracking().Where(e => e.City.Id == cityId).ToListAsync();
+            return _entities.Include(e => e.City).Where(e => e.City.Id == cityId).ToListAsync();
         }
     }
 }

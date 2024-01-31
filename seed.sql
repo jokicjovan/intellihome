@@ -24,7 +24,7 @@ INSERT INTO "SmartHomes" ("Id", "Name", "Address", "CityId", "Area", "Type", "Nu
                           "Longitude", "IsApproved", "OwnerId")
 VALUES
     (gen_random_uuid(), 'Lepa kuca u zrenjaninu', 'Mise Dimitrijevica 124',
-     (SELECT "Cities"."Id" FROM "Cities" WHERE "Cities"."Name" = 'Novi Sad' AND "Cities"."Country"='Serbia'),
+     (SELECT "Cities"."Id" FROM "Cities" WHERE "Cities"."Name" = 'Zrenjanin' AND "Cities"."Country"='Serbia'),
      '50', 0, 2, 45.244320, 19.831070, true, (SELECT "Users"."Id" FROM "Users" WHERE "Username" = 'crni'));
 
 -- WashingMachineModes
