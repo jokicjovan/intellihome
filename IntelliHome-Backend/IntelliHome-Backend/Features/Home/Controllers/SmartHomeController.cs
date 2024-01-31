@@ -56,7 +56,7 @@ namespace IntelliHome_Backend.Features.Home.Controllers
             GetSmartHomeDTO smartHome;
             try
             {
-                smartHome = await _smartHomeService.GetSmartHomeDTO(Id);
+                smartHome = await _smartHomeService.GetSmartHomeDTOO(Id);
             }
             catch (Exception e)
             {

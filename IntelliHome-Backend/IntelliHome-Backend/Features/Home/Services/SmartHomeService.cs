@@ -12,6 +12,8 @@ using SendGrid;
 using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
+using IntelliHome_Backend.Features.Shared.Redis;
 
 namespace IntelliHome_Backend.Features.Home.Services
 {
@@ -22,22 +24,36 @@ namespace IntelliHome_Backend.Features.Home.Services
         private readonly IUserRepository _userRepository;
         private readonly ICityRepository _cityRepository;
         private readonly ISmartHomeHandler _smartHomeHandler;
+        private readonly IDataChangeListener _dataChangeListener;
 
         public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
-            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler)
+            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler, IDataChangeListener dataChangeListener)
         {
             _smartHomeRepository = smartHomeRepository;
             _smartHomeDataRepository = smartHomeDataRepository;
             _userRepository = userRepository;
             _cityRepository = cityRepository;
             _smartHomeHandler = smartHomeHandler;
+            _dataChangeListener = dataChangeListener;
         }
 
+        // public async Task<GetSmartHomeDTO> GetSmartHomeDTO(Guid Id)
+        // {
+        //     SmartHome smartHome = await _smartHomeRepository.Read(Id) ?? throw new ResourceNotFoundException("Smart house with provided Id not found!");
+        //     return new GetSmartHomeDTO(smartHome);
+        // }
 
-        public async Task<GetSmartHomeDTO> GetSmartHomeDTO(Guid Id)
-        {
+        public async Task<GetSmartHomeDTO> GetSmartHomeDTOO(Guid Id)
+        { 
+            string cacheKey = $"SmartHomeDTO:{Id}";
+            RedisRepository<GetSmartHomeDTO> redisRepository = new RedisRepository<GetSmartHomeDTO>("localhost");
+            GetSmartHomeDTO smartHomeDTO = redisRepository.Get(cacheKey);
+            if (smartHomeDTO != null) return smartHomeDTO;
             SmartHome smartHome = await _smartHomeRepository.Read(Id) ?? throw new ResourceNotFoundException("Smart house with provided Id not found!");
-            return new GetSmartHomeDTO(smartHome);
+            smartHomeDTO = new GetSmartHomeDTO(smartHome);
+            redisRepository.Add(cacheKey, smartHomeDTO);
+            return smartHomeDTO;
+
         }
 
         public async Task<GetSmartHomeDTO> CreateSmartHome(SmartHomeCreationDTO dto, String username)
@@ -72,16 +88,26 @@ namespace IntelliHome_Backend.Features.Home.Services
             };
 
             _smartHomeRepository.Create(smartHome);
-
+            _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
             return new GetSmartHomeDTO(smartHome);
+        }
 
-
+        public void DeleteSmartHomeDevicesCache(Guid smartHomeId)
+        {
+            string cacheKey = $"SmartDevicesForSmartHome:{smartHomeId}";
+            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
+            redisRepository.Delete(cacheKey);
         }
 
         public async Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters)
         {
             User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
             List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
+            // for all smartHomes registter listener for data change
+            foreach (var smartHome in smartHomes)
+            {
+                _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
+            }
             SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
             {
                 TotalCount = smartHomes.Count,

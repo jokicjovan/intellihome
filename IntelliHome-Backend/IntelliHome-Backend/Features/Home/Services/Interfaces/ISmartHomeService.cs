@@ -8,7 +8,7 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
 {
     public interface ISmartHomeService : ICrudService<SmartHome>
     {
-        Task<GetSmartHomeDTO> GetSmartHomeDTO(Guid Id);
+        Task<GetSmartHomeDTO> GetSmartHomeDTOO(Guid Id);
         Task<GetSmartHomeDTO> CreateSmartHome(SmartHomeCreationDTO dto, String username);
         Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters);
         Task ApproveSmartHome(Guid id);

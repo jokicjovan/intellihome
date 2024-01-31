@@ -63,6 +63,15 @@ services:
       - mqtt
     tty: true
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./Redis/data:/data
+    tty: true
+
   # device_simulator:
   #   image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
   #   container_name: device_simulator

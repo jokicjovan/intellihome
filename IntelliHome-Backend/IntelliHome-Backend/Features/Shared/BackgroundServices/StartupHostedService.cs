@@ -3,6 +3,8 @@ using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
+using IntelliHome_Backend.Features.Shared.Redis;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 
@@ -22,12 +24,14 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
             {
                 ILastWillHandler heartbeatService = scope.ServiceProvider.GetRequiredService<ILastWillHandler>();
                 ISimulationsHandler simulationService = scope.ServiceProvider.GetRequiredService<ISimulationsHandler>();
+                RedisRepository<object> redisRepository = scope.ServiceProvider.GetRequiredService<RedisRepository<object>>();
 
                 //eliminsanje lazy loadinga :(
                 ISmartHomeHandler smartHomeHandler = scope.ServiceProvider.GetRequiredService<ISmartHomeHandler>();
 
                 Task.Run(() => SetupDevicesFromDatabase());
                 Task.Run(() => heartbeatService.SetupLastWillHandler());
+                Task.Run(() => redisRepository.DeleteAll());
                 return Task.CompletedTask;
             }
         }
