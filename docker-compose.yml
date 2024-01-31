@@ -46,6 +46,23 @@ services:
       - mqtt
     tty: true
 
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "8800:80"
+    environment:
+      - NGINX_CONFIG=/etc/nginx/nginx.conf
+    volumes:
+      - ./Nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./Nginx/conf.d:/etc/nginx/conf.d
+      - ./Nginx/log:/var/log/nginx
+      - ./IntelliHome-Backend/IntelliHome-Backend:/data
+
+    networks:
+      - mqtt
+    tty: true
+
   # device_simulator:
   #   image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
   #   container_name: device_simulator
