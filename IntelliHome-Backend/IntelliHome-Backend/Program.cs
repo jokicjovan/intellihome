@@ -49,6 +49,7 @@ using IntelliHome_Backend.Features.Shared.BackgroundServices;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.Shared.Influx;
+using IntelliHome_Backend.Features.Shared.Redis;
 using Microsoft.Extensions.ObjectPool;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,6 +84,7 @@ builder.Services.AddSingleton(provider =>
 
     return new InfluxDbConnectionPool(objectPoolProvider, url, token, organization, bucket);
 });
+builder.Services.AddSingleton<RedisRepository<object>>();
 
 builder.Services.AddScoped(provider =>
 {
@@ -161,6 +163,8 @@ builder.Services.AddSingleton<ISolarPanelSystemHandler, SolarPanelSystemHandler>
 builder.Services.AddSingleton<IVehicleChargerHandler, VehicleChargerHandler>();
 builder.Services.AddSingleton<ISmartDeviceHandler, SmartDeviceHandler>();
 builder.Services.AddSingleton<ISmartHomeHandler, SmartHomeHandler>();
+
+builder.Services.AddSingleton<IDataChangeListener, DataChangeListener>();
 
 //Hosted services
 builder.Services.AddHostedService<StartupHostedService>();

@@ -42,5 +42,8 @@ namespace IntelliHome_Backend.Features.Home.DTOs
             // SmartDevices = smartHome.SmartDevices;
             Owner = new GetUserDTO(smartHome.Owner);
         }
+
+        public GetSmartHomeDTO()
+        { }
     }
 }

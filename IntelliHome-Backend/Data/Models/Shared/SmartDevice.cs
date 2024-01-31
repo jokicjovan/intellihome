@@ -18,5 +18,26 @@ namespace Data.Models.Shared
         [JsonIgnore]
         public List<User> AllowedUsers { get; set; }
 
+        public SmartDevice(Guid id, string name, string? image, SmartDeviceCategory category, SmartDeviceType type,
+            bool isConnected, bool isOn, SmartHome smartHome, List<User> allowedUsers)
+        {
+            Id = id;
+            Name = name;
+            Image = image;
+            Category = category;
+            Type = type;
+            IsConnected = isConnected;
+            IsOn = isOn;
+            SmartHome = smartHome;
+            AllowedUsers = allowedUsers;
+        }
+
+        public SmartDevice()
+        {
+            AllowedUsers = new List<User>();
+        }
+
+
+
     }
 }

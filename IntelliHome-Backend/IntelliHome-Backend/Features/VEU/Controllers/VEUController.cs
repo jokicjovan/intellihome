@@ -1,6 +1,7 @@
 ﻿using Data.Models.Shared;
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
@@ -20,16 +21,18 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         private readonly ISolarPanelSystemService _solarPanelSystemService;
         private readonly IVehicleChargerService _vehicleChargerService;
         private readonly IImageService _imageService;
+        private readonly IDataChangeListener _dataChangeListener;
 
         public VEUController(ISmartHomeService smartHomeService, IBatterySystemService batterySystemService,
                 ISolarPanelSystemService solarPanelSystemService, IVehicleChargerService vehicleChargerService,
-                IImageService imageService)
+                IImageService imageService, IDataChangeListener dataChangeListener)
         {
             _smartHomeService = smartHomeService;
             _batterySystemService = batterySystemService;
             _solarPanelSystemService = solarPanelSystemService;
             _vehicleChargerService = vehicleChargerService;
             _imageService = imageService;
+            _dataChangeListener = dataChangeListener;
         }
 
         [HttpPost]
@@ -47,6 +50,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             batterySystem = await _batterySystemService.Create(batterySystem);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(batterySystem);
         }
 
@@ -66,6 +70,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             solarPanelSystem = await _solarPanelSystemService.Create(solarPanelSystem);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(solarPanelSystem);
         }
 
@@ -85,6 +90,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleCharger = await _vehicleChargerService.Create(vehicleCharger);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(vehicleCharger);
         }
     }
