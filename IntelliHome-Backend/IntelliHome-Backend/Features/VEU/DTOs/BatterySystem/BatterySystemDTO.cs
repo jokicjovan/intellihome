@@ -1,11 +1,11 @@
 ﻿using IntelliHome_Backend.Features.Shared.DTOs;
 
-namespace IntelliHome_Backend.Features.VEU.DTOs
+namespace IntelliHome_Backend.Features.VEU.DTOs.BatterySystem
 {
     public class BatterySystemDTO : SmartDeviceDTO
     {
-        public Double Capacity { get; set; }
-        public Double CurrentCapacity { get; set; }
+        public double Capacity { get; set; }
+        public double CurrentCapacity { get; set; }
 
         public BatterySystemDTO()
         {
