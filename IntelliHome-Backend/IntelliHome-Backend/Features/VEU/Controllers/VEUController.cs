@@ -2,7 +2,9 @@
 using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
+using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +80,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Name = dto.Name,
                 Category = SmartDeviceCategory.VEU,
                 Type = SmartDeviceType.VEHICLECHARGER,
-                Power = dto.Power,
+                PowerPerHour = dto.PowerPerHour,
                 ChargingPoints = Enumerable.Range(0, dto.NumberOfChargingPoints).Select(_ => new VehicleChargingPoint { IsFree = true }).ToList(),
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };

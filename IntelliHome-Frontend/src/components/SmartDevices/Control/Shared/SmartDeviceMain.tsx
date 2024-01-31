@@ -21,6 +21,9 @@ import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
 import WashingMachineControl from "../PKA/WashingMachineControl";
 import WashingMachineReport from "../PKA/WashingMachineReport";
+import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
+import EVChargerControl from "../VEU/EVChargerControl.tsx";
+import EVChargerReport from "../VEU/EVChargerReport.tsx";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -37,8 +40,9 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
-
-        if(result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined){
+        if((result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined) ||
+            (result.action !== undefined && result.actionBy !== undefined && result.timestamp !== undefined))
+        {
             setReport(result);
         }
         else
@@ -49,7 +53,6 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }));
             result.isConnected !== undefined && setIsConnected(result.isConnected);
             result.isOn !== undefined && setIsOn(result.isOn);
-            console.log(result)
         }
     };
 
@@ -172,34 +175,41 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }} onClick={() => setSelectedTab(0)} fontSize="25px" fontWeight="500">Control</Typography>
             <Typography px={2} py={1} sx={{
                 backgroundColor: selectedTab == 1 ? "#FBC40E" : "#D0D2E1",
-                borderRadius: "0px 12px 12px 0px",
+                borderRadius: "0px",
                 ':hover': {backgroundColor: selectedTab == 1 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(1)} fontSize="25px" fontWeight="500">Reports</Typography>
+            <Typography px={2} py={1} sx={{
+                backgroundColor: selectedTab == 2 ? "#FBC40E" : "#D0D2E1",
+                borderRadius: "0px 12px 12px 0px",
+                ':hover': {backgroundColor: selectedTab == 2 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
+            }} onClick={() => setSelectedTab(2)} fontSize="25px" fontWeight="500">Availability</Typography>
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
-                deviceType == "AirConditioner" ?
-                    <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                    deviceType == "WashingMachine" ?
+                deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                deviceType == "WashingMachine" ?
                         <WashingMachineControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                            deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
-                                deviceType == "VehicleGate" ?
-                                    <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                                    deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
-                                        deviceType == "Sprinkler" ? <SprinklerControl smartDevice={smartDevice}
-                                                                                      setSmartDeviceParent={setSmartDevice}/> :
-                                            <></>
+                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                        deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
+                                    deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
+                                        deviceType == "VehicleCharger" ? <EVChargerControl vehicleCharger={smartDevice}/> :
+                                    <></>
 
 
             : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
                     deviceType == "WashingMachine" ? <WashingMachineReport device={smartDevice}/>:
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
+                        deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
+                            deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
                                     deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
-                                        <></> : <></>}
+                                    deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice} report={report}/> :
+                                        deviceType == "VehicleCharger" ? <EVChargerReport vehicleCharger={smartDevice} report={report}/> :
+                                    <></>
+                : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
+                : <></>}
 
     </>
 }

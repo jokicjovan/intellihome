@@ -1,6 +1,6 @@
 ﻿using Data.Models.VEU;
 using IntelliHome_Backend.Features.Shared.Services.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 
 namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
 {
@@ -9,6 +9,7 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         List<BatterySystemCapacityDataDTO> GetCapacityHistoricalData(Guid id, DateTime from, DateTime to);
         void AddCapacityMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         Task<BatterySystemDTO> GetWithCapacityData(Guid id);
-        Task ToggleBatterySystem(Guid id, bool turnOn);
+        Task Toggle(Guid id, bool turnOn);
+        Task<BatterySystem> GetWithHome(Guid id);
     }
 }

@@ -1,4 +1,4 @@
-﻿using IntelliHome_Backend.Features.VEU.DTOs;
+﻿using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<ActionResult> Toggle(Guid id, bool turnOn = true)
         {
-            await _batterySystemService.ToggleBatterySystem(id, turnOn);
+            await _batterySystemService.Toggle(id, turnOn);
             return Ok();
         }
     }

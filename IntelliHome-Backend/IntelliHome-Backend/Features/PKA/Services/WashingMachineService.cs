@@ -19,6 +19,7 @@ namespace IntelliHome_Backend.Features.PKA.Services
         private readonly IWashingMachineDataRepository _washingMachineDataRepository;
         private readonly IWashingMachineModeRepository _washingMachineModeRepository;
         private readonly IWashingMachineHandler _washingMachineHandler;
+        private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
         public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
             IWashingMachineModeRepository washingMachineModeRepository, IWashingMachineHandler washingMachineHandler, IWashingMachineDataRepository washingMachineDataRepository)
@@ -43,11 +44,19 @@ namespace IntelliHome_Backend.Features.PKA.Services
         {
             entity = await _washingMachineRepository.Create(entity);
             bool success = await _washingMachineHandler.ConnectToSmartDevice(entity);
-            if (success)
+            if (!success) return entity;
+            entity.IsConnected = true;
+            await _washingMachineRepository.Update(entity);
+            var fields = new Dictionary<string, object>
             {
-                entity.IsConnected = true;
-                await _washingMachineRepository.Update(entity);
-            }
+                { "isConnected", 1 }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "deviceId", entity.Id.ToString()}
+            };
+            _smartDeviceDataRepository.AddPoint(fields, tags);
             return entity;
         }
 

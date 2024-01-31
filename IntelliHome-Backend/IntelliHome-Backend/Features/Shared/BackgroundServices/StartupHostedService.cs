@@ -23,7 +23,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 ILastWillHandler heartbeatService = scope.ServiceProvider.GetRequiredService<ILastWillHandler>();
                 ISimulationsHandler simulationService = scope.ServiceProvider.GetRequiredService<ISimulationsHandler>();
 
-                //eliminsanje lazy loadinga
+                //eliminsanje lazy loadinga :(
                 ISmartHomeHandler smartHomeHandler = scope.ServiceProvider.GetRequiredService<ISmartHomeHandler>();
 
                 Task.Run(() => SetupDevicesFromDatabase());
@@ -98,6 +98,7 @@ namespace IntelliHome_Backend.Features.Shared.BackgroundServices
                 }).ToList();
                 await Task.WhenAll(connectTasks);
                 smartDeviceService.UpdateAll(smartDevices);
+                smartDeviceService.UpdateAvailability(smartDevices.Select(s => s.Id).ToList(), true);
             }
         }
     }

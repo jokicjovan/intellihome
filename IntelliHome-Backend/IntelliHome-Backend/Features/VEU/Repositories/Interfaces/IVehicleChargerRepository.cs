@@ -5,5 +5,6 @@ namespace IntelliHome_Backend.Features.VEU.Repositories.Interfaces
 {
     public interface IVehicleChargerRepository : ICrudRepository<VehicleCharger>
     {
+        Task<VehicleCharger> FindWithSmartHome(Guid id);
     }
 }

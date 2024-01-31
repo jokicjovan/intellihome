@@ -2,7 +2,7 @@
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Influx;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 
 namespace IntelliHome_Backend.Features.VEU.DataRepositories
 {
@@ -77,7 +77,6 @@ namespace IntelliHome_Backend.Features.VEU.DataRepositories
                 Action = action,
                 ActionBy = actionBy
             };
-
         }
 
     }
