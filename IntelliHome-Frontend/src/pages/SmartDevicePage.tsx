@@ -2,7 +2,7 @@ import {useParams} from "react-router-dom";
 import SmartDeviceMain from "../components/SmartDevices/Control/Shared/SmartDeviceMain";
 import {Box} from "@mui/material";
 
-const SmartDeviceHome = () => {
+const SmartDevicePage = () => {
     const { id, type } = useParams();
     return (
         <><Box
@@ -11,4 +11,4 @@ const SmartDeviceHome = () => {
     )
 }
 
-export default SmartDeviceHome;
+export default SmartDevicePage;

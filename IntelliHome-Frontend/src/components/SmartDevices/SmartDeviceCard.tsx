@@ -38,7 +38,7 @@ const SmartDeviceCard = (props) => {
             <div style={{ margin: "auto 5px" }}>
                 <img
                     src={environment + '/' + smartDevice.image}
-                    alt="Smart Home Image"
+                    alt="Smart HomePage Image"
                     style={{ width: "70px", height: "70px", minWidth:"70px", maxWidth:"70px", minHeight:"70px", maxHeight:"70px", border: "5px solid #343F71", borderRadius: "8px", marginLeft: "20px" }}
                 />
             </div>

@@ -1,7 +1,7 @@
-import PropertyRequests from "./PropertyRequests.tsx";
+import SmartHomeRequests from "./SmartHomeRequests.tsx";
 
 const AdminHome = () => {
-    return <PropertyRequests/>
+    return <SmartHomeRequests/>
 }
 
 

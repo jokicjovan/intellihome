@@ -2,9 +2,9 @@ import {Box, Button, Container, Dialog, Grid, TablePagination, TextField, Typogr
 import {Add} from "@mui/icons-material";
 import React, {useEffect} from "react";
 import axios from "axios";
-import SmartHomeCard from "./SmartHomeCard.tsx";
-import SmartHomeCreatingMap from "./SmartHomeCreatingMap.tsx";
-import SmartHomeCreatingInfo from "./SmartHomeCreatingInfo.tsx";
+import SmartHomeCard from "../SmartHome/SmartHomeCard.tsx";
+import SmartHomeCreatingMap from "../SmartHome/SmartHomeCreatingMap.tsx";
+import SmartHomeCreatingInfo from "../SmartHome/SmartHomeCreatingInfo.tsx";
 import {useMutation} from "react-query";
 import {environment} from "../../utils/Environment.ts";
 
@@ -233,7 +233,7 @@ const UserHome=()=>{
             {/* Buttons */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt:"30px" }}>
                 <Button onClick={button1Handler} sx={{ marginRight: "20px", background: "white", width: "7vw", height: "5vh", color: "black", border: '1px solid #FBC40E', fontWeight: "500", textTransform: "none", fontSize: "1.4rem" }}>{button1Text}</Button>
-                <Button onClick={button2Handler} sx={{ background: "#FBC40E", width: "7vw", height: "5vh", fontWeight: "500", textTransform: "none", fontSize: "1.4rem" }}>{button2Text}</Button>
+                <Button onClick={button2Handler} sx={{ background: "#FBC40E", width: "7vw", height: "5vh", fontWeight: "500", color: "black",textTransform: "none", fontSize: "1.4rem" }}>{button2Text}</Button>
             </Box>
         </Box>
     );

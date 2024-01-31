@@ -105,7 +105,7 @@ const SmartHomeApprovalCard = (props) => {
             <Container disableGutters sx={{ display: "flex", flexDirection: "row", marginY: "0vh", marginX: "5px 0" }}>
                 <img
                     src={environment + '/' + data.image}
-                    alt="Smart Home Image"
+                    alt="Smart HomePage Image"
                     style={{ width: "50px", height: "50px", border: "5px solid #343F71", borderRadius: "8px", margin: "10px" }}
                 />
                 <Container disableGutters sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start" }}>

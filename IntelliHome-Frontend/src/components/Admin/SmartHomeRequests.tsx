@@ -5,7 +5,7 @@ import SmartHomeApprovalCard from "./SmartHomeApprovalCart.tsx";
 import {environment} from "../../utils/Environment.ts";
 
 
-const PropertyRequests = () => {
+const SmartHomeRequests = () => {
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(8);
@@ -72,4 +72,4 @@ const PropertyRequests = () => {
     </Box>
 }
 
-export default PropertyRequests;
+export default SmartHomeRequests;

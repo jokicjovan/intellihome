@@ -63,7 +63,7 @@ const SmartDeviceReportAvailability = ({ deviceId }) => {
                         </MenuItem>
                     ))}
                 </Select>
-                <Box mx={3} my={10} display="flex" flexDirection="space-between" alignItems="center" sx={{width: "100%"}}>
+                <Box mx={3} my={10} display="flex" alignItems="center" sx={{width: "100%"}}>
                     <SmartDeviceAvailabilityPie online={onlinePercentage} offline={offlinePercentage} width={400} height={400}  />
                     <SmartDeviceAvailabilityBar data={data}  />
                 </Box>

@@ -5,21 +5,21 @@ import axios from 'axios';
 import React from 'react';
 import {AuthProvider} from "./security/AuthContext.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
-import SignIn from "./pages/SignIn.tsx";
-import SignUp from "./pages/SignUp";
-import Home from "./pages/Home.tsx";
+import SignInPage from "./pages/SignInPage.tsx";
+import SignUpPage from "./pages/SignUpPage.tsx";
+import HomePage from "./pages/HomePage.tsx";
 import {UnauthenticatedRoute} from "./security/UnauthenticatedRoute";
 import {AuthenticatedRoute} from "./security/AuthenticatedRoute";
 import {QueryClient, QueryClientProvider} from "react-query";
-import SuccessfulActivation from "./pages/SuccessfulActivation.tsx";
+import SuccessfulActivationPage from "./pages/SuccessfulActivationPage.tsx";
 import Layout from "./components/Shared/Layout";
-import AddAdmin from "./pages/AddAdmin";
+import AddAdminPage from "./pages/AddAdminPage.tsx";
 import LandingPage from "./pages/LandingPage";
 import {AdminRoute} from "./security/AdminRoute";
-import PasswordChange from "./pages/PasswordChange";
+import PasswordChangePage from "./pages/PasswordChangePage.tsx";
 import {AdminFirstTimeRoute} from "./security/AdminFirstTimeRoute";
-import SmartHome from "./pages/SmartHome.tsx";
-import SmartDeviceHome from "./pages/SmartDeviceHome";
+import SmartHomePage from "./pages/SmartHomePage.tsx";
+import SmartDevicePage from "./pages/SmartDevicePage.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -36,16 +36,16 @@ const theme = createTheme({
 });
 
 const router = createBrowserRouter([
-    {path:"/signin", element: <UnauthenticatedRoute><SignIn/></UnauthenticatedRoute>},
-    {path:"/signup", element: <UnauthenticatedRoute><SignUp/></UnauthenticatedRoute>},
-    {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
+    {path:"/signin", element: <UnauthenticatedRoute><SignInPage/></UnauthenticatedRoute>},
+    {path:"/signup", element: <UnauthenticatedRoute><SignUpPage/></UnauthenticatedRoute>},
+    {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivationPage/></UnauthenticatedRoute>},
     {path:"/index", element: <UnauthenticatedRoute><LandingPage/></UnauthenticatedRoute>},
-    {path:"/home", element: <AuthenticatedRoute><Layout><Home/></Layout></AuthenticatedRoute>},
+    {path:"/home", element: <AuthenticatedRoute><Layout><HomePage/></Layout></AuthenticatedRoute>},
     {path:"/consumption", element: <AuthenticatedRoute><AdminRoute></AdminRoute></AuthenticatedRoute>},
-    {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdmin/></Layout></AdminRoute></AuthenticatedRoute>},
-    {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChange/></AdminFirstTimeRoute></AuthenticatedRoute>},
-    {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHome/></Layout></AuthenticatedRoute>},
-    {path:"/smartDevice/:type/:id", element: <AuthenticatedRoute><Layout><SmartDeviceHome/></Layout></AuthenticatedRoute>},
+    {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdminPage/></Layout></AdminRoute></AuthenticatedRoute>},
+    {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChangePage/></AdminFirstTimeRoute></AuthenticatedRoute>},
+    {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHomePage/></Layout></AuthenticatedRoute>},
+    {path:"/smartDevice/:type/:id", element: <AuthenticatedRoute><Layout><SmartDevicePage/></Layout></AuthenticatedRoute>},
     {path:"*", element: <Navigate to="/signin" replace />},
 ])
 const queryClient = new QueryClient()

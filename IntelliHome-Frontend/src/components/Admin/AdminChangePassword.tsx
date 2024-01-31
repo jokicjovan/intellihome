@@ -3,7 +3,7 @@ import React, {useContext, useState} from "react";
 import axios from "axios";
 import {useMutation, useQueryClient} from "react-query";
 import {useNavigate} from "react-router-dom";
-import {AuthContext} from "../../security/AuthContext";
+import {AuthContext} from "../../security/AuthContext.tsx";
 import {environment} from "../../utils/Environment.ts";
 
 

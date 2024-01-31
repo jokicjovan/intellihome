@@ -245,18 +245,18 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
                     </Select>
                     <TextField value={modalTemperature} fullWidth type="number" name="temperatureSchedule"
                                onChange={(e) => {
-                                   if (minTemperature <= e.target.value as number && maxTemperature >= e.target.value as number)
-                                       setModalTemperature(e.target.value as number)
+                                   if (minTemperature <= e.target.value as unknown as number && maxTemperature >= e.target.value as unknown as number)
+                                       setModalTemperature(e.target.value as unknown as number)
                                }}
                                InputProps={{
                                    inputProps: {min: minTemperature, max: maxTemperature},
                                    endAdornment: <InputAdornment position="start">°C</InputAdornment>
                                }}
-                               placeholder="Desired temperature" sx={styledInput} mb={3}></TextField>
+                               placeholder="Desired temperature" sx={styledInput}></TextField>
                     <TextField value={modalDuration} fullWidth disabled={isThereTimeLimit} type="number"
                                name="durationSchedule"
                                onChange={(e) => {
-                                   setModalDuration(e.target.value as number)
+                                   setModalDuration(e.target.value as unknown as number)
                                }}
                                InputProps={
                                    {
@@ -265,8 +265,7 @@ const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {
                                    }
                                }
                                placeholder="Duration"
-                               sx={styledInput}
-                               mb={3}> </TextField>
+                               sx={styledInput}> </TextField>
                     <FormControl sx={{width: "500px", margin: "0 auto"}}>
                         <FormControlLabel
                             label="Without Time Limit"

@@ -1,4 +1,4 @@
-import PropertyRequests from "./PropertyRequests.tsx";
+import SmartHomeRequests from "./SmartHomeRequests.tsx";
 
 const SmartHomesConsumption = () => {
     return <></>

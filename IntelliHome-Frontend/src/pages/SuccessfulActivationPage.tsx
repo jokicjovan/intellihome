@@ -6,7 +6,7 @@ import axios from "axios";
 import {environment} from "../utils/Environment.ts";
 
 
-const SuccessfulActivation=()=>{
+const SuccessfulActivationPage=()=>{
 
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
@@ -62,4 +62,4 @@ const SuccessfulActivation=()=>{
     </Container></>
 }
 
-export default  SuccessfulActivation;
+export default  SuccessfulActivationPage;

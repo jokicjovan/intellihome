@@ -94,9 +94,9 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
                         margin="normal"
                         required
                         fullWidth
-                        id="Power"
-                        label="Power"
-                        name="Power"
+                        id="PowerPerHour"
+                        label="PowerPerHour"
+                        name="PowerPerHour"
                         type="number"
                         value={additionalFormData.PowerPerHour}
                         onChange={handleAdditionalFormInputChange}

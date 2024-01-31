@@ -1,8 +1,8 @@
 import SignContainter from "../components/Unauthorized/SignContainter.tsx";
 import SignUpForm from "../components/Unauthorized/SignUpForm";
 
-const SignUp=()=>{
+const SignUpPage=()=>{
     return <SignContainter component={SignUpForm}/>
 }
 
-export default  SignUp;
+export default  SignUpPage;

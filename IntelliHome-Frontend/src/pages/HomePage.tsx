@@ -5,7 +5,7 @@ import {AdminRoute} from "../security/AdminRoute";
 import AdminHome from "../components/Admin/AdminHome.tsx";
 
 
-const Home=()=>{
+const HomePage=()=>{
     const { role} = useContext(AuthContext);
     return (
         <>
@@ -15,4 +15,4 @@ const Home=()=>{
     )
 };
 
-export default Home;
+export default HomePage;
