@@ -134,6 +134,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConfirmationService, ConfirmationService>();
 builder.Services.AddScoped<ISmartDeviceService, SmartDeviceService>();
 builder.Services.AddScoped<ISmartHomeService, SmartHomeService>();
+builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IAirConditionerService, AirConditionerService>();
 builder.Services.AddScoped<IAmbientSensorService, AmbientSensorService>();
 builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();

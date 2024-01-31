@@ -2,14 +2,14 @@
 
 namespace IntelliHome_Backend.Features.Home.DTOs
 {
-    public class GetCityDTO
+    public class CityDTO
     {
         public Guid Id { get; set; }
         public String Name { get; set; }
         public String Country { get; set; }
         public String ZipCode { get; set; }
 
-        public GetCityDTO(City city)
+        public CityDTO(City city)
         {
             Id = city.Id;
             Name = city.Name;

@@ -14,7 +14,7 @@ import AirConditionerReport from "../PKA/AirConditionerReport.tsx";
 import LampReport from "../SPU/LampReport.tsx";
 import SolarPanelReport from "../VEU/SolarPanelReport.tsx";
 import GateReport from "../SPU/GateReport.tsx";
-import SmartHomeReport from "../../../Consumption/SmartHomeReport.tsx";
+import SmartHomeConsumptionReport from "../../../Consumption/SmartHomeConsumptionReport.tsx";
 import ActionData from "../../../../models/interfaces/Action.ts";
 import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
@@ -206,7 +206,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                                 deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                                     deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                         deviceType == "BatterySystem" ?
-                                            <SmartHomeReport smartHomeId={smartDevice.smartHomeId}/> :
+                                            <SmartHomeConsumptionReport smartHomeId={smartDevice.smartHomeId}/> :
                                             deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                                 deviceType == "SolarPanelSystem" ?
                                                     <SolarPanelReport solarPanelSystem={smartDevice} report={report}/> :

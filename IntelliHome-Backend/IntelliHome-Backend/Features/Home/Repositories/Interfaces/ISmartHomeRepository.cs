@@ -11,5 +11,6 @@ namespace IntelliHome_Backend.Features.Home.Repositories.Interfaces
         Task<List<SmartHome>> GetAllSmartHomesPaged(string search);
         Task<List<SmartHome>> GetSmartHomesForApproval();
         Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId);
+        Task<List<SmartHome>> GetSmartHomesByCity(Guid cityId);
     }
 }

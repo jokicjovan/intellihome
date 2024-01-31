@@ -52,9 +52,9 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<SmartHome>> GetSmartHomesForApproval()
+        public Task<List<SmartHome>> GetSmartHomesForApproval()
         {
-            return await _entities
+            return _entities
                 .Include(s => s.SmartDevices)
                 .Include(s => s.Owner)
                 .Include(s => s.City)
@@ -67,6 +67,10 @@ namespace IntelliHome_Backend.Features.Home.Repositories
             return _entities
                 .Where(e => e.Id == smartHomeId && (e.Owner.Id == userId || e.SmartDevices.Any(device => device.AllowedUsers.Any(user => user.Id == userId))))
                 .AnyAsync();
+        }
+
+        public Task<List<SmartHome>> GetSmartHomesByCity(Guid cityId) {
+            return _entities.Include(e => e.City).AsNoTracking().Where(e => e.City.Id == cityId).ToListAsync();
         }
     }
 }

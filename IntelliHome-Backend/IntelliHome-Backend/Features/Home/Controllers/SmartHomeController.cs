@@ -93,7 +93,7 @@ namespace IntelliHome_Backend.Features.Home.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> GetSmartAllSmartHomes([FromQuery] PageParametersDTO pageParameters, [FromQuery] string search)
+        public async Task<ActionResult> GetAllSmartHomesPaged([FromQuery] PageParametersDTO pageParameters, [FromQuery] string search)
         {
             AuthenticateResult result = await HttpContext.AuthenticateAsync();
             if (!result.Succeeded)

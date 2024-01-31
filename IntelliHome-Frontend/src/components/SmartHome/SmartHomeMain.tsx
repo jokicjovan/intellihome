@@ -8,7 +8,7 @@ import {
     Dialog,
     Grid,
     Menu,
-    MenuItem,
+    MenuItem, Modal,
     TablePagination,
     Typography
 } from "@mui/material";
@@ -24,7 +24,7 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
-import SmartHomeReport from "../Consumption/SmartHomeReport.tsx";
+import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
@@ -182,7 +182,7 @@ const SmartHomeMain = ({smartHomeId}) => {
                 <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
 
             {modalContentItem === 99 &&
-                <SmartHomeReport smartHomeId={smartHomeId}/>}
+                <SmartHomeConsumptionReport smartHomeId={smartHomeId}/>}
 
         </Box>
     );
@@ -348,14 +348,14 @@ const SmartHomeMain = ({smartHomeId}) => {
                 />
             </Container>
 
-            <Dialog open={openModal} onClose={handleCloseModal}
+            <Modal open={openModal} onClose={handleCloseModal}
                     sx={{
                         '& .MuiDialog-paper': {
                             minWidth: modalContentItem == 99 ? '1000px' : '400px',
                         },
                     }}>
                 {modalContent}
-            </Dialog>
+            </Modal>
         </Box>
     )
 

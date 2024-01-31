@@ -3,7 +3,7 @@ import axios from "axios";
 import {environment} from "../../utils/Environment.ts";
 import {Box, Container, Dialog, Grid, TablePagination, TextField} from "@mui/material";
 import SmartHomeConsumptionCard from "./SmartHomeConsumptionCard.tsx";
-import SmartHomeReport from "./SmartHomeReport.tsx";
+import SmartHomeConsumptionReport from "./SmartHomeConsumptionReport.tsx";
 
 const SmartHomesConsumption = () => {
     const [smartHomes, setSmartHomes]=React.useState([]);
@@ -47,7 +47,7 @@ const SmartHomesConsumption = () => {
     };
 
     const getSmartHomes = () => {
-        axios.get(environment + `/api/SmartHome/GetSmartAllSmartHomes?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
+        axios.get(environment + `/api/SmartHome/GetAllSmartHomesPaged?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
             setTotalCount(res.data.totalCount);
             setSmartHomes(res.data.smartHomes);
         }).catch(err => {
@@ -124,7 +124,7 @@ const SmartHomesConsumption = () => {
                 display: "flex",
                 flexDirection: "column"
             }}>
-                <SmartHomeReport smartHomeId={selectedSmartHomeId}/>
+                <SmartHomeConsumptionReport smartHomeId={selectedSmartHomeId}/>
             </Box>
         </Dialog>
     </Box>

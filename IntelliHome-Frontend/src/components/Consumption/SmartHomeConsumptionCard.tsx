@@ -4,7 +4,6 @@ import {environment} from "../../utils/Environment.ts";
 import {Apartment, LocationOn, PhotoSizeSelectSmall} from "@mui/icons-material";
 
 const SmartHomeConsumptionCard = ({smartHome, onButtonClick}) => {
-    const navigate = useNavigate();
     const textStyle = { fontStyle: "bold", fontWeight: "600", color: "black", margin: "5px" };
     const iconStyle = { fontStyle: "bold", fontWeight: "600", color: "#343F71", margin: "5px" };
     const containerStyle = { display: "flex", flexDirection: "row", padding: "0 10px", alignItems: "center" };
