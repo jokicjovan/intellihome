@@ -7,6 +7,11 @@ using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using Newtonsoft.Json;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json.Serialization;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -16,17 +21,20 @@ namespace IntelliHome_Backend.Features.VEU.Services
         private readonly ISolarPanelSystemDataRepository _solarPanelSystemDataRepository;
         private readonly ISolarPanelSystemHandler _solarPanelSystemHandler;
         private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
+        private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
 
         public SolarPanelSystemService(
             ISolarPanelSystemRepository solarPanelSystemRepository, 
             ISolarPanelSystemDataRepository solarPanelSystemDataRepository,
             ISolarPanelSystemHandler solarPanelSystemHandler,
-            ISmartDeviceDataRepository smartDeviceDataRepository)
+            ISmartDeviceDataRepository smartDeviceDataRepository,
+            IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             _solarPanelSystemRepository = solarPanelSystemRepository;
             _solarPanelSystemDataRepository = solarPanelSystemDataRepository;
             _solarPanelSystemHandler = solarPanelSystemHandler;
             _smartDeviceDataRepository = smartDeviceDataRepository;
+            _smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async Task<SolarPanelSystem> Create(SolarPanelSystem entity)
@@ -134,18 +142,36 @@ namespace IntelliHome_Backend.Features.VEU.Services
             _ = _solarPanelSystemHandler.ToggleSmartDevice(solarPanelSystem, turnOn);
             solarPanelSystem.IsOn = turnOn;
             _ = _solarPanelSystemRepository.Update(solarPanelSystem);
+            SaveActionAndInformUsers(turnOn ? "ON" : "OFF", togglerUsername, id.ToString());
+        }
 
+        public void SaveActionAndInformUsers(String action, String actionBy, String deviceId)
+        {
             var fields = new Dictionary<string, object>
             {
-                { "action", turnOn ? "ON" : "OFF" }
+                { "action", action }
 
             };
             var tags = new Dictionary<string, string>
             {
-                { "actionBy", togglerUsername},
-                { "deviceId", id.ToString()}
+                { "actionBy", actionBy},
+                { "deviceId", deviceId}
             };
             AddActionMeasurement(fields, tags);
+
+            ActionDataDTO actionDataDto = new()
+            {
+                Action = action,
+                ActionBy = actionBy,
+                Timestamp = DateTime.Now,
+            };
+            _ = _smartDeviceHubContext.Clients.Group(deviceId).ReceiveSmartDeviceData(JsonConvert.SerializeObject(actionDataDto, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            }));
         }
     }
 }

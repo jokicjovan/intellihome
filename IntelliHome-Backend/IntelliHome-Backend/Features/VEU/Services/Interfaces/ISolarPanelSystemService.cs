@@ -14,5 +14,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to);
         Task Toggle(Guid id, String togglerUsername, bool turnOn = true);
         Task<SolarPanelSystem> GetWithHome(Guid id);
+        void SaveActionAndInformUsers(String action, String actionBy, String deviceId);
     }
 }

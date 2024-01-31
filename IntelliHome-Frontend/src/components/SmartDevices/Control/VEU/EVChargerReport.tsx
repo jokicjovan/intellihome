@@ -7,7 +7,7 @@ import {Box} from "@mui/material";
 import SmartDeviceReportAction from "../Shared/SmartDeviceReportAction.tsx";
 import SolarPanelReport from "./SolarPanelReport.tsx";
 
-const EVChargerReport = ({vehicleCharger}) => {
+const EVChargerReport = ({vehicleCharger, report}) => {
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState(dayjs());
     const [user, setUser] = useState("");
@@ -27,8 +27,14 @@ const EVChargerReport = ({vehicleCharger}) => {
     }, [vehicleCharger.id, startDate, endDate, user]);
 
     useEffect(() => {
-
-    }, [vehicleCharger])
+        if (Object.keys(report).length !== 0){
+            const data = [
+                ...[{ action: report.action, by: report.actionBy, date: new Date(report.timestamp) }],
+                ...historicalData,
+            ];
+            setHistoricalData(data);
+        }
+    }, [report]);
 
     return <Box mt={1} overflow={"auto"}><SmartDeviceReportAction
         inputData={historicalData}

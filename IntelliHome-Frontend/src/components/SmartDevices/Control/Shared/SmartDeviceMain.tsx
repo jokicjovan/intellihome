@@ -38,7 +38,9 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
-        if(result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined){
+        if((result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined) ||
+            (result.action !== undefined && result.actionBy !== undefined && result.timestamp !== undefined))
+        {
             setReport(result);
         }
         else
@@ -196,8 +198,8 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                         deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                             deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
-                                    deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
-                                        deviceType == "VehicleCharger" ? <EVChargerReport vehicleCharger={smartDevice}/> :
+                                    deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice} report={report}/> :
+                                        deviceType == "VehicleCharger" ? <EVChargerReport vehicleCharger={smartDevice} report={report}/> :
                                     <></>
                 : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
                 : <></>}

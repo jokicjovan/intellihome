@@ -2,14 +2,16 @@
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
+using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
+using IntelliHome_Backend.Features.Shared.Hubs;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
-using IntelliHome_Backend.Features.VEU.Repositories;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using System;
+using Newtonsoft.Json.Serialization;
 
 namespace IntelliHome_Backend.Features.VEU.Services
 {
@@ -21,10 +23,11 @@ namespace IntelliHome_Backend.Features.VEU.Services
         private readonly IVehicleChargingPointRepository _vehicleChargingPointRepository;
         private readonly IVehicleChargingPointDataRepository _vehicleChargingPointDataRepository;
         private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
+        private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
 
         public VehicleChargerService(IVehicleChargerRepository vehicleChargerRepository, IVehicleChargingPointRepository vehicleChargingPointRepository,
             IVehicleChargerHandler vehicleChargerHandler, IVehicleChargerDataRepository vehicleChargerDataRepository, IVehicleChargingPointDataRepository vehicleChargingPointDataRepository,
-            ISmartDeviceDataRepository smartDeviceDataRepository)
+            ISmartDeviceDataRepository smartDeviceDataRepository, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             _vehicleChargerRepository = vehicleChargerRepository;
             _vehicleChargingPointRepository = vehicleChargingPointRepository;
@@ -32,6 +35,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             _vehicleChargerDataRepository = vehicleChargerDataRepository;
             _vehicleChargingPointDataRepository = vehicleChargingPointDataRepository;
             _smartDeviceDataRepository = smartDeviceDataRepository;
+            _smartDeviceHubContext = smartDeviceHubContext;
         }
 
         public async Task<VehicleCharger> Create(VehicleCharger entity)
@@ -151,18 +155,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             await _vehicleChargerHandler.ToggleSmartDevice(vehicleCharger, turnOn);
             vehicleCharger.IsOn = turnOn;
             _ = _vehicleChargerRepository.Update(vehicleCharger);
-
-            var fields = new Dictionary<string, object>
-            {
-                { "action", turnOn ? "ON" : "OFF" }
-
-            };
-            var tags = new Dictionary<string, string>
-            {
-                { "actionBy", togglerUsername},
-                { "deviceId", id.ToString()}
-            };
-            AddActionMeasurement(fields, tags);
+            SaveActionAndInformUsers(turnOn ? "ON" : "OFF", togglerUsername, id.ToString());
         }
 
         public List<ActionDataDTO> GetActionHistoricalData(Guid id, DateTime from, DateTime to)
@@ -202,6 +195,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 { "chargeLimit", vehicleChargingPoint.ChargeLimit},
             };
             await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
+            SaveActionAndInformUsers("CHARGER CONNECTED", "SYSTEM", vehicleChargerId.ToString());
             return vehicleCharger;
         }
 
@@ -234,7 +228,36 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 { "chargingPointId", vehicleChargingPoint.Id }
             };
             await _vehicleChargerHandler.PublishMessageToSmartDevice(vehicleCharger, JsonConvert.SerializeObject(payload));
+            SaveActionAndInformUsers("CHARGER DISCONNECTED", "SYSTEM", vehicleChargerId.ToString());
             return vehicleCharger;
+        }
+
+        public void SaveActionAndInformUsers(String action, String actionBy, String deviceId) {
+            var fields = new Dictionary<string, object>
+            {
+                { "action", action }
+
+            };
+            var tags = new Dictionary<string, string>
+            {
+                { "actionBy", actionBy},
+                { "deviceId", deviceId}
+            };
+            AddActionMeasurement(fields, tags);
+
+            ActionDataDTO actionDataDto = new()
+            {
+                Action = action,
+                ActionBy = actionBy,
+                Timestamp = DateTime.Now,
+            };
+            _ = _smartDeviceHubContext.Clients.Group(deviceId).ReceiveSmartDeviceData(JsonConvert.SerializeObject(actionDataDto, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            }));
         }
     }
 }

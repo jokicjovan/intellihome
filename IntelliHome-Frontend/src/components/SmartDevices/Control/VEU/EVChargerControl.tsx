@@ -62,7 +62,6 @@ const EVChargerControl = ({vehicleCharger}) => {
                 return updatedArray;
             });
             setChargingPoints(vehicleChargerData.busyChargingPoints);
-            console.log(vehicleChargerData.busyChargingPoints)
         }
     }
 
@@ -81,7 +80,6 @@ const EVChargerControl = ({vehicleCharger}) => {
             );
 
             setChargingPoints([...vehicleChargerData.chargingPoints.filter(newElement => !newElement.isFree)]);
-            console.log(vehicleChargerData.chargingPoints)
         }
     }
 
@@ -253,7 +251,7 @@ const EVChargerControl = ({vehicleCharger}) => {
                     </Box>
                 </Box>
             </Box>
-            <Grid container>
+            {vehicleCharger.isOn ? <Grid container>
                 {chargingPoints.map((vehicle)=><Grid item mr={2} xs={2.9} height="600px" borderRadius="25px" bgcolor="white" display="flex"
                       flexDirection="column" alignItems="center">
                     <EvStationRounded sx={{
@@ -328,7 +326,8 @@ const EVChargerControl = ({vehicleCharger}) => {
                         borderRadius: "80px"
                     }}/>
                 </Grid>}
-            </Grid>
+            </Grid> :
+                <Box marginTop={10} fontSize={30} fontWeight={"bold"} color={"gray"}>*Turn on device to see charging ports*</Box>}
         </Box>
     </Box>
 }

@@ -18,5 +18,6 @@ namespace IntelliHome_Backend.Features.VEU.Services.Interfaces
         List<VehicleChargingPointDataDTO> GetVehicleChargingPointHistoricalData(Guid id, DateTime from, DateTime to);
         Task<VehicleCharger> ConnectToCharger(Guid vehicleChargerId, VehicleChargingPoint vehicleChargingPoint);
         Task<VehicleCharger> DisconnectFromCharger(Guid vehicleChargerId, Guid vehicleChargingPointId);
+        void SaveActionAndInformUsers(String action, String actionBy, String deviceId);
     }
 }

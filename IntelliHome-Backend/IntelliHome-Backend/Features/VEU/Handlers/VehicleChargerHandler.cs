@@ -13,6 +13,7 @@ using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using Newtonsoft.Json.Serialization;
+using System.Reactive;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {
@@ -41,6 +42,7 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                 return;
             }
 
+            #region data
             var vehicleChargerData = JsonConvert.DeserializeObject<VehicleChargerDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
             if (vehicleChargerData.BusyChargingPoints != null)
             {
@@ -59,64 +61,61 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
 
 
                     VehicleChargingPoint chargingPoint = vehicleCharger.ChargingPoints.FirstOrDefault(e => e.Id == chargingPointdataDTO.Id);
-                    if (chargingPoint == null)
+                    if (chargingPoint != null)
                     {
-                        continue;
+                        VehicleChargingPointDTO busyChargingPoint = new VehicleChargingPointDTO
+                        {
+                            CurrentCapacity = chargingPointdataDTO.CurrentCapacity,
+                            Id = chargingPointdataDTO.Id,
+                            ChargeLimit = chargingPoint.ChargeLimit,
+                            Status = chargingPoint.Status,
+                            Capacity = chargingPoint.Capacity,
+                            StartTime = chargingPoint.StartTime,
+                            EndTime = chargingPoint.EndTime,
+                            InitialCapacity = chargingPoint.InitialCapacity
+                        };
+                        busyChargingPoints.Add(busyChargingPoint);
                     }
-                    VehicleChargingPointDTO busyChargingPoint = new VehicleChargingPointDTO
-                    {
-                        CurrentCapacity = chargingPointdataDTO.CurrentCapacity,
-                        Id = chargingPointdataDTO.Id,
-                        ChargeLimit = chargingPoint.ChargeLimit,
-                        Status = chargingPoint.Status,
-                        Capacity = chargingPoint.Capacity,
-                        StartTime = chargingPoint.StartTime,
-                        EndTime = chargingPoint.EndTime,
-                        InitialCapacity = chargingPoint.InitialCapacity
-                    };
-                    busyChargingPoints.Add(busyChargingPoint);
                 }
-                var serializerSettings = new JsonSerializerSettings
+
+                var payload = JsonConvert.SerializeObject(new { vehicleChargerData.ConsumptionPerMinute, BusyChargingPoints = busyChargingPoints}, new JsonSerializerSettings
                 {
                     ContractResolver = new DefaultContractResolver
                     {
                         NamingStrategy = new CamelCaseNamingStrategy()
                     }
-                };
-                var payload = JsonConvert.SerializeObject(new { ConsumptionPerMinute = vehicleChargerData.ConsumptionPerMinute, BusyChargingPoints = busyChargingPoints}, serializerSettings);
+                });
                 _ = smartDeviceHubContext.Clients.Group(vehicleChargerId).ReceiveSmartDeviceData(payload);
                 return;
             };
+            #endregion
 
+            #region action
             var vehicleChargingPointActionData = JsonConvert.DeserializeObject<VehicleChargerActionDataDTO>(e.ApplicationMessage.ConvertPayloadToString());
             if (vehicleChargingPointActionData != null)
             {
-                var fields = new Dictionary<string, object>
-                {
-                    { "action", vehicleChargingPointActionData.Action }
-
-                };
-                var tags = new Dictionary<string, string>
-                {
-                    { "actionBy", "SYSTEM"},
-                    { "deviceId", vehicleCharger.Id.ToString()}
-                };
-                vehicleChargerService.AddActionMeasurement(fields, tags);
-
                 VehicleChargingPoint chargingPoint = vehicleCharger.ChargingPoints.FirstOrDefault(e => e.Id == vehicleChargingPointActionData.ChargingPointId);
                 if (chargingPoint == null)
                 {
                     return;
                 }
+
+                String action = "NO ACTION";
                 if (vehicleChargingPointActionData.Action == "chargingStarted") {
                     chargingPoint.Status = "CHARGING";
                     chargingPoint.StartTime = DateTime.Now;
+                    action = "CHARGING STARTED";
                 }
-                else if (vehicleChargingPointActionData.Action == "chargingFinished") {
+                else if (vehicleChargingPointActionData.Action == "chargingFinished")
+                {
+                    chargingPoint.Status = "FINISHED";
                     chargingPoint.EndTime = DateTime.Now;
+                    action = "CHARGING FINISHED";
                 }
                 vehicleChargerService.Update(chargingPoint);
+                vehicleChargerService.SaveActionAndInformUsers(action, "SYSTEM", vehicleCharger.Id.ToString());
             }
+            #endregion
         }
 
         public override async Task<bool> ConnectToSmartDevice(SmartDevice smartDevice)
