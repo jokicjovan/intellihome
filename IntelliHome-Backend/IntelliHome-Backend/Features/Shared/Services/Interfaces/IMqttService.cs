@@ -6,5 +6,6 @@ namespace IntelliHome_Backend.Features.Shared.Services.Interfaces
     {
         Task PublishAsync(string topic, string payload);
         Task SubscribeAsync(string topic, Func<MqttApplicationMessageReceivedEventArgs, Task> messageHandler);
+        Task ConnectAsync(string host, int port, CancellationToken cancellationToken = default);
     }
 }

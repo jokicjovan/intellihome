@@ -10,9 +10,9 @@ namespace IntelliHome_Backend.Features.Shared.Services
         private readonly IMqttClient _mqttClient;
         private Dictionary<string, Func<MqttApplicationMessageReceivedEventArgs, Task>> _topicHandlers;
 
-        public MqttService(IMqttClient mqttClient)
+        public MqttService(MqttFactory mqttFactory)
         {
-            _mqttClient = mqttClient;
+            _mqttClient = mqttFactory.CreateMqttClient();
             _topicHandlers = new Dictionary<string, Func<MqttApplicationMessageReceivedEventArgs, Task>>();
         }
 
