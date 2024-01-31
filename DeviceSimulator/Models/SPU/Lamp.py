@@ -28,7 +28,7 @@ def generate_lumens():
     current_time = datetime.now().time()
     hours = current_time.hour + current_time.minute / 60
 
-    time_rad = 2 * math.pi * hours / 24
+    time_rad = math.pi * (hours - 12) / 12  # subtract 12 from hours to shift the phase and divide by 12 for smoother transition
 
     sine_val = math.sin(time_rad)
 
