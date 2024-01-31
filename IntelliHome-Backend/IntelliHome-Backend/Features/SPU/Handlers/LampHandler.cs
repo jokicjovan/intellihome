@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
@@ -11,17 +10,16 @@ using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using SendGrid.Helpers.Errors.Model;
 using IntelliHome_Backend.Features.Home.Handlers;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
     public class LampHandler : SmartDeviceHandler, ILampHandler
     {
-        public LampHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public LampHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.LAMP}/+", HandleMessageFromDevice);
+            mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.LAMP}/+", HandleMessageFromDevice);
         }
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

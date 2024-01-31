@@ -9,6 +9,7 @@ using MQTTnet;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Home.DTOs;
+using IntelliHome_Backend.Features.Shared.Services;
 
 namespace IntelliHome_Backend.Features.Home.Handlers
 {
@@ -18,12 +19,13 @@ namespace IntelliHome_Backend.Features.Home.Handlers
         protected readonly IServiceProvider serviceProvider;
         protected readonly IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext;
 
-        public SmartHomeHandler(IMqttService mqttService, IServiceProvider serviceProvider, IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext)
+        public SmartHomeHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext)
         {
-            this.mqttService = mqttService;
             this.serviceProvider = serviceProvider;
             this.smartHomeHubContext = smartHomeHubContext;
-            this.mqttService.SubscribeAsync($"FromSmartHome/+/Usage", HandleMessageFromHome);
+            mqttService = new MqttService(mqttFactory);
+            mqttService.ConnectAsync("localhost", 1883).Wait();
+            mqttService.SubscribeAsync($"FromSmartHome/+/Usage", HandleMessageFromHome);
         }
 
         public async void SubscribeToSmartHome(SmartHome smartHome)

@@ -1,6 +1,5 @@
 ﻿using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
 using Data.Models.Shared;
@@ -19,10 +18,10 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 {
     public class WashingMachineHandler : SmartDeviceHandler, IWashingMachineHandler
     {
-        public WashingMachineHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public WashingMachineHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.WASHINGMACHINE}/+", HandleMessageFromDevice);
+            mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.WASHINGMACHINE}/+", HandleMessageFromDevice);
         }
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

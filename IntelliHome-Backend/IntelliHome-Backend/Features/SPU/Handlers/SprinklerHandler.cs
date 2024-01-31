@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.SPU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
@@ -12,17 +11,16 @@ using Data.Models.SPU;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
 using System.Globalization;
 using Newtonsoft.Json;
-using Data.Models.PKA;
 using IntelliHome_Backend.Features.SPU.DTOs;
 
 namespace IntelliHome_Backend.Features.SPU.Handlers
 {
     public class SprinklerHandler : SmartDeviceHandler, ISprinklerHandler
     {
-        public SprinklerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public SprinklerHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.SPRINKLER}/+", HandleMessageFromDevice);
+            mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.SPRINKLER}/+", HandleMessageFromDevice);
         }
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

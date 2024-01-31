@@ -145,19 +145,7 @@ builder.Services.AddScoped<ISolarPanelSystemService, SolarPanelSystemService>();
 builder.Services.AddScoped<IVehicleChargerService, VehicleChargerService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
-builder.Services.AddSingleton(provider =>
-{
-    var factory = new MqttFactory();
-    var mqttClient = factory.CreateMqttClient();
-    return mqttClient;
-});
-builder.Services.AddSingleton<IMqttService>(provider =>
-{
-    var mqttClient = provider.GetRequiredService<IMqttClient>();
-    var mqttService = new MqttService(mqttClient);
-    mqttService.ConnectAsync("localhost", 1883).Wait();
-    return mqttService;
-});
+builder.Services.AddSingleton<MqttFactory>();
 
 //Handlers
 builder.Services.AddSingleton<ISimulationsHandler, SimulationsHandler>();

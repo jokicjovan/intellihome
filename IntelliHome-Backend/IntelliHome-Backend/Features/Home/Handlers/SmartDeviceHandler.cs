@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.SignalR;
 using MQTTnet.Client;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 using Newtonsoft.Json;
+using MQTTnet;
+using IntelliHome_Backend.Features.Shared.Services;
 
 namespace IntelliHome_Backend.Features.Home.Handlers
 {
     public class SmartDeviceHandler : ISmartDeviceHandler
     {
         protected readonly ISimulationsHandler simualtionsHandler;
-        protected readonly IMqttService mqttService;
         protected readonly IServiceProvider serviceProvider;
         protected readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext;
+        protected readonly IMqttService mqttService;
 
-        public SmartDeviceHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public SmartDeviceHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             this.simualtionsHandler = simualtionsHandler;
-            this.mqttService = mqttService;
             this.serviceProvider = serviceProvider;
             this.smartDeviceHubContext = smartDeviceHubContext;
+            mqttService = new MqttService(mqttFactory);
+            mqttService.ConnectAsync("localhost", 1883).Wait();
         }
 
         public Task SubscribeToSmartDevice(SmartDevice smartDevice)

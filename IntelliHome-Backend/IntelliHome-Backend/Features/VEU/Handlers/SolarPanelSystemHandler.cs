@@ -17,10 +17,10 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
 {
     public class SolarPanelSystemHandler : SmartDeviceHandler, ISolarPanelSystemHandler
     {
-        public SolarPanelSystemHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public SolarPanelSystemHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.SOLARPANELSYSTEM}/+", HandleMessageFromDevice);
+            mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.SOLARPANELSYSTEM}/+", HandleMessageFromDevice);
         }
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

@@ -1,6 +1,5 @@
 ﻿using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
 using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
 using Data.Models.Shared;
@@ -18,10 +17,10 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 {
     public class AirConditionerHandler : SmartDeviceHandler, IAirConditionerHandler
     {
-        public AirConditionerHandler(IMqttService mqttService, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttService, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public AirConditionerHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
-            this.mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.AIRCONDITIONER}/+", HandleMessageFromDevice);
+            mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.AIRCONDITIONER}/+", HandleMessageFromDevice);
         }
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)

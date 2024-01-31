@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Client;
 using Newtonsoft.Json;
+using IntelliHome_Backend.Features.Shared.Services;
 
 namespace IntelliHome_Backend.Features.Shared.Handlers
 {
@@ -16,9 +17,10 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         private readonly IMqttService _mqttService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
-        public LastWillHandler(IMqttService mqttService, IServiceProvider serviceProvider, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public LastWillHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
-            _mqttService = mqttService;
+            _mqttService = new MqttService(mqttFactory);
+            _mqttService.ConnectAsync("localhost", 1883).Wait();
             _serviceProvider = serviceProvider;
             _smartDeviceHubContext = smartDeviceHubContext;
         }
@@ -35,6 +37,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             Guid deviceId = Guid.Parse(e.ApplicationMessage.ConvertPayloadToString());
             SmartDevice smartDevice = await smartDeviceService.Get(deviceId);
             smartDevice.IsConnected = false;
+            smartDevice.IsOn = false;
             await smartDeviceService.Update(smartDevice);
 
             smartDeviceService.UpdateAvailability(new List<Guid> { deviceId }, false);
