@@ -98,6 +98,7 @@ builder.Services.AddScoped(provider =>
 //Data repositories
 builder.Services.AddScoped<IAmbientSensorDataRepository, AmbientSensorDataRepository>();
 builder.Services.AddScoped<IAirConditionerDataRepository, AirConditionerDataRepository>();
+builder.Services.AddScoped<IWashingMachineDataRepository, WashingMachineDataRepository>();
 builder.Services.AddScoped<ILampDataRepository, LampDataRepository>();
 builder.Services.AddScoped<IVehicleGateDataRepository, VehicleGateDataRepository>();
 builder.Services.AddScoped<ISprinklerDataRepository, SprinklerDataRepository>();

@@ -3,7 +3,7 @@ import {
     IconButton, MenuItem, Modal, Select,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Add,
     PlayArrowRounded,
@@ -13,19 +13,21 @@ import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {v4 as uuidv4} from 'uuid';
+import axios from "axios";
+import {environment} from "../../../../security/Environment";
 
 
 const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
 
-    const [selectedMode, setSelecteedMod] = useState("FAN")
-    const [scheduledMode, setScheduledMode] = useState("AUTO");
-    const [availableModes, setAvailableModes] = useState(["fan", "cool", "heat", "auto"])
-    const [isOn, setIsOn] = useState(false)
+    const [selectedMode, setSelecteedMod] = useState(smartDevice.mode)
+    const [scheduledMode, setScheduledMode] = useState("mixed wash");
+    const [availableModes, setAvailableModes] = useState([])
+    const [isOn, setIsOn] = useState(smartDevice.isOn)
     const [open, setIsOpen] = useState(false)
     // @ts-ignore
     type TDate = TDate | null;
     const [value, setValue] = React.useState<TDate>(dayjs());
-    const [scheduled, setScheduled] = useState([]);
+    const [scheduled, setScheduled] = useState(smartDevice.schedules);
     const DatePickerStyle = {
         "& .MuiPickersLayout-actionBar": {display: "none"},
         minHeight: "520px"
@@ -55,6 +57,54 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
         return parsedDate;
     }
 
+    const changeMode = (mode) => {
+        axios.put(environment + `/api/WashingMachine/ChangeMode?Id=${smartDevice.id}&mode=${mode}`).then(res => {
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    useEffect(() => {
+            smartDevice.mode = selectedMode;
+            setSmartDeviceParent(smartDevice);
+            setSmartDeviceParent(smartDevice);
+        },
+        [selectedMode])
+
+    useEffect(() => {
+        setSelecteedMod(smartDevice.mode??"mixed wash")
+        setIsOn(smartDevice.isOn)
+        setScheduled(smartDevice.schedules)
+        setAvailableModes(smartDevice.modes??[])
+    }, [smartDevice.id])
+    useEffect(() => {
+        setSelecteedMod(smartDevice.mode??"mixed wash")
+        setIsOn(smartDevice.isOn)
+        setScheduled(smartDevice.schedules)
+    }, [smartDevice])
+
+    const handleAddSchedule = () => {
+        axios.post(environment + '/api/WashingMachine/AddScheduledWork', {
+            id: smartDevice.id,
+            mode: scheduledMode.toString().toLowerCase(),
+            startDate: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm'),
+        })
+            .then((res) => {
+                if (res.status == 200) {
+                    smartDevice.schedules = [...smartDevice.schedules, {
+                        date: value.subtract(1, 'hour').format('DD/MM/YYYY HH:mm').toString()+" - "+value.subtract(55, 'minute').format('DD/MM/YYYY HH:mm').toString(),
+                        mode: scheduledMode,
+                    }]
+                    setSmartDeviceParent(smartDevice)
+                    setValue(dayjs() as TDate)
+                    setIsOpen(false)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    }
 
     return <>
         <Modal
@@ -89,10 +139,9 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                         }}
 
                     >
-                        {availableModes.includes("auto") && <MenuItem value={"AUTO"}>AUTO</MenuItem>}
-                        {availableModes.includes("heat") && <MenuItem value={"HEAT"}>HEAT</MenuItem>}
-                        {availableModes.includes("cool") && <MenuItem value={"COOL"}>COOL</MenuItem>}
-                        {availableModes.includes("fan") && <MenuItem value={"FAN"}>FAN</MenuItem>}
+                        {availableModes.includes("mixed wash") && <MenuItem value={"mixed wash"}>MIXED WASH</MenuItem>}
+                        {availableModes.includes("antiallergy") && <MenuItem value={"antiallergy"}>ANTIALLERGY</MenuItem>}
+                        {availableModes.includes("white wash") && <MenuItem value={"white wash"}>WHITE WASH</MenuItem>}
                     </Select>
 
                 </Grid>
@@ -105,8 +154,7 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                         paddingY: "10px",
                         borderRadius: "7px",
                     }}>Cancel</Button>
-                    <Button type="submit" onClick={() => {
-                    }} sx={{
+                    <Button type="submit" onClick={() => handleAddSchedule()} sx={{
                         backgroundColor: "#FBC40E",
                         color: "black",
                         paddingY: "10px",
@@ -131,68 +179,39 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                 fontWeight="700">{isOn ? "ON" : "OFF"}</Typography>
 
                 </Box>
-                <Typography fontSize="30px" fontWeight="600">{selectedMode.toUpperCase()}</Typography>
+                <Typography fontSize="30px" fontWeight="600">{selectedMode!=undefined?selectedMode.toUpperCase( ):selectedMode}</Typography>
             </Box>
 
-            <Box gridColumn={1} gridRow={3} display="grid" gap="10px"
-                 gridTemplateColumns="5fr 5fr"
-                 gridTemplateRows="170px 170px"
-                 height="350px" borderRadius="25px">
-                <Box gridColumn={1} gridRow={1} display="flex" justifyContent="center"
-                     flexDirection="column"
-                     alignItems="center" bgcolor="white" borderRadius="25px">
-                    <Typography fontSize="30px" fontWeight="600">START</Typography>
-                    <IconButton aria-label="delete">
-                        <PlayArrowRounded  sx={{color:"green", fontSize:"80px"}}/>
-                    </IconButton>
-                </Box>
-                <Box gridColumn={1} gridRow={2} display="flex" justifyContent="center"
-                     flexDirection="column"
-                     alignItems="center" bgcolor="white" borderRadius="25px">
-                    <Typography fontSize="30px" fontWeight="600">STOP</Typography>
-                    <IconButton aria-label="delete">
-                        <StopRounded  sx={{color:"red", fontSize:"80px"}}/>
-                    </IconButton>
-                </Box>
-                <Box gridColumn={2} gridRow={1} height="350px" display="flex"
+                <Box gridColumn={1} gridRow={3} height="350px" display="flex"
                      justifyContent="center"
                      flexDirection="column"
                      alignItems="center" bgcolor="white" borderRadius="25px">
                     <Typography fontSize="25px" fontWeight="500">MODE</Typography>
-                    {availableModes.includes("auto") &&
-                        <Typography my={1.8} fontSize={selectedMode == "auto" ? "40px" : "30px"}
-                                    color={selectedMode == "auto" ? "#343F71" : "black"}
+                    {availableModes.includes("mixed wash") &&
+                        <Typography my={1.8} fontSize={selectedMode == "mixed wash" ? "40px" : "30px"}
+                                    color={selectedMode == "mixed wash" ? "#343F71" : "black"}
                                     sx={{cursor: "pointer"}}
                                     onClick={() => {
-                                        setSelecteedMod("auto");
-                                        //changeMode("auto")
-                                    }} fontWeight="600">AUTO</Typography>}
-                    {availableModes.includes("cool") &&
-                        <Typography my={1.8} fontSize={selectedMode == "cool" ? "40px" : "30px"}
-                                    color={selectedMode == "cool" ? "#343F71" : "black"}
+                                        setSelecteedMod("mixed wash");
+                                        changeMode("mixed wash")
+                                    }} fontWeight="600">MIXED WASH</Typography>}
+                    {availableModes.includes("antiallergy") &&
+                        <Typography my={1.8} fontSize={selectedMode == "antiallergy" ? "40px" : "30px"}
+                                    color={selectedMode == "antiallergy" ? "#343F71" : "black"}
                                     sx={{cursor: "pointer"}}
                                     onClick={() => {
-                                        setSelecteedMod("cool");
-                                        ///changeMode("cool")
-                                    }} fontWeight="600">COOL</Typography>}
-                    {availableModes.includes("heat") &&
-                        <Typography my={1.8} fontSize={selectedMode == "heat" ? "40px" : "30px"}
-                                    color={selectedMode == "heat" ? "#343F71" : "black"}
+                                        setSelecteedMod("antiallergy");
+                                        changeMode("antiallergy")
+                                    }} fontWeight="600">ANTIALLERGY</Typography>}
+                    {availableModes.includes("white wash") &&
+                        <Typography my={1.8} fontSize={selectedMode == "white wash" ? "40px" : "30px"}
+                                    color={selectedMode == "white wash" ? "#343F71" : "black"}
                                     sx={{cursor: "pointer"}}
                                     onClick={() => {
-                                        setSelecteedMod("heat");
-                                        //changeMode("heat")
-                                    }} fontWeight="600">HEAT</Typography>}
-                    {availableModes.includes("fan") &&
-                        <Typography my={1.8} fontSize={selectedMode == "fan" ? "40px" : "30px"}
-                                    color={selectedMode == "fan" ? "#343F71" : "black"}
-                                    sx={{cursor: "pointer"}}
-                                    onClick={() => {
-                                        setSelecteedMod("fan");
-                                        //changeMode("fan")
-                                    }} fontWeight="600">FAN</Typography>}
+                                        setSelecteedMod("white wash");
+                                        changeMode("white wash")
+                                    }} fontWeight="600">WHITE WASH</Typography>}
                 </Box>
-            </Box>
 
                 <Box gridColumn={2} gridRow={1} height="710px" display="flex"
                      flexDirection="column"
@@ -219,10 +238,8 @@ const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {
                                          gridTemplateColumns="6fr 1fr 2fr">
                                         <Typography textAlign="left" gridColumn={1} fontSize="20px"
                                                     fontWeight="500"> {item.date}</Typography>
-                                        <Typography gridColumn={2} textAlign="center" fontSize="20px"
-                                                    fontWeight="500"> {item.temperature}</Typography>
                                         <Typography gridColumn={3} textAlign="right" fontSize="20px"
-                                                    fontWeight="500"> {item.mode}</Typography>
+                                                    fontWeight="500"> {item.mode!=undefined?item.mode.toUpperCase():item.mode}</Typography>
                                     </Box>
                                 </Box>
                             </Box>)}
