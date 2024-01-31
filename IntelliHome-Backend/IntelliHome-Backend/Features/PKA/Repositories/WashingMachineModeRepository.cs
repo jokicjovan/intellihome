@@ -13,5 +13,10 @@ namespace IntelliHome_Backend.Features.PKA.Repositories
         {
             return _entities.Where(e => modesIds.Contains(e.Id)).ToList();
         }
+
+        public async Task<WashingMachineMode> FindWashingMachineModeByName(String name)
+        {
+            return _entities.FirstOrDefault(e => name.ToLower().Equals(e.Name.ToLower()));
+        }
     }
 }

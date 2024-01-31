@@ -19,6 +19,8 @@ import HomeReport from "../VEU/HomeReport.tsx";
 import ActionData from "../../../../models/interfaces/Action.ts";
 import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
+import WashingMachineControl from "../PKA/WashingMachineControl";
+import WashingMachineReport from "../PKA/WashingMachineReport";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -84,6 +86,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
         axios.put(environment + `/api/${deviceType}/Toggle?Id=${smartDeviceId}&TurnOn=${on}`).then(res => {
                 setIsOn(on)
                 smartDevice.isOn = on;
+
             }
         ).catch(err => {
             console.log(err)
@@ -174,23 +177,29 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }} onClick={() => setSelectedTab(1)} fontSize="25px" fontWeight="500">Reports</Typography>
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
-                deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
-                            deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                                deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
-                                    deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                                    <></>
+                deviceType == "AirConditioner" ?
+                    <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                    deviceType == "WashingMachine" ?
+                        <WashingMachineControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                        deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
+                                deviceType == "VehicleGate" ?
+                                    <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                    deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
+                                        deviceType == "Sprinkler" ? <SprinklerControl smartDevice={smartDevice}
+                                                                                      setSmartDeviceParent={setSmartDevice}/> :
+                                            <></>
 
 
             : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
                 deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
+                    deviceType == "WashingMachine" ? <WashingMachineReport device={smartDevice}/>:
                     deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
                         deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice}/> :
                             deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                                 deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
-                                    deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
-                                    <></> : <></>}
+                                    deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
+                                        <></> : <></>}
 
     </>
 }

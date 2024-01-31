@@ -5,6 +5,7 @@ namespace IntelliHome_Backend.Features.PKA.Repositories.Interfaces
 {
     public interface IWashingMachineModeRepository : ICrudRepository<WashingMachineMode>
     {
+        Task<WashingMachineMode> FindWashingMachineModeByName(string name);
         List<WashingMachineMode> FindWashingMachineModes(List<Guid> modesIds);
     }
 }
