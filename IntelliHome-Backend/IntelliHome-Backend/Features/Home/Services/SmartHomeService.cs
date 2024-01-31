@@ -168,8 +168,10 @@ namespace IntelliHome_Backend.Features.Home.Services
             smartHome.IsApproved = true;
             await _smartHomeRepository.Update(smartHome);
 
+
             // TODO: Send mail to user
             User user = await _userRepository.Read(smartHome.Owner.Id) ?? throw new ResourceNotFoundException("User with provided Id not found!");
+            _dataChangeListener.HandleDataChange(user.Id);
             _sendApprovalRejectionMail(user, "", false);
         }
 
@@ -178,6 +180,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             //TODO: Send mail to user
             User user = await _userRepository.Read(userId) ?? throw new ResourceNotFoundException("User with provided Id not found!");
             _sendApprovalRejectionMail(user, reason, true);
+            _dataChangeListener.HandleDataChange(user.Id);
             await _smartHomeRepository.Delete(id);
         }
 
