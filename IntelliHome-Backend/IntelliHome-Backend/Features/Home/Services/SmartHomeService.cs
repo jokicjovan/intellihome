@@ -9,7 +9,6 @@ using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
 using SendGrid.Helpers.Mail;
 using SendGrid;
-using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Home.Handlers.Interfaces;
 
@@ -82,6 +81,18 @@ namespace IntelliHome_Backend.Features.Home.Services
         {
             User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
             List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
+            SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
+            {
+                TotalCount = smartHomes.Count,
+                SmartHomes = smartHomes.Skip((pageParameters.PageNumber - 1) * pageParameters.PageSize)
+                    .Take(pageParameters.PageSize).Select(s => new GetSmartHomeDTO(s)).ToList()
+            };
+            return result;
+        }
+
+        public async Task<SmartHomePaginatedDTO> GetAllPaged(String search, PageParametersDTO pageParameters)
+        {
+            List<SmartHome> smartHomes = await _smartHomeRepository.GetAllSmartHomesPaged(search);
             SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
             {
                 TotalCount = smartHomes.Count,

@@ -24,7 +24,7 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
-import SmartHomeReport from "./SmartHomeReport.tsx";
+import SmartHomeReport from "../Consumption/SmartHomeReport.tsx";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
@@ -348,10 +348,14 @@ const SmartHomeMain = ({smartHomeId}) => {
                 />
             </Container>
 
-            <Dialog open={openModal} onClose={handleCloseModal}>
+            <Dialog open={openModal} onClose={handleCloseModal}
+                    sx={{
+                        '& .MuiDialog-paper': {
+                            minWidth: modalContentItem == 99 ? '1000px' : '400px',
+                        },
+                    }}>
                 {modalContent}
             </Dialog>
-
         </Box>
     )
 

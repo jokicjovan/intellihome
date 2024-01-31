@@ -1,12 +1,10 @@
-import { Box, Button, Container, Typography } from '@mui/material';
-import { Apartment, Devices, LocationOn, PhotoSizeSelectSmall } from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
+import {Box, Button, Container, Typography} from "@mui/material";
 import {environment} from "../../utils/Environment.ts";
+import {Apartment, LocationOn, PhotoSizeSelectSmall} from "@mui/icons-material";
 
-const SmartHomeCard = (props) => {
-    const data = props.data
+const SmartHomeConsumptionCard = ({smartHome, onButtonClick}) => {
     const navigate = useNavigate();
-    const isConditionMet = data.isApproved; // Replace with your actual condition
     const textStyle = { fontStyle: "bold", fontWeight: "600", color: "black", margin: "5px" };
     const iconStyle = { fontStyle: "bold", fontWeight: "600", color: "#343F71", margin: "5px" };
     const containerStyle = { display: "flex", flexDirection: "row", padding: "0 10px", alignItems: "center" };
@@ -23,8 +21,8 @@ const SmartHomeCard = (props) => {
     }
     const boxStyle = {
         width: "18vw",
-        height: "37vh",
-        backgroundColor: isConditionMet ? "white" : "#D0D0D0",
+        height: "28vh",
+        backgroundColor: "white",
         borderRadius: "15px",
         textAlign: "center",
         mb: "10px",
@@ -32,36 +30,31 @@ const SmartHomeCard = (props) => {
         flexDirection: "column",
     }
 
-    const handleButtonClick = () => {
-        if (isConditionMet) navigate("/smartHome/" + data.id)
-    }
-
-
     return (
         <Box sx={boxStyle}>
             <Container disableGutters sx={{ display: "flex", flexDirection: "row", marginY: "0vh", marginX: "5px 0" }}>
                 <img
-                    src={environment + '/' + data.image}
+                    src={environment + '/' + smartHome.image}
                     alt="Smart HomePage Image"
                     style={{ width: "60px", height: "60px", minWidth:"60px", maxWidth:"60px", minHeight:"60px", maxHeight:"60px", border: "5px solid #343F71", borderRadius: "8px", margin: "10px" }}
                 />
                 <Container disableGutters sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start" }}>
-                    <Typography sx={{ fontSize: "20px", fontWeight: "600", color: "black" }}>{data.name}</Typography>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#FBC40E" }}>{data.city.name}, {data.city.country}</Typography>
+                    <Typography sx={{ fontSize: "20px", fontWeight: "600", color: "black" }}>{smartHome.name}</Typography>
+                    <Typography sx={{ fontSize: "15px", fontWeight: "600", color: "#FBC40E" }}>{smartHome.city.name}, {smartHome.city.country}</Typography>
                 </Container>
             </Container>
             <Container disableGutters sx={containerStyle}>
-                <LocationOn sx={iconStyle} /><Typography sx={textStyle}>{data.address}</Typography>
+                <LocationOn sx={iconStyle} /><Typography sx={textStyle}>{smartHome.address}</Typography>
             </Container>
             <Container disableGutters sx={containerStyle}>
-                <Apartment sx={iconStyle} /><Typography sx={textStyle}>{data.type == "0" ? "House" : "Flat"}</Typography>
+                <Apartment sx={iconStyle} /><Typography sx={textStyle}>{smartHome.type == "0" ? "House" : "Flat"}</Typography>
             </Container>
             <Container disableGutters sx={containerStyle}>
-                <PhotoSizeSelectSmall sx={iconStyle} /><Typography sx={textStyle}>{data.area}m<sup>2</sup></Typography>
+                <PhotoSizeSelectSmall sx={iconStyle} /><Typography sx={textStyle}>{smartHome.area}m<sup>2</sup></Typography>
             </Container>
-            <Button sx={{ ...buttonStyle, mt: 'auto' }} onClick={handleButtonClick}>View details</Button>
+            <Button sx={{ ...buttonStyle, mt: 2 }} onClick={() => onButtonClick(smartHome.id)}>View Consumption</Button>
         </Box>
     );
 };
 
-export default SmartHomeCard;
+export default SmartHomeConsumptionCard;
