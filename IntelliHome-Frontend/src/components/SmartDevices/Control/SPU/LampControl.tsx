@@ -10,8 +10,8 @@ import {
 import React, {useEffect, useState} from "react";
 import {KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
 import SmartDeviceAvailabilityPie from "../Shared/SmartDeviceAvailabilityPie.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 
 const LampControl = ({device, setSmartDeviceParent}) => {
     console.log(device)

@@ -3,9 +3,9 @@ import {CheckCircle, Close} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import {useMutation} from "react-query";
 import axios from "axios";
-import {environment} from "../../security/Environment";
 import {useState} from "react";
 import SuccessfulRegistrationContainer from "./SuccessfulRegistrationContainer";
+import {environment} from "../../utils/Environment.ts";
 
 const SignUpForm = () => {
     const navigate = useNavigate()

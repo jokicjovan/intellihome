@@ -1,8 +1,8 @@
 import {Box, Typography} from "@mui/material";
 import React from "react";
-import {environment} from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
 import {getSmartDeviceTypeValueByKey} from "../../models/enums/SmartDeviceType.ts";
+import {environment} from "../../utils/Environment.ts";
 
 
 const SmartDeviceCard = (props) => {
@@ -38,7 +38,7 @@ const SmartDeviceCard = (props) => {
             <div style={{ margin: "auto 5px" }}>
                 <img
                     src={environment + '/' + smartDevice.image}
-                    alt="Smart Home Image"
+                    alt="Smart HomePage Image"
                     style={{ width: "70px", height: "70px", minWidth:"70px", maxWidth:"70px", minHeight:"70px", maxHeight:"70px", border: "5px solid #343F71", borderRadius: "8px", marginLeft: "20px" }}
                 />
             </div>

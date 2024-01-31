@@ -1,12 +1,12 @@
 import {Box, Divider, Grid, TablePagination, Typography} from "@mui/material";
-import AdminCardListItem from "../components/AddAdmin/AdminCardListItem";
-import AdminRegistration from "../components/AddAdmin/AdminRegistration";
-import {useEffect, useState} from "react";
+import AdminCardListItem from "../components/Admin/AdminCardListItem.tsx";
+import AdminRegistration from "../components/Admin/AdminRegistration.tsx";
+import {useState} from "react";
 import {useQuery} from "react-query";
 import axios from "axios";
-import {environment} from "../security/Environment";
+import {environment} from "../utils/Environment.ts";
 
-const AddAdmin = () => {
+const AddAdminPage = () => {
 
     const [page, setPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -58,4 +58,4 @@ const AddAdmin = () => {
     </Box>
 }
 
-export default AddAdmin;
+export default AddAdminPage;

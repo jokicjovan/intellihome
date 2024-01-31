@@ -1,13 +1,13 @@
-import SignalRSmartHomeService from "../../../../services/smartDevices/SignalRSmartHomeService.ts";
+import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
 import React, {useEffect, useState} from "react";
-import SmartDeviceReportValues from "../Shared/SmartDeviceReportValues.tsx";
+import SmartDeviceReportValues from "../SmartDevices/Control/Shared/SmartDeviceReportValues.tsx";
 import axios from "axios";
-import {environment} from "../../../../utils/Environment.ts";
+import {environment} from "../../utils/Environment.ts";
 import dayjs from "dayjs";
 import {Box} from "@mui/material";
 import {Chart} from "react-google-charts";
 
-const HomeReport = ({smartHomeId}) => {
+const SmartHomeReport = ({smartHomeId}) => {
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState(dayjs());
     const headerRow = ["Date", "ProductionPerMinute", "ConsumptionPerMinute", "GridPerMinute"];
@@ -16,7 +16,7 @@ const HomeReport = ({smartHomeId}) => {
     const signalRSmartHomeService = new SignalRSmartHomeService();
 
     const smartHomeSubscriptionResultCallback = (result) => {
-        console.log('Home subscription result:', result);
+        console.log('HomePage subscription result:', result);
     }
 
     const smartHomeDataCallback = (result) => {
@@ -117,4 +117,4 @@ const HomeReport = ({smartHomeId}) => {
     </Box>
 }
 
-export default HomeReport
+export default SmartHomeReport

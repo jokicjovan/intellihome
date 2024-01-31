@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { PieChart } from '@mui/x-charts/PieChart';
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {environment} from "../../../../utils/Environment.ts";
 import {axisClasses, BarChart} from "@mui/x-charts";
 
 const SmartDeviceAvailabilityBar = ({data}) => {

@@ -1,10 +1,10 @@
 import {Box, Button, Typography} from "@mui/material";
 import {useContext} from "react";
 import {AuthContext} from "../../security/AuthContext";
-import {Group, Home} from "@mui/icons-material";
+import {Group, Home, Power} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {environment} from "../../security/Environment";
+import {environment} from "../../utils/Environment.ts";
 
 const Navbar = () => {
     const { role} = useContext(AuthContext);
@@ -27,6 +27,7 @@ const Navbar = () => {
         <Box style={{height:"100vh", width:"360px",minWidth:"360px",backgroundColor:"#343F71FF" }}>
             {role==="Admin" &&<><Button onClick={()=>navigate("/home")}  sx={buttonStyle}><Home sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Home</Typography></Button></>}
             {role==="Admin" &&<><Button onClick={()=>navigate("/addAdmin")}  sx={buttonStyle}><Group sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Add Admin</Typography></Button></>}
+            {role==="Admin" &&<><Button onClick={()=>navigate("/consumption")}  sx={buttonStyle}><Power sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Consumption</Typography></Button></>}
             {role==="User" &&<><Button onClick={()=>navigate("/userHome")}  sx={buttonStyle}><Home sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Home</Typography></Button></>}
             <Box position="absolute" bottom="0">
                 <Box padding="10px" display="flex"  alignItems="center" flexDirection="row">

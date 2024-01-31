@@ -7,7 +7,6 @@ import SolarPanelControl from "../VEU/SolarPanelControl.tsx";
 import GateControl from "../SPU/GateControl";
 import BatteryControl from "../VEU/BatteryControl";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
 import SignalRSmartDeviceService from "../../../../services/smartDevices/SignalRSmartDeviceService.ts";
 import SmartDevice from "../../../../models/interfaces/SmartDevice.ts";
 import AmbientSensorReport from "../PKA/AmbientSensorReport.tsx";
@@ -15,7 +14,7 @@ import AirConditionerReport from "../PKA/AirConditionerReport.tsx";
 import LampReport from "../SPU/LampReport.tsx";
 import SolarPanelReport from "../VEU/SolarPanelReport.tsx";
 import GateReport from "../SPU/GateReport.tsx";
-import HomeReport from "../VEU/HomeReport.tsx";
+import SmartHomeReport from "../../../SmartHome/SmartHomeReport.tsx";
 import ActionData from "../../../../models/interfaces/Action.ts";
 import SprinklerControl from "../SPU/SprinklerControl.tsx";
 import SprinklerReport from "../SPU/SprinklerReport.tsx";
@@ -24,6 +23,7 @@ import WashingMachineReport from "../PKA/WashingMachineReport";
 import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
 import EVChargerControl from "../VEU/EVChargerControl.tsx";
 import EVChargerReport from "../VEU/EVChargerReport.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -40,13 +40,10 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
-        if((result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined) ||
-            (result.action !== undefined && result.actionBy !== undefined && result.timestamp !== undefined))
-        {
+        if ((result.Action !== undefined && result.ActionBy !== undefined && result.Timestamp !== undefined) ||
+            (result.action !== undefined && result.actionBy !== undefined && result.timestamp !== undefined)) {
             setReport(result);
-        }
-        else
-        {
+        } else {
             setSmartDevice(prevSmartDevice => ({
                 ...prevSmartDevice,
                 ...result
@@ -185,31 +182,39 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             }} onClick={() => setSelectedTab(2)} fontSize="25px" fontWeight="500">Availability</Typography>
         </Box>
         {selectedTab == 0 ? deviceType == "AmbientSensor" ? <AmbientSensorControl smartDevice={smartDevice}/> :
-                deviceType == "AirConditioner" ? <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                deviceType == "WashingMachine" ?
+                deviceType == "AirConditioner" ?
+                    <AirConditionerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                    deviceType == "WashingMachine" ?
                         <WashingMachineControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                    deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                        deviceType == "VehicleGate" ? <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                            deviceType =="Sprinkler" ? <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
-                                deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
-                                    deviceType == "SolarPanelSystem" ? <SolarPanelControl solarPanelSystem={smartDevice}/> :
-                                        deviceType == "VehicleCharger" ? <EVChargerControl vehicleCharger={smartDevice}/> :
-                                    <></>
+                        deviceType == "Lamp" ? <LampControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                            deviceType == "VehicleGate" ?
+                                <GateControl device={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                deviceType == "Sprinkler" ?
+                                    <SprinklerControl smartDevice={smartDevice} setSmartDeviceParent={setSmartDevice}/> :
+                                    deviceType == "BatterySystem" ? <BatteryControl batterySystem={smartDevice}/> :
+                                        deviceType == "SolarPanelSystem" ?
+                                            <SolarPanelControl solarPanelSystem={smartDevice}/> :
+                                            deviceType == "VehicleCharger" ?
+                                                <EVChargerControl vehicleCharger={smartDevice}/> :
+                                                <></>
 
 
             : selectedTab == 1 ? deviceType == "AmbientSensor" ? <AmbientSensorReport device={smartDevice}/> :
-                deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
-                    deviceType == "WashingMachine" ? <WashingMachineReport device={smartDevice}/>:
-                    deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
-                        deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
-                            deviceType =="Sprinkler" ? <SprinklerReport device={smartDevice}/> :
-                                deviceType == "BatterySystem" ? <HomeReport smartHomeId={smartDevice.smartHomeId}/> :
+                    deviceType == "AirConditioner" ? <AirConditionerReport airConditioner={smartDevice}/> :
+                        deviceType == "WashingMachine" ? <WashingMachineReport device={smartDevice}/> :
+                            deviceType == "Lamp" ? <LampReport device={smartDevice}/> :
+                                deviceType == "VehicleGate" ? <GateReport device={smartDevice} report={report}/> :
                                     deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
-                                    deviceType == "SolarPanelSystem" ? <SolarPanelReport solarPanelSystem={smartDevice} report={report}/> :
-                                        deviceType == "VehicleCharger" ? <EVChargerReport vehicleCharger={smartDevice} report={report}/> :
-                                    <></>
+                                        deviceType == "BatterySystem" ?
+                                            <SmartHomeReport smartHomeId={smartDevice.smartHomeId}/> :
+                                            deviceType == "Sprinkler" ? <SprinklerReport device={smartDevice}/> :
+                                                deviceType == "SolarPanelSystem" ?
+                                                    <SolarPanelReport solarPanelSystem={smartDevice} report={report}/> :
+                                                    deviceType == "VehicleCharger" ?
+                                                        <EVChargerReport vehicleCharger={smartDevice} report={report}/> :
+                                                        <></>
                 : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
-                : <></>}
+                    : <></>}
 
     </>
 }

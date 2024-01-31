@@ -1,8 +1,8 @@
 import {Box, Button, Container, Dialog, Typography} from '@mui/material';
-import {Apartment, Check, Clear, Devices, LocationOn, Person, PhotoSizeSelectSmall} from "@mui/icons-material";
-import { environment } from "../../security/Environment.tsx";
+import {Apartment, Check, Clear, LocationOn, Person, PhotoSizeSelectSmall} from "@mui/icons-material";
 import React from "react";
 import axios from "axios";
+import {environment} from "../../utils/Environment.ts";
 
 const SmartHomeApprovalCard = (props) => {
     const data = props.data
@@ -105,7 +105,7 @@ const SmartHomeApprovalCard = (props) => {
             <Container disableGutters sx={{ display: "flex", flexDirection: "row", marginY: "0vh", marginX: "5px 0" }}>
                 <img
                     src={environment + '/' + data.image}
-                    alt="Smart Home Image"
+                    alt="Smart HomePage Image"
                     style={{ width: "50px", height: "50px", border: "5px solid #343F71", borderRadius: "8px", margin: "10px" }}
                 />
                 <Container disableGutters sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start" }}>

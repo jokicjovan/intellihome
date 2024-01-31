@@ -1,11 +1,11 @@
 import {useParams} from "react-router-dom";
 import SmartHomeMain from "../components/SmartHome/SmartHomeMain.tsx";
 
-const SmartHome = () => {
+const SmartHomePage = () => {
     const { id } = useParams();
     return (
         <><SmartHomeMain smartHomeId={id}/></>
     )
 }
 
-export default SmartHome;
+export default SmartHomePage;

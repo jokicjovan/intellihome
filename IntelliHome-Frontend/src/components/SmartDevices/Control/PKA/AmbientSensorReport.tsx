@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {environment} from "../../../../utils/Environment";
+import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceReportValues from "../Shared/SmartDeviceReportValues";
 
 const AmbientSensorReport = ({device}) => {

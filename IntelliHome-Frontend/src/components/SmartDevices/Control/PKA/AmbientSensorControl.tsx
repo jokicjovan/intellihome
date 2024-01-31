@@ -2,7 +2,7 @@ import {Box, Container, CssBaseline, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
-import {environment} from "../../../../security/Environment";
+import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType";
 
 const AmbientSensorControl = ({smartDevice}) => {

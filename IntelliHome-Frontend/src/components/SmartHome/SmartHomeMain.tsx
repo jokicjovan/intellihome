@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {environment} from "../../security/Environment.tsx";
+import {environment} from "../../utils/Environment.ts";
 import {
     Box,
     Button,
@@ -13,7 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import {Add, LocationOn, ShowChart} from "@mui/icons-material";
-import SmartDeviceCard from "./SmartDeviceCard.tsx";
+import SmartDeviceCard from "../SmartDevices/SmartDeviceCard.tsx";
 import AirConditionerRegistrationForm from "../SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import AmbientSensorRegistrationForm from "../SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
 import WashingMachineRegistrationForm from "../SmartDevices/Registration/PKA/WashingMachineRegistrationForm.tsx";
@@ -24,7 +24,7 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
-import HomeReport from "../SmartDevices/Control/VEU/HomeReport.tsx";
+import SmartHomeReport from "./SmartHomeReport.tsx";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
@@ -182,7 +182,7 @@ const SmartHomeMain = ({smartHomeId}) => {
                 <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
 
             {modalContentItem === 99 &&
-                <HomeReport smartHomeId={smartHomeId}/>}
+                <SmartHomeReport smartHomeId={smartHomeId}/>}
 
         </Box>
     );

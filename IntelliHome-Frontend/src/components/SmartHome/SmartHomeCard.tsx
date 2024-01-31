@@ -1,7 +1,7 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { Apartment, Devices, LocationOn, PhotoSizeSelectSmall } from "@mui/icons-material";
-import { environment } from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
+import {environment} from "../../utils/Environment.ts";
 
 const SmartHomeCard = (props) => {
     const data = props.data
@@ -42,7 +42,7 @@ const SmartHomeCard = (props) => {
             <Container disableGutters sx={{ display: "flex", flexDirection: "row", marginY: "0vh", marginX: "5px 0" }}>
                 <img
                     src={environment + '/' + data.image}
-                    alt="Smart Home Image"
+                    alt="Smart HomePage Image"
                     style={{ width: "60px", height: "60px", minWidth:"60px", maxWidth:"60px", minHeight:"60px", maxHeight:"60px", border: "5px solid #343F71", borderRadius: "8px", margin: "10px" }}
                 />
                 <Container disableGutters sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start" }}>

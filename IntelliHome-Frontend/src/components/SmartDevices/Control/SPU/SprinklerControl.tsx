@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import {v4 as uuidv4} from 'uuid';
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const SprinklerControl = ({smartDevice, setSmartDeviceParent}) => {
@@ -208,7 +208,7 @@ const SprinklerControl = ({smartDevice, setSmartDeviceParent}) => {
                     <TextField value={modalDuration} fullWidth disabled={isThereTimeLimit} type="number"
                                name="durationSchedule"
                                onChange={(e) => {
-                                   setModalDuration(e.target.value as number)
+                                   setModalDuration(e.target.value as unknown as number)
                                }}
                                InputProps={
                                    {
@@ -217,8 +217,7 @@ const SprinklerControl = ({smartDevice, setSmartDeviceParent}) => {
                                    }
                                }
                                placeholder="Duration"
-                               sx={styledInput}
-                               mb={3}> </TextField>
+                               sx={styledInput}> </TextField>
                 </Grid>
 
                 <Grid item xs={6} display="flex" alignItems="center">
