@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import {v4 as uuidv4} from 'uuid';
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const SprinklerControl = ({smartDevice, setSmartDeviceParent}) => {

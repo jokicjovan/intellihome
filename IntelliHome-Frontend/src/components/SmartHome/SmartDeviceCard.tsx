@@ -1,8 +1,8 @@
 import {Box, Typography} from "@mui/material";
 import React from "react";
-import {environment} from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
 import {getSmartDeviceTypeValueByKey} from "../../models/enums/SmartDeviceType.ts";
+import {environment} from "../../utils/Environment.ts";
 
 
 const SmartDeviceCard = (props) => {

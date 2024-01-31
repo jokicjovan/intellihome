@@ -9,14 +9,14 @@ import {
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {Add, Close, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
+import {Add, KeyboardArrowDown, KeyboardArrowUp} from "@mui/icons-material";
 import {LocalizationProvider, StaticDateTimePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
-import {environment} from "../../../../security/Environment";
 import {v4 as uuidv4} from 'uuid';
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const AirConditionerControl = ({smartDevice, setSmartDeviceParent}) => {

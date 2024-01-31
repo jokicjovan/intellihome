@@ -2,9 +2,9 @@ import {Box, Button, IconButton, TextField, Typography} from "@mui/material";
 import {CheckCircle, Close, Shuffle} from "@mui/icons-material";
 import {useMutation, useQueryClient} from "react-query";
 import axios from "axios";
-import {environment} from "../../security/Environment";
 import {useState} from "react";
 import InputAdornment from "@mui/material/InputAdornment";
+import {environment} from "../../utils/Environment.ts";
 
 const AdminRegistration = () => {
     const queryClient = useQueryClient()

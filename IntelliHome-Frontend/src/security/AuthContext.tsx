@@ -1,6 +1,6 @@
 import {createContext, useState, useEffect} from 'react';
 import axios from "axios";
-import {environment} from "./Environment.tsx";
+import {environment} from "../utils/Environment.ts";
 
 export const AuthContext = createContext({
     isAuthenticated: false,

@@ -2,7 +2,7 @@ import {Box, Button, InputLabel, Link, TextField, Typography} from "@mui/materia
 import React, {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {environment} from "../../security/Environment";
+import {environment} from "../../utils/Environment.ts";
 
 
 const SignInForm = () => {

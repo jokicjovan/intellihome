@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios';
-import {environment} from "../../security/Environment.tsx";
 import SmartDeviceType from "../../models/enums/SmartDeviceType.ts";
 import SmartDeviceCategory from "../../models/enums/SmartDeviceCategory.ts";
+import {environment} from "../../utils/Environment.ts";
 
 class SmartDeviceService {
 

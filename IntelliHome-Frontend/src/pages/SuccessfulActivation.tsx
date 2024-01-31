@@ -2,9 +2,8 @@ import {Box, CircularProgress, Container, CssBaseline, Link, Typography} from "@
 import {useEffect, useRef, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {CheckCircle, Error} from "@mui/icons-material";
-import {useMutation} from "react-query";
 import axios from "axios";
-import {environment} from "../security/Environment";
+import {environment} from "../utils/Environment.ts";
 
 
 const SuccessfulActivation=()=>{

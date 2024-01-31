@@ -2,7 +2,7 @@ import AmbientSensorReport from "./AmbientSensorReport.tsx";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import axios from "axios";
-import {environment} from "../../../../utils/Environment";
+import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType";
 import SmartDeviceReportAction from "../Shared/SmartDeviceReportAction";
 

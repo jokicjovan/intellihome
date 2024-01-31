@@ -1,6 +1,6 @@
 import SmartDeviceAvailabilityPie from "./SmartDeviceAvailabilityPie.tsx";
 import React, { useEffect, useState } from "react";
-import { Box, Checkbox, ListItemText, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { Box, ListItemText, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import axios from "axios";
 import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceAvailabilityBar from "./SmartDeviceAvailabilityBar.tsx";

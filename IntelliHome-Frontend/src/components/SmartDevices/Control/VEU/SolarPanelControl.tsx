@@ -5,7 +5,7 @@ import {
 import React, {useEffect, useState} from "react";
 import {Chart} from "react-google-charts";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 
 const SolarPanelControl = ({solarPanelSystem}) => {

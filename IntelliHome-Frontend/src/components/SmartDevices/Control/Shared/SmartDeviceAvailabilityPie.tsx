@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {environment} from "../../../../utils/Environment.ts";
 
 const SmartDeviceAvailabilityPie = ({width, height, online, offline}) => {
     const [onlinePercentage, setOnlinePercentage] = useState(online)

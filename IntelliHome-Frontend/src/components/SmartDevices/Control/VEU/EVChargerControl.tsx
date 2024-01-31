@@ -8,8 +8,8 @@ import {ArrowRightAltRounded, ArrowDownwardRounded, Battery20Rounded, BatteryFul
 import AddIcon from "@mui/icons-material/Add";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const EVChargerControl = ({vehicleCharger}) => {

@@ -116,6 +116,7 @@ volumes:
   Influxdb:
   Mosquitto:
   DeviceSimulator:
+  Nginx:
 
 networks:
   mqtt:

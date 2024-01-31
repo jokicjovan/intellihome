@@ -14,7 +14,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {v4 as uuidv4} from 'uuid';
 import axios from "axios";
-import {environment} from "../../../../security/Environment";
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const WashingMachineControl = ({smartDevice, setSmartDeviceParent}) => {

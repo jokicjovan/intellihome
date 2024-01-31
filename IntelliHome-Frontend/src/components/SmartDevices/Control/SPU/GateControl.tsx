@@ -12,7 +12,7 @@ import React, {useEffect, useState} from "react";
 import {Add, Close} from "@mui/icons-material";
 import dayjs, {Dayjs} from "dayjs";
 import axios from "axios";
-import {environment} from "../../../../security/Environment.tsx";
+import {environment} from "../../../../utils/Environment.ts";
 
 
 const GateControl = ({device, setSmartDeviceParent}) => {

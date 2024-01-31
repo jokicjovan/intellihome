@@ -11,7 +11,7 @@ import Home from "./pages/Home.tsx";
 import {UnauthenticatedRoute} from "./security/UnauthenticatedRoute";
 import {AuthenticatedRoute} from "./security/AuthenticatedRoute";
 import {QueryClient, QueryClientProvider} from "react-query";
-import SuccessfulActivation from "./pages/successfulActivation";
+import SuccessfulActivation from "./pages/SuccessfulActivation.tsx";
 import Layout from "./components/Shared/Layout";
 import AddAdmin from "./pages/AddAdmin";
 import LandingPage from "./pages/LandingPage";
@@ -41,6 +41,7 @@ const router = createBrowserRouter([
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivation/></UnauthenticatedRoute>},
     {path:"/index", element: <UnauthenticatedRoute><LandingPage/></UnauthenticatedRoute>},
     {path:"/home", element: <AuthenticatedRoute><Layout><Home/></Layout></AuthenticatedRoute>},
+    {path:"/consumption", element: <AuthenticatedRoute><AdminRoute></AdminRoute></AuthenticatedRoute>},
     {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdmin/></Layout></AdminRoute></AuthenticatedRoute>},
     {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChange/></AdminFirstTimeRoute></AuthenticatedRoute>},
     {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHome/></Layout></AuthenticatedRoute>},

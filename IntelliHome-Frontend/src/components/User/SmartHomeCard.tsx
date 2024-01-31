@@ -1,7 +1,7 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { Apartment, Devices, LocationOn, PhotoSizeSelectSmall } from "@mui/icons-material";
-import { environment } from "../../security/Environment.tsx";
 import {useNavigate} from "react-router-dom";
+import {environment} from "../../utils/Environment.ts";
 
 const SmartHomeCard = (props) => {
     const data = props.data

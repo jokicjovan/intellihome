@@ -1,11 +1,9 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
-using IntelliHome_Backend.Features.PKA.DataRepositories;
+using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
-using IntelliHome_Backend.Features.PKA.Handlers;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
-using IntelliHome_Backend.Features.PKA.Repositories;
 using IntelliHome_Backend.Features.PKA.Repositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
@@ -22,12 +20,15 @@ namespace IntelliHome_Backend.Features.PKA.Services
         private readonly ISmartDeviceDataRepository _smartDeviceDataRepository;
 
         public WashingMachineService(IWashingMachineRepository washingMachineRepository, 
-            IWashingMachineModeRepository washingMachineModeRepository, IWashingMachineHandler washingMachineHandler, IWashingMachineDataRepository washingMachineDataRepository)
+            IWashingMachineModeRepository washingMachineModeRepository, IWashingMachineHandler washingMachineHandler, 
+            IWashingMachineDataRepository washingMachineDataRepository,
+            ISmartDeviceDataRepository smartDeviceDataRepository)
         {
             _washingMachineRepository = washingMachineRepository;
             _washingMachineModeRepository = washingMachineModeRepository;
             _washingMachineHandler = washingMachineHandler;
             _washingMachineDataRepository = washingMachineDataRepository;
+            _smartDeviceDataRepository = smartDeviceDataRepository;
         }
 
         public List<WashingMachineMode> GetWashingMachineModes(List<Guid> modesIds)

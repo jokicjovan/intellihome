@@ -1,5 +1,4 @@
 import {useParams} from "react-router-dom";
-import SmartHomeMain from "../components/SmartHome/SmartHomeMain.tsx";
 import SmartDeviceMain from "../components/SmartDevices/Control/Shared/SmartDeviceMain";
 import {Box} from "@mui/material";
 

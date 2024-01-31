@@ -4,7 +4,7 @@ import AdminRegistration from "../components/AddAdmin/AdminRegistration";
 import {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import axios from "axios";
-import {environment} from "../security/Environment";
+import {environment} from "../utils/Environment.ts";
 
 const AddAdmin = () => {
 

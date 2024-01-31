@@ -5,7 +5,6 @@ import {environment} from "../../../../utils/Environment.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import {Box} from "@mui/material";
 import SmartDeviceReportAction from "../Shared/SmartDeviceReportAction.tsx";
-import SolarPanelReport from "./SolarPanelReport.tsx";
 
 const EVChargerReport = ({vehicleCharger, report}) => {
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
