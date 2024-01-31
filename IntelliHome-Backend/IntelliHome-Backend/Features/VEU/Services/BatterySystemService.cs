@@ -3,7 +3,7 @@ using Data.Models.VEU;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.VEU.DataRepositories.Interfaces;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using IntelliHome_Backend.Features.VEU.Repositories.Interfaces;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
@@ -35,7 +35,8 @@ namespace IntelliHome_Backend.Features.VEU.Services
             bool success = await _batterySystemHandler.ConnectToSmartDevice(entity);
             if (!success) return entity;
             entity.IsConnected = true;
-            await _batterySystemRepository.Update(entity);
+            entity = await _batterySystemRepository.Update(entity);
+
             var fields = new Dictionary<string, object>
             {
                 { "isConnected", 1 }
@@ -46,6 +47,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 { "deviceId", entity.Id.ToString()}
             };
             _smartDeviceDataRepository.AddPoint(fields, tags);
+
             return entity;
         }
 
@@ -57,6 +59,16 @@ namespace IntelliHome_Backend.Features.VEU.Services
         public async Task<BatterySystem> Get(Guid id)
         {
             BatterySystem batterySystem = await _batterySystemRepository.Read(id);
+            if (batterySystem == null)
+            {
+                throw new ResourceNotFoundException("Battery system with provided Id not found!");
+            }
+            return batterySystem;
+        }
+
+        public async Task<BatterySystem> GetWithHome(Guid id)
+        {
+            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
             if (batterySystem == null)
             {
                 throw new ResourceNotFoundException("Battery system with provided Id not found!");
@@ -76,7 +88,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
 
         public async Task<BatterySystemDTO> GetWithCapacityData(Guid id)
         {
-            BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
+            BatterySystem batterySystem = await GetWithHome(id);
             BatterySystemDTO batterySystemDTO = new BatterySystemDTO
             {
                 Id = batterySystem.Id,
@@ -108,7 +120,7 @@ namespace IntelliHome_Backend.Features.VEU.Services
             _batterySystemDataRepository.AddCapacityMeasurement(fields, tags);
         }
 
-        public async Task ToggleBatterySystem(Guid id, bool turnOn = true)
+        public async Task Toggle(Guid id, bool turnOn = true)
         {
             BatterySystem batterySystem = await _batterySystemRepository.FindWithSmartHome(id);
             if ( batterySystem == null ) {

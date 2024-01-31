@@ -9,7 +9,7 @@ import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
 
 interface VehicleChargerAdditionalFields {
-    Power: number;
+    PowerPerHour: number;
     NumberOfChargingPoints: number;
 }
 
@@ -21,7 +21,7 @@ interface VehicleChargerRegistrationFormProps {
 const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormProps> = ({smartHomeId, onClose}) => {
     const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<VehicleChargerAdditionalFields>({
-        Power: 1,
+        PowerPerHour: 1,
         NumberOfChargingPoints: 2
     });
 
@@ -98,7 +98,7 @@ const VehicleChargerRegistrationForm : React.FC<VehicleChargerRegistrationFormPr
                         label="Power"
                         name="Power"
                         type="number"
-                        value={additionalFormData.Power}
+                        value={additionalFormData.PowerPerHour}
                         onChange={handleAdditionalFormInputChange}
                         InputProps={{
                             endAdornment: <InputAdornment position="end">KW</InputAdornment>,

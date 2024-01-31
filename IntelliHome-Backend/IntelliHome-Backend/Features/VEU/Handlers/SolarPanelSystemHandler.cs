@@ -7,11 +7,11 @@ using Data.Models.Shared;
 using IntelliHome_Backend.Features.Shared.Hubs.Interfaces;
 using IntelliHome_Backend.Features.Shared.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using IntelliHome_Backend.Features.VEU.DTOs;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Newtonsoft.Json;
 using IntelliHome_Backend.Features.Home.Handlers;
 using Data.Models.VEU;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 
 namespace IntelliHome_Backend.Features.VEU.Handlers
 {

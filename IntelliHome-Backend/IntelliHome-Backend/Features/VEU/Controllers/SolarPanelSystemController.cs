@@ -1,5 +1,5 @@
 ﻿using IntelliHome_Backend.Features.Shared.DTOs;
-using IntelliHome_Backend.Features.VEU.DTOs;
+using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +46,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
             }
             ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
             string username = identity.FindFirst(ClaimTypes.Name).Value;
-            await _solarPanelSystemService.ToggleSolarPanelSystem(id, username, turnOn);
+            await _solarPanelSystemService.Toggle(id, username, turnOn);
             return Ok();
         }
 
