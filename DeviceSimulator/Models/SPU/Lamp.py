@@ -28,15 +28,14 @@ def generate_lumens():
     current_time = datetime.now().time()
     hours = current_time.hour + current_time.minute / 60
 
-    time_rad = math.pi * (hours - 12) / 12  # subtract 12 from hours to shift the phase and divide by 12 for smoother transition
+    time_diff_noon = abs(12 - hours)
+    if time_diff_noon > 12:  # adjust for 24:00 (midnight)
+        time_diff_noon = 24 - time_diff_noon
 
-    sine_val = math.sin(time_rad)
+    lumens = 1000 * (1 - (time_diff_noon / 12))  # Linearly decrease from 1000 lumens at noon to 0 lumens at midnight
 
-    adjusted_sine_val = (sine_val + 1) / 2
+    lumens = max(0, round(lumens, 2))  # Ensure lumens is not negative
 
-    lumens = adjusted_sine_val * 1000
-
-    lumens = round(lumens, 2)
     return lumens
 
 

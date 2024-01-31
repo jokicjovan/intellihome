@@ -554,4 +554,7 @@ IntelliHome-Backend/IntelliHome-Backend/static
 .idea/*
 venv
 
+Redis/*
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,webstorm,react
+
