@@ -149,6 +149,7 @@ const UserHome=()=>{
                     } else {
                         alert("Smart home created successfully!");
                     }
+                    getSmartHomes();
                 })
                 .catch((error) => {
                     console.log(error);
