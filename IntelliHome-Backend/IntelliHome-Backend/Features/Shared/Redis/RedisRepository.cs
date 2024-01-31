@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using NRedisStack;
 using StackExchange.Redis;
 
@@ -18,7 +19,11 @@ namespace IntelliHome_Backend.Features.Shared.Redis
 
         public void Add(string key, T value)
         {
-            var serializedValue = Newtonsoft.Json.JsonConvert.SerializeObject(value);
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            var serializedValue = Newtonsoft.Json.JsonConvert.SerializeObject(value, serializerSettings);
             _db.StringSet(key, serializedValue);
         }
 

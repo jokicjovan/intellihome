@@ -63,6 +63,7 @@ namespace IntelliHome_Backend.Features.Home.Services
 
 
             //TODO: Save image to file system
+            if(dto.Image == null) throw new InvalidInputException("Image is required!");
             string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(dto.Image.FileName);
             string SavePath = Path.Combine("static/smartHomes", ImageName);
             using (var stream = new FileStream(SavePath, FileMode.Create))
@@ -89,6 +90,7 @@ namespace IntelliHome_Backend.Features.Home.Services
 
             _smartHomeRepository.Create(smartHome);
             _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
+            _dataChangeListener.HandleDataChange(user.Id);
             return new GetSmartHomeDTO(smartHome);
         }
 
@@ -99,14 +101,56 @@ namespace IntelliHome_Backend.Features.Home.Services
             redisRepository.Delete(cacheKey);
         }
 
+        public void DeleteUserSmartHomesCache(Guid userId)
+        {
+            string cacheKey = $"SmartHomesForUsername:{userId}";
+            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
+            redisRepository.Delete(cacheKey);
+        }
+
+        // public async Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters)
+        // {
+        //     User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
+        //     List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
+        //     // for all smartHomes register listener for data change
+        //     foreach (var smartHome in smartHomes)
+        //     {
+        //         _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
+        //     }
+        //     _dataChangeListener.RegisterListener(DeleteUserSmartHomesCache, user.Id);
+        //     SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
+        //     {
+        //         TotalCount = smartHomes.Count,
+        //         SmartHomes = smartHomes.Skip((pageParameters.PageNumber - 1) * pageParameters.PageSize)
+        //             .Take(pageParameters.PageSize).Select(s => new GetSmartHomeDTO(s)).ToList()
+        //     };
+        //     return result;
+        // }
+
         public async Task<SmartHomePaginatedDTO> GetSmartHomesForUser(String username, String search, PageParametersDTO pageParameters)
         {
             User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
-            List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
-            // for all smartHomes registter listener for data change
+            string cacheKey = $"SmartHomesForUsername:{user.Id}";
+            RedisRepository<List<SmartHome>> redisRepository = new RedisRepository<List<SmartHome>>("localhost");
+            List<SmartHome> smartHomes = redisRepository.Get(cacheKey);
+            if (smartHomes == null)
+            {
+                Console.WriteLine("Data retrieved from database.");
+                smartHomes = await _smartHomeRepository.GetSmartHomesForUser(user);
+                redisRepository.Add(cacheKey, smartHomes);
+            }
+            else
+            {
+                Console.WriteLine("Data retrieved from cache.");
+            }
             foreach (var smartHome in smartHomes)
             {
                 _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
+            }
+            _dataChangeListener.RegisterListener(DeleteUserSmartHomesCache, user.Id);
+            if (search != null)
+            {
+                smartHomes = smartHomes.Where(s => s.Name.ToLower().Contains(search.ToLower())).ToList();
             }
             SmartHomePaginatedDTO result = new SmartHomePaginatedDTO
             {
