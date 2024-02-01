@@ -26,6 +26,7 @@ import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/S
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
 import SmartHomeReport from "./SmartHomeReport.tsx";
 import SmartHomeShare from "./SmartHomeShare";
+import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
@@ -200,7 +201,7 @@ const SmartHomeMain = ({smartHomeId}) => {
                 <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
 
             {modalContentItem === 99 &&
-                <SmartHomeReport smartHomeId={smartHomeId}/>}
+<SmartHomeConsumptionReport smartHomeId={smartHomeId}/>}
             {modalContentItem === 100 &&
                 <SmartHomeShare smartHomeId={smartHomeId}/>
             }
@@ -374,10 +375,14 @@ const SmartHomeMain = ({smartHomeId}) => {
                 />
             </Container>
 
-            <Dialog open={openModal} onClose={handleCloseModal}>
+            <Modal open={openModal} onClose={handleCloseModal}
+                    sx={{
+                        '& .MuiDialog-paper': {
+                            minWidth: modalContentItem == 99 ? '1000px' : '400px',
+                        },
+                    }}>
                 {modalContent}
-            </Dialog>
-
+            </Modal>
         </Box>
     )
 

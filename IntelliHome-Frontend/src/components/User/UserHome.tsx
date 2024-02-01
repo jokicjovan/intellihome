@@ -52,6 +52,7 @@ const UserHome=()=>{
     const handleChangePage = (event, newPage: number) => {
         setPage(newPage);
     };
+
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 8));
         setPage(0);

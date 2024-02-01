@@ -20,6 +20,8 @@ import PasswordChangePage from "./pages/PasswordChangePage.tsx";
 import {AdminFirstTimeRoute} from "./security/AdminFirstTimeRoute";
 import SmartHomePage from "./pages/SmartHomePage.tsx";
 import SmartDevicePage from "./pages/SmartDevicePage.tsx";
+import SmartHomesConsumption from "./components/Consumption/SmartHomesConsumption.tsx";
+import ConsumptionPage from "./pages/ConsumptionPage.tsx";
 
 axios.defaults.withCredentials = true
 
@@ -41,7 +43,7 @@ const router = createBrowserRouter([
     {path:"/successfulActivation", element: <UnauthenticatedRoute><SuccessfulActivationPage/></UnauthenticatedRoute>},
     {path:"/index", element: <UnauthenticatedRoute><LandingPage/></UnauthenticatedRoute>},
     {path:"/home", element: <AuthenticatedRoute><Layout><HomePage/></Layout></AuthenticatedRoute>},
-    {path:"/consumption", element: <AuthenticatedRoute><AdminRoute></AdminRoute></AuthenticatedRoute>},
+    {path:"/consumption", element: <AuthenticatedRoute><AdminRoute><Layout><ConsumptionPage/></Layout></AdminRoute></AuthenticatedRoute>},
     {path:"/addAdmin", element: <AuthenticatedRoute><AdminRoute><Layout><AddAdminPage/></Layout></AdminRoute></AuthenticatedRoute>},
     {path:"/passwordChange", element: <AuthenticatedRoute><AdminFirstTimeRoute><PasswordChangePage/></AdminFirstTimeRoute></AuthenticatedRoute>},
     {path:"/smartHome/:id", element: <AuthenticatedRoute><Layout><SmartHomePage/></Layout></AuthenticatedRoute>},

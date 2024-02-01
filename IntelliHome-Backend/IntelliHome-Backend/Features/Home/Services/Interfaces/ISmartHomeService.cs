@@ -20,5 +20,6 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task AddPermision(SmartHome smartHome, string email);
         Task RemovePermision(SmartHome smartHome, string email);
         Task<List<string>> GetAllEmailsWithPermission(SmartHome smarthome);
+        Task<SmartHomePaginatedDTO> GetAllPaged(String search, PageParametersDTO pageParameters);
     }
 }

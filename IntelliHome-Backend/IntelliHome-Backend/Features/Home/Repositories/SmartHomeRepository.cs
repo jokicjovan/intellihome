@@ -24,7 +24,7 @@ namespace IntelliHome_Backend.Features.Home.Repositories
 
         public async Task<List<SmartHome>> GetSmartHomesForUser(User user)
         {
-            return await _entities                
+            return await _entities
                 .Include(s => s.SmartDevices)
                 .Include(s => s.Owner)
                 .Include(s => s.City)
@@ -43,9 +43,18 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<SmartHome>> GetSmartHomesForApproval()
-        {
+        public async Task<List<SmartHome>> GetAllSmartHomesPaged(string search) {
             return await _entities
+                .Include(s => s.SmartDevices)
+                .Include(s => s.Owner)
+                .Include(s => s.City)
+                .Where(s => s.Name.ToLower().Contains(search.ToLower()))
+                .ToListAsync();
+        }
+
+        public Task<List<SmartHome>> GetSmartHomesForApproval()
+        {
+            return _entities
                 .Include(s => s.SmartDevices)
                 .Include(s => s.Owner)
                 .Include(s => s.City)
@@ -58,6 +67,10 @@ namespace IntelliHome_Backend.Features.Home.Repositories
             return _entities
                 .Where(e => e.Id == smartHomeId && (e.Owner.Id == userId || e.SmartDevices.Any(device => device.AllowedUsers.Any(user => user.Id == userId))))
                 .AnyAsync();
+        }
+
+        public Task<List<SmartHome>> GetSmartHomesByCity(Guid cityId) {
+            return _entities.Include(e => e.City).Where(e => e.City.Id == cityId).ToListAsync();
         }
     }
 }

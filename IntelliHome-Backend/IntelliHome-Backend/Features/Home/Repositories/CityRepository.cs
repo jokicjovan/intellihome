@@ -16,5 +16,10 @@ namespace IntelliHome_Backend.Features.Home.Repositories
         {
             return _entities.FirstOrDefault(c => c.Name == city && c.Country == country);
         }
+
+        public async Task<List<City>> GetCitiesWithNameSearch(string search) 
+        {
+            return await _entities.Where(s => s.Name.ToLower().Contains(search.ToLower())).ToListAsync();
+        }
     }
 }
