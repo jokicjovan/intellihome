@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import {Box} from "@mui/material";
 import {Chart} from "react-google-charts";
 
-const SmartHomeReport = ({smartHomeId}) => {
+const SmartHomeConsumptionReport = ({smartHomeId}) => {
     const [startDate, setStartDate] = useState(dayjs().subtract(24, "hour"));
     const [endDate, setEndDate] = useState(dayjs());
     const headerRow = ["Date", "ProductionPerMinute", "ConsumptionPerMinute", "GridPerMinute"];
@@ -117,4 +117,4 @@ const SmartHomeReport = ({smartHomeId}) => {
     </Box>
 }
 
-export default SmartHomeReport
+export default SmartHomeConsumptionReport

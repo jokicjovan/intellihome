@@ -16,7 +16,7 @@ const LandingPage=()=>{
 
             <Grid item xs={6} display="flex" justifyContent="center" alignItems="center" flexDirection="column">
                 <Typography fontSize="45px" fontWeight="800" display="flex" maxWidth="600px" flexWrap="wrap">We Partner with Industry Leaders to provide amazing Smarthome platform</Typography>
-                <Typography width="100%" textAlign="left" fontSize="22px" fontWeight="400" display="flex" maxWidth="600px" flexWrap="wrap">Join us today!</Typography>
+                <Typography width="100%" textAlign="left" fontSize="22px" fontWeight="400" display="flex" maxWidth="600px" marginLeft={"450px"} flexWrap="wrap">Join us today!</Typography>
                 <Button onClick={()=>navigate("/signup")}  sx={{fontSize:"30px",marginX:"10px",marginTop:"40px",paddingX:"40px",fontWeight:"800" ,color:"#343F71FF",border:"3px solid #343F71FF", borderRadius:"10px",backgroundColor:"rgba(52,63,113,0.1)",':hover':{backgroundColor:"#2c3770",color:"white"}}} >Sign Up</Button>
 
             </Grid>

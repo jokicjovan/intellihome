@@ -1,16 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Data.Models.Home;
-using Data.Models.PKA;
-using IntelliHome_Backend.Features.Home.DTOs;
+﻿using IntelliHome_Backend.Features.Home.DTOs;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
-using IntelliHome_Backend.Features.PKA.DTOs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Security.Claims;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using IntelliHome_Backend.Features.SPU.DTOs;
 
 namespace IntelliHome_Backend.Features.Home.Controllers
 {
@@ -94,6 +88,34 @@ namespace IntelliHome_Backend.Features.Home.Controllers
                 return BadRequest(e.Message);
             }
 
+            return Ok(smartHomes);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> GetAllSmartHomesPaged([FromQuery] PageParametersDTO pageParameters, [FromQuery] string search)
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
+            SmartHomePaginatedDTO smartHomes;
+            try
+            {
+                if (search == null)
+                {
+                    search = "";
+                }
+                search = search.Substring(1, search.Length - 2);
+                smartHomes = await _smartHomeService.GetAllPaged(search, pageParameters);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok(smartHomes);
         }
 
