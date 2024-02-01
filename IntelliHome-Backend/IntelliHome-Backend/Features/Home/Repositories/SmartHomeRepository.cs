@@ -38,7 +38,7 @@ namespace IntelliHome_Backend.Features.Home.Repositories
                 .Include(s => s.SmartDevices)
                 .Include(s => s.Owner)
                 .Include(s => s.City)
-                .Where(s => s.Owner.Username == user.Username)
+                .Where(s => s.Owner.Username == user.Username || s.SmartDevices.Any(t => t.AllowedUsers.Any(u => u.Username == user.Username)))
                 .Where(s => s.Name.ToLower().Contains(search.ToLower()))
                 .ToListAsync();
         }

@@ -90,6 +90,10 @@ namespace Data.Context
                     j => j.HasOne<WashingMachineMode>().WithMany(),
                     j => j.HasOne<WashingMachine>().WithMany()
                 );
+            modelBuilder.Entity<User>()
+            .HasMany(u => u.AllowedSmartDevices)
+            .WithMany(s => s.AllowedUsers)
+            .UsingEntity(j => j.ToTable("SharingDevices"));
             using (StreamReader file = new StreamReader("superadminpass.txt"))
             {
                 string pass=file.ReadLine();

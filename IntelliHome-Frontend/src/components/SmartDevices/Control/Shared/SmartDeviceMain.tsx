@@ -1,4 +1,4 @@
-import {Box, FormControlLabel, styled, Switch, SwitchProps, Typography} from "@mui/material";
+import {Box, Button, Dialog, FormControlLabel, styled, Switch, SwitchProps, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AmbientSensorControl from "../PKA/AmbientSensorControl";
 import AirConditionerControl from "../PKA/AirConditionerControl";
@@ -24,6 +24,8 @@ import SmartDeviceReportAvailability from "./SmartDeviceReportAvailability.tsx";
 import EVChargerControl from "../VEU/EVChargerControl.tsx";
 import EVChargerReport from "../VEU/EVChargerReport.tsx";
 import {environment} from "../../../../utils/Environment.ts";
+import {Share} from "@mui/icons-material";
+import SmartDeviceShare from "../../SmartDeviceShare";
 
 const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -33,10 +35,37 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
     const [smartDevice, setSmartDevice] = useState<SmartDevice>({});
     const [report, setReport] = useState<ActionData>({} as ActionData);
     const signalRSmartDeviceService = new SignalRSmartDeviceService();
+    const [isOwner, setIsOwner]= useState(false)
+    const [isOpen, setIsOpen]= useState(false)
 
     const smartDeviceSubscriptionResultCallback = (result) => {
         console.log('Device subscription result:', result);
     }
+    const buttonStyle = {
+        backgroundColor: "#FBC40E",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        width: "200px",
+        height: "40px",
+        fontSize: "20px",
+        fontWeight: "600",
+        margin: "15px",
+        borderRadius: "5px",
+        ':hover': {backgroundColor: "#EDB90D"},
+        textTransform: "none"
+    }
+    const statsButtonStyle = {
+        backgroundColor: "#343F71",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        width: "100px",
+        height: "40px",
+        fontSize: "20px",
+        fontWeight: "600",
+        marginLeft:"15px",
+        borderRadius: "5px",
+        ':hover': {backgroundColor: "#20284b"},
+        textTransform: "none"
+    }
+    const typoStyle = {color: "white", fontWeight: "600", fontSize: "15px"}
 
     const smartDeviceDataCallback = (result) => {
         result = JSON.parse(result);
@@ -73,10 +102,18 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
 
     const getSmartDevice = () => {
         return axios.get(environment + `/api/${deviceType}/Get?Id=${smartDeviceId}`).then(res => {
+            getIsOwner(res.data.smartHomeId)
             setSmartDevice(res.data)
             setIsConnected(res.data.isConnected)
             setIsOn(res.data.isOn)
             return res.data;
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+    const getIsOwner = (smartHomeId) => {
+        axios.get(environment + `/api/SmartHome/IsOwner?homeId=${smartHomeId}`).then(res => {
+            setIsOwner(res.data)
         }).catch(err => {
             console.log(err)
         });
@@ -160,8 +197,11 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
             </Box>
 
         </Box>
-        <Box width="100%">
+        <Box display="flex" justifyContent="start" alignItems="center" width="100%">
             <Typography fontSize="25px" color="secondary" fontWeight="600">{deviceType}</Typography>
+            {isOwner &&<Button onClick={()=>setIsOpen(true)} sx={statsButtonStyle}
+                                startIcon={<Share sx={{color: "white"}}/>}><Typography
+                sx={typoStyle}>Share</Typography></Button>}
         </Box>
         <Box width="100%" height={"4px"} my={2} bgcolor="#343F71FF"></Box>
         <Box display="flex" flexDirection="row">
@@ -215,6 +255,9 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                                                         <></>
                 : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
                     : <></>}
+        <Dialog open={isOpen} onClose={()=>setIsOpen(false)}>
+            <SmartDeviceShare smartDeviceId={smartDeviceId}/>
+        </Dialog>
 
     </>
 }

@@ -23,16 +23,18 @@ namespace IntelliHome_Backend.Features.Home.Services
         private readonly IUserRepository _userRepository;
         private readonly ICityRepository _cityRepository;
         private readonly ISmartHomeHandler _smartHomeHandler;
+        private readonly ISmartDeviceRepository _smartDeviceRepository;
         private readonly IDataChangeListener _dataChangeListener;
 
         public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
-            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler, IDataChangeListener dataChangeListener)
+            ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler, IDataChangeListener dataChangeListener, ISmartDeviceRepository smartDeviceRepository)
         {
             _smartHomeRepository = smartHomeRepository;
             _smartHomeDataRepository = smartHomeDataRepository;
             _userRepository = userRepository;
             _cityRepository = cityRepository;
             _smartHomeHandler = smartHomeHandler;
+            _smartDeviceRepository = smartDeviceRepository;
             _dataChangeListener = dataChangeListener;
         }
 
@@ -195,6 +197,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             await _smartHomeRepository.Delete(id);
         }
 
+
         private async Task _sendApprovalRejectionMail(User user, String reason, Boolean isRejection)
         {
             StreamReader sr = new StreamReader("sendgrid_api_key.txt");
@@ -230,6 +233,52 @@ namespace IntelliHome_Backend.Features.Home.Services
                     .Take(pageParameters.PageSize).Select(s => new GetSmartHomeDTO(s)).ToList()
             };
             return result;
+        }
+
+        public async Task<List<String>> GetAllEmailsWithPermission(SmartHome smarthome)
+        {
+            List<User> users = new List<User>();
+            for (int i = 0; i < smarthome.SmartDevices.Count; i++)
+            {
+                SmartDevice device =await  _smartDeviceRepository.Read(smarthome.SmartDevices[i].Id);
+                if (i == 0)
+                {
+                    users = device.AllowedUsers;
+                }
+                else
+                {
+                    users = users.Intersect(device.AllowedUsers).ToList();
+                }
+            }
+            return users.Select(user=>user.Email).ToList();
+        }
+
+        public async Task AddPermision(SmartHome smartHome, string email)
+        {
+            User user =_userRepository.FindByEmail(email).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
+            foreach (SmartDevice device in smartHome.SmartDevices)
+            {
+                if (!user.AllowedSmartDevices.Contains(device))
+                {
+                    user.AllowedSmartDevices.Add(device);
+                }
+            }
+            await _userRepository.Update(user);
+
+
+        }
+
+        public async Task RemovePermision(SmartHome smartHome, string email)
+        {
+            User user = _userRepository.FindByEmail(email).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
+            foreach (SmartDevice device in smartHome.SmartDevices)
+            {
+                if (user.AllowedSmartDevices.Contains(device))
+                {
+                    user.AllowedSmartDevices.Remove(device);
+                }
+            }
+                await _userRepository.Update(user);
         }
 
         public Task<SmartHome> Create(SmartHome entity)

@@ -12,7 +12,7 @@ import {
     TablePagination,
     Typography
 } from "@mui/material";
-import {Add, LocationOn, ShowChart} from "@mui/icons-material";
+import {Add, LocationOn, Share, ShowChart} from "@mui/icons-material";
 import SmartDeviceCard from "../SmartDevices/SmartDeviceCard.tsx";
 import AirConditionerRegistrationForm from "../SmartDevices/Registration/PKA/AirConditionerRegistrationForm.tsx";
 import AmbientSensorRegistrationForm from "../SmartDevices/Registration/PKA/AmbientSensorRegistrationForm.tsx";
@@ -24,6 +24,8 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
+import SmartHomeReport from "./SmartHomeReport.tsx";
+import SmartHomeShare from "./SmartHomeShare";
 import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
 
 
@@ -69,6 +71,8 @@ const SmartHomeMain = ({smartHomeId}) => {
     const [smartDevices, setSmartDevices] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openModal, setOpenModal] = useState(false);
+    const [openShareModal, setOpenShareModal] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
     const [modalContentItem, setModalContentItem] = useState(-1);
     const signalRSmartHomeService = new SignalRSmartHomeService();
 
@@ -79,6 +83,7 @@ const SmartHomeMain = ({smartHomeId}) => {
     useEffect(() => {
         if (smartHomeId) {
             getSmartHome();
+            getIsOwner();
         }
 
         signalRSmartHomeService.startConnection().then(() => {
@@ -98,6 +103,14 @@ const SmartHomeMain = ({smartHomeId}) => {
     const getSmartHome = () => {
         axios.get(environment + `/api/SmartHome/GetSmartHome?Id=${smartHomeId}`).then(res => {
             setSmartHome(res.data);
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
+    const getIsOwner = () => {
+        axios.get(environment + `/api/SmartHome/IsOwner?homeId=${smartHomeId}`).then(res => {
+            setIsOwner(res.data)
         }).catch(err => {
             console.log(err)
         });
@@ -144,6 +157,12 @@ const SmartHomeMain = ({smartHomeId}) => {
         handleOpenModal(99)
     };
 
+    const handleShareClick = (event) => {
+        setAnchorEl(null);
+        handleOpenModal(100);
+        setOpenModal(true)
+    };
+
     const handleCloseModal = () => {
         setOpenModal(false);
         getSmartDevices();
@@ -182,8 +201,10 @@ const SmartHomeMain = ({smartHomeId}) => {
                 <VehicleChargerRegistrationForm smartHomeId={smartHomeId} onClose={handleCloseModal}/>}
 
             {modalContentItem === 99 &&
-                <SmartHomeConsumptionReport smartHomeId={smartHomeId}/>}
-
+<SmartHomeConsumptionReport smartHomeId={smartHomeId}/>}
+            {modalContentItem === 100 &&
+                <SmartHomeShare smartHomeId={smartHomeId}/>
+            }
         </Box>
     );
     return (
@@ -288,51 +309,57 @@ const SmartHomeMain = ({smartHomeId}) => {
                     <Typography sx={{fontSize: "15px", fontWeight: "600"}}>High power devices</Typography>
 
                 </Box>
-                <Button onClick={handleStatsClick} sx={statsButtonStyle}><ShowChart sx={{marginX: "5px", color: "white"}}
-                                                                    fontSize="inherit"/><Typography sx={typoStyle}>Stats</Typography></Button>
-                <Button onClick={handleClick} sx={buttonStyle}><Add sx={{marginX: "5px", color: "white"}}
-                                                                    fontSize="inherit"/><Typography sx={typoStyle}>Add
-                    new device</Typography></Button>
-                <Menu open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} anchorEl={anchorEl}
-                      anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                      transformOrigin={{vertical: 'top', horizontal: 'center'}}>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(0)
-                    }}>Air conditioner</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(1)
-                    }}>Ambient sensor</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(2)
-                    }}>Washing machine</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(3)
-                    }}>Lamp</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(4)
-                    }}>Sprinkler</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(5)
-                    }}>Vehicle gate</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(6)
-                    }}>Battery system</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(7)
-                    }}>Solar system</MenuItem>
-                    <MenuItem onClick={() => {
-                        setAnchorEl(null);
-                        handleOpenModal(8)
-                    }}>Vehicle charger</MenuItem>
-                </Menu>
+                <Box>
+                    <Button onClick={handleStatsClick} sx={statsButtonStyle}><ShowChart
+                        sx={{marginX: "5px", color: "white"}}
+                        fontSize="inherit"/><Typography sx={typoStyle}>Stats</Typography></Button>
+                    {isOwner && <Button onClick={handleShareClick} sx={statsButtonStyle}
+                                        startIcon={<Share sx={{color: "white"}}/>}><Typography
+                        sx={typoStyle}>Share</Typography></Button>}
+                    <Button onClick={handleClick} sx={buttonStyle}><Add sx={{marginX: "5px", color: "white"}}
+                                                                        fontSize="inherit"/><Typography sx={typoStyle}>Add
+                        new device</Typography></Button>
+                    <Menu open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} anchorEl={anchorEl}
+                          anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                          transformOrigin={{vertical: 'top', horizontal: 'center'}}>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(0)
+                        }}>Air conditioner</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(1)
+                        }}>Ambient sensor</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(2)
+                        }}>Washing machine</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(3)
+                        }}>Lamp</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(4)
+                        }}>Sprinkler</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(5)
+                        }}>Vehicle gate</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(6)
+                        }}>Battery system</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(7)
+                        }}>Solar system</MenuItem>
+                        <MenuItem onClick={() => {
+                            setAnchorEl(null);
+                            handleOpenModal(8)
+                        }}>Vehicle charger</MenuItem>
+                    </Menu>
+                </Box>
             </Container>
 
             <Container style={{position: 'relative'}}>
