@@ -17,8 +17,8 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 {
     public class VehicleGateHandler : SmartDeviceHandler, IVehicleGateHandler
     {
-        public VehicleGateHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public VehicleGateHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(configuration, mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.VEHICLEGATE}/+", HandleMessageFromDevice);
         }
@@ -81,15 +81,16 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                             { "allowed_licence_plates", vehicleGate.AllowedLicencePlates },
                             { "power_per_hour", vehicleGate.PowerPerHour }
                         };
+
             var requestBody = new
             {
                 device_id = smartDevice.Id,
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30,
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"],
                 kwargs = additionalAttributes
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);

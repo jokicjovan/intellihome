@@ -11,9 +11,9 @@ namespace IntelliHome_Backend.Features.Shared.Redis
         private readonly ConnectionMultiplexer _redis;
         private readonly IDatabase _db;
 
-        public RedisRepository(string connectionString="localhost")
+        public RedisRepository(IConfiguration configuration)
         {
-            _redis = ConnectionMultiplexer.Connect(connectionString);
+            _redis = ConnectionMultiplexer.Connect(configuration["Redis:Host"]);
             _db = _redis.GetDatabase();
         }
 

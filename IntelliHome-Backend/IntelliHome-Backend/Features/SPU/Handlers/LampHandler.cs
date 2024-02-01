@@ -16,8 +16,8 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
 {
     public class LampHandler : SmartDeviceHandler, ILampHandler
     {
-        public LampHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public LampHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(configuration, mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.SPU}/{SmartDeviceType.LAMP}/+", HandleMessageFromDevice);
         }
@@ -70,9 +70,9 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30,
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"],
                 kwargs = additionalAttributes
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);

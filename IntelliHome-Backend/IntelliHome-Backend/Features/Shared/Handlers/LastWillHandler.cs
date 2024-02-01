@@ -17,10 +17,10 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
         private readonly IMqttService _mqttService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> _smartDeviceHubContext;
-        public LastWillHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public LastWillHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             _mqttService = new MqttService(mqttFactory);
-            _mqttService.ConnectAsync("localhost", 1883).Wait();
+            _mqttService.ConnectAsync(configuration["MqttBroker:Host"], Convert.ToInt32(configuration["MqttBroker:Port"])).Wait();
             _serviceProvider = serviceProvider;
             _smartDeviceHubContext = smartDeviceHubContext;
         }

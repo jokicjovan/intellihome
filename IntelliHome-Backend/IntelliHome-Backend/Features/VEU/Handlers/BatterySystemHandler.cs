@@ -17,9 +17,9 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
 {
     public class BatterySystemHandler : SmartDeviceHandler, IBatterySystemHandler
     {
-        public BatterySystemHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, 
+        public BatterySystemHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, 
             IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+            : base(configuration,mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.BATTERYSYSTEM}/+", HandleMessageFromDevice);
         }
@@ -59,15 +59,16 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                         {
                             { "capacity", batterySystem.Capacity }
                         };
+
             var requestBody = new
             {
                 device_id = smartDevice.Id,
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30,
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"],
                 kwargs = additionalAttributes
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);

@@ -175,17 +175,22 @@ builder.Services.AddSignalR();
 
 //export port 5238
 builder.WebHost.UseUrls("http://*:5283");
+
+//add cors
+var allowedOrigins = builder.Configuration.GetSection("CorsOrigins:AllowedOrigins").Get<string>(); ;
+var originsArray = allowedOrigins.Split(',');
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:8000", "http://localhost:4173", "https://accounts.google.com", "http://localhost:8800")
+            builder.WithOrigins(originsArray)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
 });
+
 builder.Services.AddTransient<CustomCookieAuthenticationEvents>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
        .AddCookie(options =>

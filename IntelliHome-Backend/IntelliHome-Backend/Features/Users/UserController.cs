@@ -22,8 +22,11 @@ namespace IntelliHome_Backend.Features.Users
     {
         private readonly IUserService _userService;
         private readonly IConfirmationService _confirmationService;
-        public UserController(IUserService userService, IConfirmationService confirmationService)
+        private readonly IConfiguration _configuration;
+
+        public UserController(IConfiguration configuration, IUserService userService, IConfirmationService confirmationService)
         {
+            _configuration = configuration;
             _userService = userService;
             _confirmationService = confirmationService;
         }
@@ -190,7 +193,7 @@ namespace IntelliHome_Backend.Features.Users
                 identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-            return Redirect("http://localhost:8000/home");
+            return Redirect(_configuration["Client:Host"] + "/home");
         }
         private string GenerateRandomPassword()
         {

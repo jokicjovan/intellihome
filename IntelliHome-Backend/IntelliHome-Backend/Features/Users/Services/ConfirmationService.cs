@@ -15,9 +15,11 @@ namespace IntelliHome_Backend.Features.Users.Services
         private const int VerificationCodeLength = 8;
         private readonly IConfirmationRepository _confirmationRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-        public ConfirmationService(IUserRepository userRepository, IConfirmationRepository confirmationRepository)
+        public ConfirmationService(IConfiguration configuration, IUserRepository userRepository, IConfirmationRepository confirmationRepository)
         {
+            _configuration = configuration;
             _userRepository = userRepository;
             _confirmationRepository = confirmationRepository;
         }
@@ -68,7 +70,7 @@ namespace IntelliHome_Backend.Features.Users.Services
 
             var dynamicTemplateData = new
             {
-                url = "http://localhost:8000/successfulActivation?code=" + code,
+                url = _configuration["Client:Host"] + "/successfulActivation?code=" + code,
                 user_name = user.FirstName,
                 code = code
                 

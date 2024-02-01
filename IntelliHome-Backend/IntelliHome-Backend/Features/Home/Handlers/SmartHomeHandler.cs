@@ -18,13 +18,15 @@ namespace IntelliHome_Backend.Features.Home.Handlers
         protected readonly IMqttService mqttService;
         protected readonly IServiceProvider serviceProvider;
         protected readonly IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext;
+        protected readonly IConfiguration configuration;
 
-        public SmartHomeHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext)
+        public SmartHomeHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, IHubContext<SmartHomeHub, ISmartHomeClient> smartHomeHubContext)
         {
             this.serviceProvider = serviceProvider;
             this.smartHomeHubContext = smartHomeHubContext;
+            this.configuration = configuration;
             mqttService = new MqttService(mqttFactory);
-            mqttService.ConnectAsync("localhost", 1883).Wait();
+            mqttService.ConnectAsync(configuration["MqttBroker:Host"], Convert.ToInt32(configuration["MqttBroker:Port"])).Wait();
             mqttService.SubscribeAsync($"FromSmartHome/+/Usage", HandleMessageFromHome);
         }
 

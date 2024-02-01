@@ -24,14 +24,16 @@ namespace IntelliHome_Backend.Features.Home.Services
         
         private readonly IDataChangeListener _dataChangeListener;
         private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler, ISmartDeviceDataRepository smartDeviceDataRepository,IUserRepository userRepository,IDataChangeListener dataChangeListener)
+        public SmartDeviceService(IConfiguration configuration, ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler, ISmartDeviceDataRepository smartDeviceDataRepository,IUserRepository userRepository,IDataChangeListener dataChangeListener)
         {
             _smartDeviceRepository = smartDeviceRepository;
             _smartDeviceHandler = smartDeviceHandler;
             _smartDeviceDataRepository = smartDeviceDataRepository;
             _userRepository = userRepository;
             _dataChangeListener = dataChangeListener;
+            _configuration = configuration;
         }
 
         public async Task AddPermision(SmartDevice smartDevice, string email)
@@ -127,7 +129,7 @@ namespace IntelliHome_Backend.Features.Home.Services
         {
             User user = await _userRepository.Read(userId);
             string cacheKey = $"SmartDevicesForSmartHome:{smartHomeId + " " + user.Username}";
-            RedisRepository<IEnumerable<SmartDevice>> redisRepository = new RedisRepository<IEnumerable<SmartDevice>>("localhost");
+            RedisRepository<IEnumerable<SmartDevice>> redisRepository = new RedisRepository<IEnumerable<SmartDevice>>(_configuration);
             IEnumerable<SmartDevice>? smartDevices = redisRepository.Get(cacheKey);
             if (smartDevices == null)
             {

@@ -16,8 +16,8 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 {
     public class AmbientSensorHandler : SmartDeviceHandler, IAmbientSensorHandler
     {
-        public AmbientSensorHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext) 
-            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public AmbientSensorHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext) 
+            : base(configuration, mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.PKA}/{SmartDeviceType.AMBIENTSENSOR}/+", HandleMessageFromDevice);
         }
@@ -62,9 +62,9 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30,
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"],
                 kwargs = additionalAttributes
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);

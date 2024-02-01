@@ -25,10 +25,12 @@ namespace IntelliHome_Backend.Features.Home.Services
         private readonly ISmartHomeHandler _smartHomeHandler;
         private readonly ISmartDeviceRepository _smartDeviceRepository;
         private readonly IDataChangeListener _dataChangeListener;
+        private readonly IConfiguration _configuration;
 
-        public SmartHomeService(ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
+        public SmartHomeService(IConfiguration configuration, ISmartHomeRepository smartHomeRepository, IUserRepository userRepository, ICityRepository cityRepository,
             ISmartHomeDataRepository smartHomeDataRepository, ISmartHomeHandler smartHomeHandler, IDataChangeListener dataChangeListener, ISmartDeviceRepository smartDeviceRepository)
         {
+            _configuration = configuration;
             _smartHomeRepository = smartHomeRepository;
             _smartHomeDataRepository = smartHomeDataRepository;
             _userRepository = userRepository;
@@ -47,7 +49,7 @@ namespace IntelliHome_Backend.Features.Home.Services
         public async Task<GetSmartHomeDTO> GetSmartHomeDTOO(Guid Id)
         { 
             string cacheKey = $"SmartHomeDTO:{Id}";
-            RedisRepository<GetSmartHomeDTO> redisRepository = new RedisRepository<GetSmartHomeDTO>("localhost");
+            RedisRepository<GetSmartHomeDTO> redisRepository = new RedisRepository<GetSmartHomeDTO>(_configuration);
             GetSmartHomeDTO smartHomeDTO = redisRepository.Get(cacheKey);
             if (smartHomeDTO != null) return smartHomeDTO;
             SmartHome smartHome = await _smartHomeRepository.Read(Id) ?? throw new ResourceNotFoundException("Smart house with provided Id not found!");
@@ -98,14 +100,14 @@ namespace IntelliHome_Backend.Features.Home.Services
         public void DeleteSmartHomeDevicesCache(string smartHomeId)
         {
             string cacheKey = $"SmartDevicesForSmartHome:{smartHomeId}";
-            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
+            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>(_configuration);
             redisRepository.Delete(cacheKey);
         }
 
         public void DeleteUserSmartHomesCache(string userId)
         {
             string cacheKey = $"SmartHomesForUsername:{userId}";
-            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
+            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>(_configuration);
             redisRepository.Delete(cacheKey);
         }
 
@@ -132,7 +134,7 @@ namespace IntelliHome_Backend.Features.Home.Services
         {
             User user = _userRepository.FindByUsername(username).Result ?? throw new ResourceNotFoundException("User with provided username not found!");
             string cacheKey = $"SmartHomesForUsername:{user.Id}";
-            RedisRepository<List<SmartHome>> redisRepository = new RedisRepository<List<SmartHome>>("localhost");
+            RedisRepository<List<SmartHome>> redisRepository = new RedisRepository<List<SmartHome>>(_configuration);
             List<SmartHome> smartHomes = redisRepository.Get(cacheKey);
             if (smartHomes == null)
             {

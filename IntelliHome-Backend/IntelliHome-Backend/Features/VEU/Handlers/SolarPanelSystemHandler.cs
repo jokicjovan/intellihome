@@ -17,8 +17,8 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
 {
     public class SolarPanelSystemHandler : SmartDeviceHandler, ISolarPanelSystemHandler
     {
-        public SolarPanelSystemHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
-            : base(mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
+        public SolarPanelSystemHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+            : base(configuration,mqttFactory, serviceProvider, simualtionsHandler, smartDeviceHubContext)
         {
             mqttService.SubscribeAsync($"FromDevice/+/{SmartDeviceCategory.VEU}/{SmartDeviceType.SOLARPANELSYSTEM}/+", HandleMessageFromDevice);
         }
@@ -60,15 +60,16 @@ namespace IntelliHome_Backend.Features.VEU.Handlers
                             { "area", solarPanelSystem.Area },
                             { "efficiency", solarPanelSystem.Efficiency }
                         };
+
             var requestBody = new
             {
                 device_id = smartDevice.Id,
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30,
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"],
                 kwargs = additionalAttributes
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);

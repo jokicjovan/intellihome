@@ -18,14 +18,16 @@ namespace IntelliHome_Backend.Features.Home.Handlers
         protected readonly IServiceProvider serviceProvider;
         protected readonly IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext;
         protected readonly IMqttService mqttService;
+        protected readonly IConfiguration configuration;
 
-        public SmartDeviceHandler(MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
+        public SmartDeviceHandler(IConfiguration configuration, MqttFactory mqttFactory, IServiceProvider serviceProvider, ISimulationsHandler simualtionsHandler, IHubContext<SmartDeviceHub, ISmartDeviceClient> smartDeviceHubContext)
         {
             this.simualtionsHandler = simualtionsHandler;
             this.serviceProvider = serviceProvider;
             this.smartDeviceHubContext = smartDeviceHubContext;
+            this.configuration = configuration;
             mqttService = new MqttService(mqttFactory);
-            mqttService.ConnectAsync("localhost", 1883).Wait();
+            mqttService.ConnectAsync(configuration["MqttBroker:Host"], Convert.ToInt32(configuration["MqttBroker:Port"])).Wait();
         }
 
         public Task SubscribeToSmartDevice(SmartDevice smartDevice)
@@ -56,9 +58,9 @@ namespace IntelliHome_Backend.Features.Home.Handlers
                 smart_home_id = smartDevice.SmartHome.Id,
                 device_category = smartDevice.Category.ToString(),
                 device_type = smartDevice.Type.ToString(),
-                host = "localhost",
-                port = 1883,
-                keepalive = 30
+                host = configuration["MqttBroker:Host"],
+                port = configuration["MqttBroker:Port"],
+                keepalive = configuration["MqttBroker:Keepalive"]
             };
             return simualtionsHandler.AddDeviceToSimulator(requestBody);
         }
