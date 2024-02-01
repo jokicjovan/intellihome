@@ -135,8 +135,6 @@ namespace IntelliHome_Backend.Features.Home.Services
             Int32 totalItems = await query.CountAsync();
             //Int32 totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             IEnumerable<SmartDevice> entities = await query.Where(p=>(p.AllowedUsers.Any(s=>s.Id==userId))||(p.SmartHome.Owner.Id==userId)).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            int totalItems = await query.CountAsync();
-            IEnumerable<SmartDevice> entities = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
             IEnumerable<SmartDeviceDTO> dtos = entities.Select(entity => new SmartDeviceDTO(entity));
 
             redisRepository.Add(cacheKey, dtos);
