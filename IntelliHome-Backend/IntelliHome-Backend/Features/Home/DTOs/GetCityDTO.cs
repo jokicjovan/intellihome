@@ -16,5 +16,10 @@ namespace IntelliHome_Backend.Features.Home.DTOs
             Country = city.Country;
             ZipCode = city.ZipCode;
         }
+
+        public GetCityDTO()
+        {
+
+        }
     }
 }

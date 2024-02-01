@@ -141,6 +141,7 @@ const UserHome=()=>{
 
     const smartHomeCreationMutation = useMutation({
         mutationFn: (data: FormData) => {
+            console.log(data);
             return axios.post(environment + '/api/SmartHome/CreateSmartHome', data)
                 .then((res) => {
                     if (res.status !== 200) {
@@ -148,6 +149,7 @@ const UserHome=()=>{
                     } else {
                         alert("Smart home created successfully!");
                     }
+                    getSmartHomes();
                 })
                 .catch((error) => {
                     console.log(error);

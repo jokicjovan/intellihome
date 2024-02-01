@@ -3,6 +3,7 @@ using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,16 +18,18 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         private readonly IAmbientSensorService _ambientSensorService;
         private readonly IWashingMachineService _washingMachineService;
         private readonly IImageService _imageService;
+        private readonly IDataChangeListener _dataChangeListener;
 
         public PKAController(ISmartHomeService smartHomeService, IAirConditionerService airConditionerService,
             IAmbientSensorService ambientSensorService, IWashingMachineService washingMachineService,
-            IImageService imageService)
+            IImageService imageService, IDataChangeListener dataChangeListener)
         {
             _smartHomeService = smartHomeService;
             _airConditionerService = airConditionerService;
             _ambientSensorService = ambientSensorService;
             _washingMachineService = washingMachineService;
             _imageService = imageService;
+            _dataChangeListener = dataChangeListener;
         }
 
         [HttpPost]
@@ -46,6 +49,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             airConditioner = await _airConditionerService.Create(airConditioner);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(airConditioner);
         }
 
@@ -63,6 +67,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             ambientSensor = await _ambientSensorService.Create(ambientSensor);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(ambientSensor);
         }
 
@@ -81,6 +86,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             washingMachine = await _washingMachineService.Create(washingMachine);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(washingMachine);
         }
 

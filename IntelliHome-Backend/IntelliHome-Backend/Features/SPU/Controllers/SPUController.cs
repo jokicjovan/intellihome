@@ -1,6 +1,7 @@
 ﻿using Data.Models.Shared;
 using Data.Models.SPU;
 using IntelliHome_Backend.Features.Home.Services.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
 using IntelliHome_Backend.Features.SPU.DTOs;
 using IntelliHome_Backend.Features.SPU.Services.Interfaces;
@@ -17,16 +18,18 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
         private readonly IVehicleGateService _vehicleGateService;
         private readonly ISprinklerService _sprinklerService;
         private readonly IImageService _imageService;
+        private readonly IDataChangeListener _dataChangeListener;
 
         public SPUController(ISmartHomeService smartHomeService, ILampService lampService,
             IVehicleGateService vehicleGateService, ISprinklerService sprinklerService,
-            IImageService imageService)
+            IImageService imageService, IDataChangeListener dataChangeListener)
         {
             _smartHomeService = smartHomeService;
             _lampService = lampService;
             _vehicleGateService = vehicleGateService;
             _sprinklerService = sprinklerService;
             _imageService = imageService;
+            _dataChangeListener = dataChangeListener;
         }
 
         [HttpPost]
@@ -44,6 +47,7 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             lamp = await _lampService.Create(lamp);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(lamp);
 
         }
@@ -62,6 +66,7 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             sprinkler = await _sprinklerService.Create(sprinkler);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(sprinkler);
 
         }
@@ -81,6 +86,7 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleGate = await _vehicleGateService.Create(vehicleGate);
+            _dataChangeListener.HandleDataChange(smartHomeId);
             return Ok(vehicleGate);
 
         }

@@ -10,6 +10,8 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using IntelliHome_Backend.Features.Shared.Exceptions;
 using IntelliHome_Backend.Features.Users.Repositories.Interfaces;
+using IntelliHome_Backend.Features.Shared.Infrastructure;
+using IntelliHome_Backend.Features.Shared.Redis;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntelliHome_Backend.Features.Home.Services
@@ -19,14 +21,17 @@ namespace IntelliHome_Backend.Features.Home.Services
         private readonly ISmartDeviceRepository _smartDeviceRepository;
         private readonly ISmartDeviceHandler _smartDeviceHandler;
         private readonly ISmartDeviceDataRepository _smartDeviceDataRepository; 
+        
+        private readonly IDataChangeListener _dataChangeListener;
         private readonly IUserRepository _userRepository;
 
-        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler, ISmartDeviceDataRepository smartDeviceDataRepository,IUserRepository userRepository)
+        public SmartDeviceService(ISmartDeviceRepository smartDeviceRepository, ISmartDeviceHandler smartDeviceHandler, ISmartDeviceDataRepository smartDeviceDataRepository,IUserRepository userRepository,IDataChangeListener dataChangeListener)
         {
             _smartDeviceRepository = smartDeviceRepository;
             _smartDeviceHandler = smartDeviceHandler;
             _smartDeviceDataRepository = smartDeviceDataRepository;
             _userRepository = userRepository;
+            _dataChangeListener = dataChangeListener;
         }
 
         public async Task AddPermision(SmartDevice smartDevice, string email)
@@ -116,11 +121,25 @@ namespace IntelliHome_Backend.Features.Home.Services
 
         public async Task<(IEnumerable<SmartDeviceDTO>, Int32)> GetPagedSmartDevicesForSmartHome(Guid smartHomeId, int page, int pageSize, Guid userId)
         {
+            string cacheKey = $"SmartDevicesForSmartHome:{smartHomeId}";
+            RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
+
+            IEnumerable<SmartDeviceDTO>? cachedDtos = redisRepository.Get(cacheKey);
+            if (cachedDtos != null)
+            {
+                Console.WriteLine("Data retrieved from cache.");
+                return (cachedDtos, cachedDtos.Count());
+            }
+            Console.WriteLine("Data retrieved from database.");
             IQueryable<SmartDevice> query = GetSmartDevicesForSmartHome(smartHomeId).AsQueryable();
             Int32 totalItems = await query.CountAsync();
             //Int32 totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             IEnumerable<SmartDevice> entities = await query.Where(p=>(p.AllowedUsers.Any(s=>s.Id==userId))||(p.SmartHome.Owner.Id==userId)).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            int totalItems = await query.CountAsync();
+            IEnumerable<SmartDevice> entities = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
             IEnumerable<SmartDeviceDTO> dtos = entities.Select(entity => new SmartDeviceDTO(entity));
+
+            redisRepository.Add(cacheKey, dtos);
             return (dtos, totalItems);
         }
 

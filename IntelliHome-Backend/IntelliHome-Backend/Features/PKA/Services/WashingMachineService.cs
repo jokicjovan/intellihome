@@ -1,6 +1,7 @@
 ﻿using Data.Models.PKA;
 using Data.Models.Shared;
 using IntelliHome_Backend.Features.Home.DataRepository.Interfaces;
+using IntelliHome_Backend.Features.PKA.DataRepositories;
 using IntelliHome_Backend.Features.PKA.DataRepositories.Interfaces;
 using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Handlers.Interfaces;
