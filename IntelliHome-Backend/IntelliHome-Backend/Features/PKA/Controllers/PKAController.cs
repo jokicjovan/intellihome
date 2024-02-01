@@ -5,7 +5,9 @@ using IntelliHome_Backend.Features.PKA.DTOs;
 using IntelliHome_Backend.Features.PKA.Services.Interfaces;
 using IntelliHome_Backend.Features.Shared.Infrastructure;
 using IntelliHome_Backend.Features.Shared.Services.Interfacted;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IntelliHome_Backend.Features.PKA.Controllers
 {
@@ -36,6 +38,13 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [Route("{smartHomeId:Guid}")]
         public async Task<ActionResult> CreateAirConditioner([FromRoute] Guid smartHomeId, [FromForm] AirConditionerCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             AirConditioner airConditioner = new AirConditioner
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -49,7 +58,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             airConditioner = await _airConditionerService.Create(airConditioner);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId.ToString() + " " + username);
             return Ok(airConditioner);
         }
 
@@ -57,6 +66,13 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [Route("{smartHomeId:Guid}")]
         public async Task<ActionResult> CreateAmbientSensor([FromRoute] Guid smartHomeId, [FromForm] AmbientSensorCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             AmbientSensor ambientSensor = new AmbientSensor
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -67,7 +83,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             ambientSensor = await _ambientSensorService.Create(ambientSensor);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId.ToString() + " " + username);
             return Ok(ambientSensor);
         }
 
@@ -75,6 +91,13 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
         [Route("{smartHomeId:Guid}")]
         public async Task<ActionResult> CreateWashingMachine([FromRoute] Guid smartHomeId, [FromForm] WashingMachineCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             WashingMachine washingMachine = new WashingMachine
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -86,7 +109,7 @@ namespace IntelliHome_Backend.Features.PKA.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             washingMachine = await _washingMachineService.Create(washingMachine);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId.ToString() + " " + username);
             return Ok(washingMachine);
         }
 

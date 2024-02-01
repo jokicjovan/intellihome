@@ -90,19 +90,19 @@ namespace IntelliHome_Backend.Features.Home.Services
             };
 
             _smartHomeRepository.Create(smartHome);
-            _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
-            _dataChangeListener.HandleDataChange(user.Id);
+            _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id.ToString() + " " + username); 
+            _dataChangeListener.HandleDataChange(smartHome.Id.ToString() + " " + username);
             return new GetSmartHomeDTO(smartHome);
         }
 
-        public void DeleteSmartHomeDevicesCache(Guid smartHomeId)
+        public void DeleteSmartHomeDevicesCache(string smartHomeId)
         {
             string cacheKey = $"SmartDevicesForSmartHome:{smartHomeId}";
             RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
             redisRepository.Delete(cacheKey);
         }
 
-        public void DeleteUserSmartHomesCache(Guid userId)
+        public void DeleteUserSmartHomesCache(string userId)
         {
             string cacheKey = $"SmartHomesForUsername:{userId}";
             RedisRepository<IEnumerable<SmartDeviceDTO>> redisRepository = new RedisRepository<IEnumerable<SmartDeviceDTO>>("localhost");
@@ -137,7 +137,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             if (smartHomes == null)
             {
                 Console.WriteLine("Data retrieved from database.");
-                smartHomes = await _smartHomeRepository.GetSmartHomesForUser(user);
+                smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
                 redisRepository.Add(cacheKey, smartHomes);
             }
             else
@@ -146,9 +146,9 @@ namespace IntelliHome_Backend.Features.Home.Services
             }
             foreach (var smartHome in smartHomes)
             {
-                _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id);
+                _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id.ToString() + " " + username);
             }
-            _dataChangeListener.RegisterListener(DeleteUserSmartHomesCache, user.Id);
+            _dataChangeListener.RegisterListener(DeleteUserSmartHomesCache, user.Id.ToString());
             if (search != null)
             {
                 smartHomes = smartHomes.Where(s => s.Name.ToLower().Contains(search.ToLower())).ToList();
@@ -184,7 +184,7 @@ namespace IntelliHome_Backend.Features.Home.Services
 
             // TODO: Send mail to user
             User user = await _userRepository.Read(smartHome.Owner.Id) ?? throw new ResourceNotFoundException("User with provided Id not found!");
-            _dataChangeListener.HandleDataChange(user.Id);
+            _dataChangeListener.HandleDataChange(user.Id.ToString());
             _sendApprovalRejectionMail(user, "", false);
         }
 
@@ -193,7 +193,7 @@ namespace IntelliHome_Backend.Features.Home.Services
             //TODO: Send mail to user
             User user = await _userRepository.Read(userId) ?? throw new ResourceNotFoundException("User with provided Id not found!");
             _sendApprovalRejectionMail(user, reason, true);
-            _dataChangeListener.HandleDataChange(user.Id);
+            _dataChangeListener.HandleDataChange(user.Id.ToString());
             await _smartHomeRepository.Delete(id);
         }
 
@@ -263,6 +263,7 @@ namespace IntelliHome_Backend.Features.Home.Services
                     user.AllowedSmartDevices.Add(device);
                 }
             }
+            _dataChangeListener.HandleDataChange(user.Id.ToString());
             await _userRepository.Update(user);
 
 
@@ -278,7 +279,8 @@ namespace IntelliHome_Backend.Features.Home.Services
                     user.AllowedSmartDevices.Remove(device);
                 }
             }
-                await _userRepository.Update(user);
+            _dataChangeListener.HandleDataChange(user.Id.ToString());
+            await _userRepository.Update(user);
         }
 
         public Task<SmartHome> Create(SmartHome entity)

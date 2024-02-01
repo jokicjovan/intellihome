@@ -3,6 +3,7 @@ using IntelliHome_Backend.Features.Home.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Data.Models.Home;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using IntelliHome_Backend.Features.SPU.DTOs;

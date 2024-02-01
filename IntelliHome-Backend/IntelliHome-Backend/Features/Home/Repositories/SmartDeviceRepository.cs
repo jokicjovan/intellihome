@@ -21,7 +21,7 @@ namespace IntelliHome_Backend.Features.Home.Repositories
         }
 
         public IEnumerable<SmartDevice> FindSmartDevicesForSmartHome(Guid smartHomeId) {
-            return _entities.Where(e => e.SmartHome.Id == smartHomeId).OrderBy(e => e.Name);
+            return _entities.Include(e=> e.SmartHome).ThenInclude(e => e.Owner).Include(e => e.AllowedUsers).Where(e => e.SmartHome.Id == smartHomeId).OrderBy(e => e.Name);
         }
 
         public IEnumerable<SmartDevice> UpdateAll(List<SmartDevice> smartDevices) 

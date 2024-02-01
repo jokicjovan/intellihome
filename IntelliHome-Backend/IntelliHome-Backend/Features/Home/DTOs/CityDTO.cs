@@ -17,7 +17,7 @@ namespace IntelliHome_Backend.Features.Home.DTOs
             ZipCode = city.ZipCode;
         }
 
-        public GetCityDTO()
+        public CityDTO()
         {
 
         }

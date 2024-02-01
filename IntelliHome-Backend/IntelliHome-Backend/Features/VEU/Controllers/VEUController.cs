@@ -7,8 +7,10 @@ using IntelliHome_Backend.Features.VEU.DTOs.BatterySystem;
 using IntelliHome_Backend.Features.VEU.DTOs.SolarPanelSystem;
 using IntelliHome_Backend.Features.VEU.DTOs.VehicleCharger;
 using IntelliHome_Backend.Features.VEU.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IntelliHome_Backend.Features.VEU.Controllers
 {
@@ -40,6 +42,13 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<ActionResult> CreateBatterySystem([FromRoute] Guid smartHomeId, [FromForm] BatterySystemCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             BatterySystem batterySystem = new BatterySystem
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -50,7 +59,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             batterySystem = await _batterySystemService.Create(batterySystem);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId + " " + username);
             return Ok(batterySystem);
         }
 
@@ -59,6 +68,13 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<ActionResult> CreateSolarPanelSystem([FromRoute] Guid smartHomeId, [FromForm] SolarPanelSystemCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             SolarPanelSystem solarPanelSystem = new SolarPanelSystem
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -70,7 +86,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             solarPanelSystem = await _solarPanelSystemService.Create(solarPanelSystem);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId + " " + username);
             return Ok(solarPanelSystem);
         }
 
@@ -79,6 +95,13 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
         [Authorize]
         public async Task<ActionResult> CreateVehicleCharger([FromRoute] Guid smartHomeId, [FromForm] VehicleChargerCreationDTO dto)
         {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            string username = identity.FindFirst(ClaimTypes.Name).Value;
             VehicleCharger vehicleCharger = new VehicleCharger
             {
                 SmartHome = await _smartHomeService.Get(smartHomeId),
@@ -90,7 +113,7 @@ namespace IntelliHome_Backend.Features.VEU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleCharger = await _vehicleChargerService.Create(vehicleCharger);
-            _dataChangeListener.HandleDataChange(smartHomeId);
+            _dataChangeListener.HandleDataChange(smartHomeId + " " + username);
             return Ok(vehicleCharger);
         }
     }

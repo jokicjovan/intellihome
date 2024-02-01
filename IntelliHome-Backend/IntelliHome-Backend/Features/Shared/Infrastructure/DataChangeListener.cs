@@ -1,26 +1,28 @@
-﻿namespace IntelliHome_Backend.Features.Shared.Infrastructure
+﻿using Data.Models.Home;
+
+namespace IntelliHome_Backend.Features.Shared.Infrastructure
 {
     public interface IDataChangeListener
     {
-        void RegisterListener(Action<Guid> callback, Guid smartHomeId);
-        void UnregisterListener(Action<Guid> callback, Guid smartHomeId);
-        void HandleDataChange(Guid smartHomeId);
+        void RegisterListener(Action<string> callback, string smartHomeId);
+        void UnregisterListener(Action<string> callback, string smartHomeId);
+        void HandleDataChange(string smartHomeId);
     }
 
     public class DataChangeListener : IDataChangeListener
     {
-        private readonly Dictionary<Guid, List<Action<Guid>>> _listeners = new();
+        private readonly Dictionary<string, List<Action<string>>> _listeners = new();
 
-        public void RegisterListener(Action<Guid> callback, Guid smartHomeId)
+        public void RegisterListener(Action<string> callback, string smartHomeId)
         {
             if (!_listeners.ContainsKey(smartHomeId))
             {
-                _listeners[smartHomeId] = new List<Action<Guid>>();
+                _listeners[smartHomeId] = new List<Action<string>>();
             }
             _listeners[smartHomeId].Add(callback);
         }
 
-        public void UnregisterListener(Action<Guid> callback, Guid smartHomeId)
+        public void UnregisterListener(Action<string> callback, string smartHomeId)
         {
             if (!_listeners.ContainsKey(smartHomeId)) return;
             _listeners[smartHomeId].Remove(callback);
@@ -30,12 +32,18 @@
             }
         }
 
-        public void HandleDataChange(Guid smartHomeId)
+        public void HandleDataChange(string smartHomeId)
         {
-            if (!_listeners.ContainsKey(smartHomeId)) return;
-            foreach (var callback in _listeners[smartHomeId])
+            // give me all listeners keys
+            var keys = _listeners.Keys.ToList();
+            var filteredKeys = keys.Where(key => key.Contains(smartHomeId)).ToList();
+            if (filteredKeys.Count == 0) return;
+            foreach (var key in filteredKeys)
             {
-                callback.Invoke(smartHomeId);
+                foreach (var listener in _listeners[key])
+                {
+                    listener.Invoke(key);
+                }
             }
         }
     }
