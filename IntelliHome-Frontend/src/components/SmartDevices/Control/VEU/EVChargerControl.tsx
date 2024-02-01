@@ -266,12 +266,14 @@ const EVChargerControl = ({vehicleCharger}) => {
                         <Schedule sx={{fontSize: "30px", textAlign: "center", marginTop: "20px", color: "#6b9b21"}}/>
                         <Box display="flex" flexDirection="row">
                             <Typography sx={{textAlign: "center", marginRight:"5px", fontWeight:"bold"}}>Started:</Typography>
-                            <Typography sx={{textAlign: "center"}}>{(new Date(vehicle.startTime)).toUTCString()}</Typography>
+                            <Typography sx={{textAlign: "center"}}>{vehicle.startTime < new Date('2000-01-01T00:00:00Z') ?
+                                'Not available' : (new Date(vehicle.startTime)).toUTCString()}</Typography>
                         </Box>
                         <ArrowDownwardRounded sx={{fontSize: "30px"}}/>
                         <Box display="flex" flexDirection="row">
                             <Typography sx={{textAlign: "center", marginRight:"5px", fontWeight:"bold"}}>Finished:</Typography>
-                            <Typography sx={{textAlign: "center"}}>{(new Date(vehicle.endTime)).toUTCString()}</Typography>
+                            <Typography sx={{textAlign: "center"}}>{vehicle.endTime < new Date('2000-01-01T00:00:00Z') ?
+                                'Not available' : (new Date(vehicle.endTime)).toUTCString()}</Typography>
                         </Box>
                     </Box>
                     <Box display="flex" marginTop="20px" justifyContent="center" alignItems="center" flexDirection="row">
