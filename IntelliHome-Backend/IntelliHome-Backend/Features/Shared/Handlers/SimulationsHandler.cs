@@ -6,9 +6,10 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
 {
     public class SimulationsHandler : ISimulationsHandler
     {
-        public SimulationsHandler()
+        private readonly String _simulatorUrl;
+        public SimulationsHandler(IConfiguration configuration)
         {
-
+            _simulatorUrl = configuration["Simulator:Url"];
         }
 
         public async Task<bool> AddDeviceToSimulator(object deviceRequestBody)
@@ -17,9 +18,7 @@ namespace IntelliHome_Backend.Features.Shared.Handlers
             {
                 try
                 {
-                    string baseUrl = "http://localhost:8080/";
-                    string endpoint = "add-device";
-                    string apiUrl = baseUrl + endpoint;
+                    string apiUrl = _simulatorUrl + "/add-device";
                     var content = JsonContent.Create(deviceRequestBody, MediaTypeHeaderValue.Parse("application/json"), new JsonSerializerOptions());
                     HttpResponseMessage response = await client.PostAsync($"{apiUrl}", content);
 
