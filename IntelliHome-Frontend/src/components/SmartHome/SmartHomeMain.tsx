@@ -375,14 +375,14 @@ const SmartHomeMain = ({smartHomeId}) => {
                 />
             </Container>
 
-            <Modal open={openModal} onClose={handleCloseModal}
+            <Dialog open={openModal} onClose={handleCloseModal}
                     sx={{
                         '& .MuiDialog-paper': {
                             minWidth: modalContentItem == 99 ? '1000px' : '400px',
                         },
                     }}>
                 {modalContent}
-            </Modal>
+            </Dialog>
         </Box>
     )
 
