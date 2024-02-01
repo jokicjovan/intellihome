@@ -12,7 +12,12 @@ namespace IntelliHome_Backend.Features.Home.Repositories
 
         public IEnumerable<SmartDevice> FindAllWIthHome()
         {
-            return _entities.Include(p => p.SmartHome);
+            return _entities.Include(p => p.SmartHome).Include(p=>p.SmartHome.Owner);
+        }
+
+        public override async Task<SmartDevice> Read(Guid id)
+        {
+            return _entities.Include(p => p.SmartHome).Include(p => p.SmartHome.Owner).Include(p=>p.AllowedUsers).FirstOrDefault(p=>p.Id==id);
         }
 
         public IEnumerable<SmartDevice> FindSmartDevicesForSmartHome(Guid smartHomeId) {

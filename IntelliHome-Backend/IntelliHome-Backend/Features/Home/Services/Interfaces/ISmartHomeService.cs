@@ -17,5 +17,8 @@ namespace IntelliHome_Backend.Features.Home.Services.Interfaces
         Task<bool> IsUserAllowed(Guid smartHomeId, Guid userId);
         void AddUsageMeasurement(Dictionary<string, object> fields, Dictionary<string, string> tags);
         List<SmartHomeUsageDataDTO> GetUsageHistoricalData(Guid id, DateTime from, DateTime to);
+        Task AddPermision(SmartHome smartHome, string email);
+        Task RemovePermision(SmartHome smartHome, string email);
+        Task<List<string>> GetAllEmailsWithPermission(SmartHome smarthome);
     }
 }

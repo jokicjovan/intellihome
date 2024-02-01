@@ -18,5 +18,9 @@ namespace Data.Models.Shared
         [JsonIgnore]
         public List<User> AllowedUsers { get; set; }
 
+        public SmartDevice() {
+            AllowedUsers = new List<User>();
+        }
+
     }
 }

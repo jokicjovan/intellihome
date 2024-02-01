@@ -10,7 +10,6 @@ namespace Data.Models.Users
         [JsonIgnore]
         public List<SmartHome> SmartHomes { get; set; }
 
-        [JsonIgnore]
         public List<SmartDevice> AllowedSmartDevices { get; set; }
 
 
@@ -29,6 +28,8 @@ namespace Data.Models.Users
 
         public User()
         {
+            SmartHomes = new List<SmartHome>();
+            AllowedSmartDevices = new List<SmartDevice>();
         }
     }
 }

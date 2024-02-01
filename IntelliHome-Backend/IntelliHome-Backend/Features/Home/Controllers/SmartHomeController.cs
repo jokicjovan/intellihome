@@ -11,6 +11,8 @@ using System.Security.Claims;
 using IntelliHome_Backend.Features.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using IntelliHome_Backend.Features.SPU.DTOs;
+using Data.Models.Users;
+using IntelliHome_Backend.Features.Users.Services.Interfaces;
 
 namespace IntelliHome_Backend.Features.Home.Controllers
 {
@@ -19,10 +21,12 @@ namespace IntelliHome_Backend.Features.Home.Controllers
     public class SmartHomeController : ControllerBase
     {
         private readonly ISmartHomeService _smartHomeService;
+        private readonly IUserService _userService;
 
-        public SmartHomeController(ISmartHomeService smartHomeService)
+        public SmartHomeController(ISmartHomeService smartHomeService,IUserService userService)
         {
             _smartHomeService = smartHomeService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -130,6 +134,105 @@ namespace IntelliHome_Backend.Features.Home.Controllers
 
             return Ok("Smart home approved!");
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> IsOwner(String homeId)
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+
+            String id = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            bool isOwner = Guid.Parse(id)==(await _smartHomeService.Get(Guid.Parse(homeId))).Owner.Id;
+            return Ok(isOwner);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> GetAllEmailsWithPermission(string homeId)
+        {
+            List<String> emails = new List<string>();
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+
+            String id = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            Data.Models.Users.User user = await _userService.Get(Guid.Parse(id));
+            SmartHome smarthome = await _smartHomeService.Get(Guid.Parse(homeId));
+            if (user.Id.Equals(smarthome.Owner.Id))
+            {
+                emails=await _smartHomeService.GetAllEmailsWithPermission(smarthome);
+            }
+            else
+            {
+                return BadRequest("Permission Denied");
+            }
+
+            return Ok(emails);
+        }
+
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> AddPermission([FromBody] PermissionDTO permission)
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+
+            String id = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            Data.Models.Users.User user = await _userService.Get(Guid.Parse(id));
+            SmartHome smarthome = await _smartHomeService.Get(Guid.Parse(permission.home));
+            if (user.Id.Equals(smarthome.Owner.Id))
+            {
+                await _smartHomeService.AddPermision(smarthome, permission.user);
+            }
+            else
+            {
+                return BadRequest("Permission Denied");
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> RemovePermission([FromBody] PermissionDTO permission)
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+
+            String id = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            String passwordChanged = null;
+            Data.Models.Users.User user = await _userService.Get(Guid.Parse(id));
+            SmartHome smarthome = await _smartHomeService.Get(Guid.Parse(permission.home));
+            if (user.Id.Equals(smarthome.Owner.Id))
+            {
+                await _smartHomeService.RemovePermision(smarthome, permission.user);
+            }
+            else
+            {
+                return BadRequest("Permission Denied");
+            }
+
+            return Ok();
+        }
+
 
 
         [HttpDelete]
