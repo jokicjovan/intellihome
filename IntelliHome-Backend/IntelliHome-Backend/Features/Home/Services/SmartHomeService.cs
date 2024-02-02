@@ -93,7 +93,7 @@ namespace IntelliHome_Backend.Features.Home.Services
 
             _smartHomeRepository.Create(smartHome);
             _dataChangeListener.RegisterListener(DeleteSmartHomeDevicesCache, smartHome.Id.ToString() + " " + username); 
-            _dataChangeListener.HandleDataChange(smartHome.Id.ToString() + " " + username);
+            _dataChangeListener.HandleDataChange(user.Id.ToString());
             return new GetSmartHomeDTO(smartHome);
         }
 

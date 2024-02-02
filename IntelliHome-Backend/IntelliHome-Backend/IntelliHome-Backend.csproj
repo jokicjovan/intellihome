@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="static\smartHomes\" />
     <Folder Include="static\smartDevices\" />
     <Folder Include="static\smartHomes\" />
   </ItemGroup>
