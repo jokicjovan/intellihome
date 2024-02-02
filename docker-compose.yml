@@ -58,8 +58,6 @@ services:
       - ./Nginx/conf.d:/etc/nginx/conf.d
       - ./Nginx/log:/var/log/nginx
       - ./IntelliHome-Backend/IntelliHome-Backend:/data
-      - ./dist:/dist
-
 
     networks:
       - mqtt
