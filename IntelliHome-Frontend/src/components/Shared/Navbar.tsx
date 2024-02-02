@@ -31,7 +31,7 @@ const Navbar = () => {
             {role==="User" &&<><Button onClick={()=>navigate("/userHome")}  sx={buttonStyle}><Home sx={{marginRight:"10px"}} fontSize="inherit"/><Typography sx={typoStyle}>Home</Typography></Button></>}
             <Box position="absolute" bottom="0">
                 <Box padding="10px" display="flex"  alignItems="center" flexDirection="row">
-                    <img src="src/assets/backgroundSign.png" width="50px" height="50px" style={{objectFit:"cover",borderRadius:"100px",border:"5px solid #FBC40EFF"}}/>
+                    <img src="/backgroundSign.png" width="50px" height="50px" style={{objectFit:"cover",borderRadius:"100px",border:"5px solid #FBC40EFF"}}/>
                     <Box display="flex" justifyContent="center" flexDirection="column" textAlign="left" ml={1} mt={1} mb={0}>
                         <Typography textAlign="left" fontSize="22px" fontWeight="600" color="white">Vukasin Bogdanovic</Typography>
                         <Typography onClick={handleLogoutClick} textAlign="left" fontSize="16px" fontWeight="600" color="#FBC40EFF" sx={{":hover":{cursor:"pointer"}}}>Logout</Typography>
