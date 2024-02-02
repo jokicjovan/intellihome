@@ -21,7 +21,7 @@ const LandingPage=()=>{
 
             </Grid>
             <Grid item xs={6} display="flex" justifyContent="center">
-                <img height="600px" src="src/assets/iotSystem.png"/>
+                <img height="600px" src="/iotSystem.png"/>
             </Grid>
         </Grid>
     </Box>

@@ -24,7 +24,6 @@ import VehicleGateRegistrationForm from "../SmartDevices/Registration/SPU/Vehicl
 import BatterySystemRegistrationForm from "../SmartDevices/Registration/VEU/BatterySystemRegistrationForm.tsx";
 import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/SolarPanelSystemRegistrationForm.tsx";
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
-import SmartHomeReport from "./SmartHomeReport.tsx";
 import SmartHomeShare from "./SmartHomeShare";
 import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
 
