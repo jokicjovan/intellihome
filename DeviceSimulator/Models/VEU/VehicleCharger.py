@@ -94,4 +94,4 @@ class VehicleCharger(SmartDevice):
                 "busyChargingPoints": serialized_data,
                 "consumptionPerMinute": round(consumption_per_minute, 4)}), retain=False)
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)

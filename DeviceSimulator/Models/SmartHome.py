@@ -123,4 +123,4 @@ class SmartHome:
                                             "gridPerMinute": round(grid_per_minute, 4)}), retain=False)
             self.current_production = 0
             self.current_consumption = 0
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)
