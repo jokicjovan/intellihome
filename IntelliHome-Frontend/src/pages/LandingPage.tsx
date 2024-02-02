@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 const LandingPage=()=>{
 
     const navigate = useNavigate()
-    return <><Box sx={{width:"100%",height:"100%",position:"absolute",backgroundImage:"url(src/assets/backgroundLandingPage.png)", backgroundSize: 'cover',}}>
+    return <><Box sx={{width:"100%",height:"100%",position:"absolute",backgroundImage:"url(/backgroundLandingPage.png)", backgroundSize: 'cover',}}>
         <Box width="100%" height="5%" marginTop="15px" display="flex" justifyContent="flex-end">
             <Button onClick={()=>navigate("/signin")}  sx={{fontSize:"20px",marginX:"10px",paddingX:"20px" ,color:"#343F71FF",border:"3px solid #343F71FF", borderRadius:"10px",backgroundColor:"rgba(52,63,113,0.1)",':hover':{backgroundColor:"#2c3770",color:"white"}}} >Sign In</Button>
             <Button onClick={()=>navigate("/signup")} sx={{fontSize:"20px",marginX:"10px",paddingX:"20px",backgroundColor:"#343F71FF",color:"white", borderRadius:"10px",':hover':{backgroundColor:"#2c3770"}}} >Sign Up</Button>
