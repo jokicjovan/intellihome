@@ -52,7 +52,7 @@ class AirConditioner(SmartDevice):
                 {"mode": self.current_mode, "temperature": self.current_temp,
                  "consumptionPerMinute": round(self.power_per_hour / 60, 4)}),
                                 retain=False)
-            print({"mode": self.current_mode, "temperature": self.current_temp,
-                   "consumptionPerMinute": round(self.power_per_hour / 60, 4), "scheduledTasks": self.schedule_list})
+            # print({"mode": self.current_mode, "temperature": self.current_temp,
+            #        "consumptionPerMinute": round(self.power_per_hour / 60, 4), "scheduledTasks": self.schedule_list})
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)

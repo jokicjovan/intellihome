@@ -27,7 +27,7 @@ class Sprinkler(SmartDevice):
                 self.schedule_list.append({"timestamp": current_timestamp, "set_spraying": set_spraying})
 
     async def send_data(self):
-        print("send_data")
+        # print("send_data")
         while self.is_on.is_set():
             for item in self.schedule_list:
                 if datetime.strptime(item['timestamp'], '%d/%m/%Y %H:%M') <= datetime.utcnow():
@@ -37,6 +37,6 @@ class Sprinkler(SmartDevice):
             self.client.publish(self.send_topic, json.dumps(
                 {"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4), "scheduledTasks": self.schedule_list}),
                                 retain=False)
-            print({"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4),
-                   "scheduledTasks": self.schedule_list})
-            await asyncio.sleep(3)
+            # print({"isSpraying": self.is_spraying, "consumptionPerMinute": round(self.power_per_hour / 60, 4),
+            #        "scheduledTasks": self.schedule_list})
+            await asyncio.sleep(60)

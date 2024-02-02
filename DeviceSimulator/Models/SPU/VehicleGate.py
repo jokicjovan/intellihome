@@ -47,13 +47,13 @@ class VehicleGate(SmartDevice):
                 self.is_opened_by_user = True
                 self.is_open = True
                 self.publish_data("", False)        # TODO: salje se visak conumption
-                print("Gate is opened by user {}".format(self.user))
+                # print("Gate is opened by user {}".format(self.user))
             elif data.get("action", None) == "close_by_user":
                 self.user = data.get("user", None)
                 self.is_opened_by_user = False
                 self.is_open = False
                 self.publish_data("", False)        # TODO: salje se visak conumption
-                print("Gate is closed by user {}".format(self.user))
+                # print("Gate is closed by user {}".format(self.user))
             elif data.get("action", None) == "add_licence_plate":
                 licence_plate_to_add = data.get("licence_plate", None)
                 self.allowed_licence_plates.append(licence_plate_to_add)
@@ -74,24 +74,24 @@ class VehicleGate(SmartDevice):
 
     async def send_data(self):
         while self.is_on.is_set():
-            print("Allowed licence plates: {}".format(self.allowed_licence_plates))
-            print("Licence plates in home: {}".format(self.licence_plates_in_home))
+            # print("Allowed licence plates: {}".format(self.allowed_licence_plates))
+            # print("Licence plates in home: {}".format(self.licence_plates_in_home))
 
             licence_plate = next(yield_licence_plate(self.allowed_licence_plates))
 
             if self.is_opened_by_user:
                 if licence_plate in self.licence_plates_in_home:
-                    print(
-                        "Car with licence plate {} is leaving home because gate is opened by {}".format(licence_plate,
-                                                                                                        self.user))
+                    # print(
+                    #     "Car with licence plate {} is leaving home because gate is opened by {}".format(licence_plate,
+                    #                                                                                     self.user))
                     self.publish_data(licence_plate, True)
                     self.licence_plates_in_home.remove(licence_plate)
                     await asyncio.sleep(2)
                     continue
                 else:
-                    print(
-                        "Car with licence plate {} is entering home because gate is opened by {}".format(licence_plate,
-                                                                                                         self.user))
+                    # print(
+                    #     "Car with licence plate {} is entering home because gate is opened by {}".format(licence_plate,
+                    #                                                                                      self.user))
                     self.publish_data(licence_plate, False)
                     self.licence_plates_in_home.append(licence_plate)
                     await asyncio.sleep(2)
@@ -101,7 +101,7 @@ class VehicleGate(SmartDevice):
 
             # car leaving home
             if licence_plate in self.licence_plates_in_home:
-                print("Car with licence plate {} is leaving home".format(licence_plate))
+                # print("Car with licence plate {} is leaving home".format(licence_plate))
                 # gate is open
                 self.is_open = True
                 self.publish_data(licence_plate, False)
@@ -116,7 +116,7 @@ class VehicleGate(SmartDevice):
             else:
                 # car entering home
                 if self.is_public:
-                    print("Car with licence plate {} is entering home".format(licence_plate))
+                    # print("Car with licence plate {} is entering home".format(licence_plate))
                     # gate is open
                     self.is_open = True
                     self.publish_data(licence_plate, True)
@@ -129,7 +129,7 @@ class VehicleGate(SmartDevice):
                     self.publish_data(licence_plate, True)
                 else:
                     if licence_plate in self.allowed_licence_plates:
-                        print("Car with licence plate {} is allowed and entering home".format(licence_plate))
+                        # print("Car with licence plate {} is allowed and entering home".format(licence_plate))
                         # gate is open
                         self.is_open = True
                         self.publish_data(licence_plate, True)
@@ -139,7 +139,7 @@ class VehicleGate(SmartDevice):
                         # gate is closed
                         self.is_open = False
                         self.publish_data(licence_plate, True)
-                    else:
-                        print("Car with licence plate {} is not allowed to enter home".format(licence_plate))
+                    # else:
+                    #     print("Car with licence plate {} is not allowed to enter home".format(licence_plate))
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)
