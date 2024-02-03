@@ -119,13 +119,13 @@ BEGIN
                             "Longitude", "IsApproved", "OwnerId", "Image")
     VALUES
         (SmartHome1Id, 'SmartHome1', 'Zarka Zrenjanina 24', City1Id,
-        '50', 0, 2, 45.244320, 20.031070, true, User1Id, 'static/smartHomes\SmartHome1.jpg'),
+        '143', 0, 2, 45.244320, 20.031070, true, User1Id, 'static/smartHomes\SmartHome1.jpg'),
         (SmartHome2Id, 'SmartHome2', 'Zarka Zrenjanina 12', City1Id,
         '50', 0, 2, 45.244320, 20.001070, true, User1Id, 'static/smartHomes\SmartHome2.jpg'),
         (SmartHome3Id, 'SmartHome3', 'Mise Dimitrijevica 124', City2Id,
-        '50', 0, 2, 45.244320, 19.831070, true, User2Id, 'static/smartHomes\SmartHome3.jpg'),
+        '120', 0, 2, 45.244320, 19.831070, true, User2Id, 'static/smartHomes\SmartHome3.jpg'),
         (SmartHome4Id, 'SmartHome4', 'Mise Dimitrijevica 123', City2Id,
-        '50', 0, 2, 45.244320, 19.801070, true, User2Id, 'static/smartHomes\SmartHome4.jpg');
+        '72', 0, 2, 45.244320, 19.801070, true, User2Id, 'static/smartHomes\SmartHome4.jpg');
 
     -- SmartDevices
     AmbientSensor1Id := gen_random_uuid();

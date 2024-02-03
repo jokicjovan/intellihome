@@ -133,11 +133,9 @@ namespace IntelliHome_Backend.Features.Home.Services
             IEnumerable<SmartDevice>? smartDevices = redisRepository.Get(cacheKey);
             if (smartDevices == null)
             {
-                Console.WriteLine("Data retrieved from cache.");
                 smartDevices = GetSmartDevicesForSmartHome(smartHomeId);
                 redisRepository.Add(cacheKey, smartDevices);
             }
-            Console.WriteLine("Data retrieved from database.");
             // IQueryable<SmartDevice> query = GetSmartDevicesForSmartHome(smartHomeId).AsQueryable();
             Int32 totalItems = smartDevices.Count();
             //Int32 totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);

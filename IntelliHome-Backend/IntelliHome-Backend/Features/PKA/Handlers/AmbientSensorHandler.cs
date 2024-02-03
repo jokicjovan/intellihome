@@ -24,7 +24,6 @@ namespace IntelliHome_Backend.Features.PKA.Handlers
 
         protected override async Task HandleMessageFromDevice(MqttApplicationMessageReceivedEventArgs e)
         {
-            Console.WriteLine($"{e.ApplicationMessage.ConvertPayloadToString()}");
             smartDeviceHubContext.Clients.Group(e.ApplicationMessage.Topic.Split("/").Last()).ReceiveSmartDeviceData(e.ApplicationMessage.ConvertPayloadToString());
 
             using var scope = serviceProvider.CreateScope();
