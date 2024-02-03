@@ -1,3 +1,4 @@
+from datetime import datetime
 from locust import HttpUser, task, between
 
 
@@ -12,16 +13,14 @@ class User(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def register_smart_device(self):
-        smart_home_id = "603223ce-8a82-41d6-aadc-9f96dfce35d9"
-        vehicle_gate_data = {
-            "AllowedLicencePlates": ["SM023SA", "SM023AS"],
-            "PowerPerHour": 2,
-            "Name": "Gate"
-        }
-        response = self.client.post(
-            f"/api/SPU/CreateVehicleGate/{smart_home_id}",
-            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))}, data=vehicle_gate_data
+    def get_solar_panel_action_historical_data(self):
+        solar_panel_id = "6452026e-aa69-436b-8e53-c77b29cfc496"
+        from_date = datetime(2023, 1, 1)
+        to_date = datetime(2023, 12, 31)
+
+        response = self.client.get(
+            f"/api/SolarPanelSystem/GetActionHistoricalData?id={solar_panel_id}&from={from_date}&to={to_date}",
+            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))},
         )
         if response.status_code != 200:
             self.environment.runner.quit()
