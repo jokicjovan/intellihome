@@ -1,0 +1,12 @@
+
+body{
+    font-family: Roboto, Helvetica, sans-serif;
+    background-color: #343f71;
+    margin: 0;
+}
+#root{
+    background-color: #343f71;
+}
+.MuiOutlinedInput-root,.MuiInputBase-root{
+    background-color: white;
+}

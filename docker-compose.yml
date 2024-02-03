@@ -1,0 +1,136 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: intellihome_user
+      POSTGRES_PASSWORD: intellihome_password
+      POSTGRES_DB: intellihome_sql
+      POSTGRES_MAX_CONNECTIONS: 1000
+    ports:
+      - "5432:5432"
+    working_dir: /var/lib/postgresql/data
+    volumes:
+      - Postgres:/var/lib/postgresql/data
+    tty: true
+
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    environment:
+      - INFLUXDB_DB=intellihome_influx
+      - INFLUXDB_ADMIN_USER=intellihome_user
+      - INFLUXDB_ADMIN_PASSWORD=intellihome_password
+    restart: always
+    ports:
+      - "8086:8086"
+    working_dir: /var/lib/influxdb
+    volumes:
+      - Influxdb:/etc/influxdb/influxdb
+    tty: true
+
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    environment:
+      - MQTT_CONFIG=/mosquitto/config/mosquitto.conf
+    volumes:
+      - ./Mosquitto/config:/mosquitto/config
+      - ./Mosquitto/data:/mosquitto/data
+      - ./Mosquitto/log:/mosquitto/log
+    networks:
+      - mqtt
+    tty: true
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "8800:80"
+    environment:
+      - NGINX_CONFIG=/etc/nginx/nginx.conf
+    volumes:
+      - ./Nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./Nginx/conf.d:/etc/nginx/conf.d
+      - ./Nginx/log:/var/log/nginx
+      - ./IntelliHome-Backend/IntelliHome-Backend:/data
+      - ./IntelliHome-Frontend/dist:/dist
+
+    networks:
+      - mqtt
+    tty: true
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./Redis/data:/data
+    tty: true
+
+  # device_simulator:
+  #   image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
+  #   container_name: device_simulator
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./DeviceSimulator:/app
+  #   tty: true
+  #   command: >
+  #     bash -c "
+  #       python -m venv /app/venv &&
+  #       source /app/venv/bin/activate &&
+  #       pip install --no-cache-dir -r /app/requirements.txt &&
+  #       gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8080 main:app
+  #     "
+
+  # react_frontend:
+  #   image: node:alpine
+  #   container_name: react_frontend
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #   working_dir: /srv/app
+  #   volumes:
+  #     - type: bind
+  #       source: ./IntelliHome-Frontend
+  #       target: /srv/app
+  #   tty: true
+  #   command: sh -c "npm install && npm run dev"
+
+  # dotnet_backend:
+  #   image: mcr.microsoft.com/dotnet/sdk:6.0
+  #   container_name: dotnet_backend
+  #   restart: always
+  #   ports:
+  #     - 5283:5283
+  #   working_dir: /app
+  #   volumes:
+  #     - type: bind
+  #       source: ./IntelliHome-Backend/IntelliHome-Backend
+  #       target: /app
+  #   tty: true
+  #   command: sh -c "./wait-for-postgres.sh"
+  #   depends_on:
+  #     - postgres
+
+
+volumes:
+  Postgres:
+  Influxdb:
+  Mosquitto:
+  DeviceSimulator:
+  Nginx:
+
+networks:
+  mqtt:
+
+
+# FJTFewZ7tzBxZshYcbTOnesAFTAKStg2gGkiEfIBIEKTUooqAtavQtbqPigudIqZ_mBEifv_Q425XBIiBF1ByQ==
