@@ -11,6 +11,9 @@ import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
 import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
+import {useMutation, useQueryClient} from "react-query";
+import SmartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import {RotatingLines} from "react-loader-spinner";
 
 interface AmbientSensorAdditionalFields {
     PowerPerHour: number;
@@ -22,6 +25,8 @@ interface AmbientSensorRegistrationFormProps {
 }
 
 const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const queryClient = useQueryClient();
+    const [isLoading, setIsLoading] = useState(false);
     const smartDeviceService = new SmartDeviceService();
     const [additionalFormData, setAdditionalFormData] = useState<AmbientSensorAdditionalFields>({
         PowerPerHour: 1
@@ -43,20 +48,55 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
         setCommonFormData(smartDeviceData);
     };
 
-    const handleAmbientSensorSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AMBIENTSENSOR)
-            .then((res) => {
+    interface registrationMutationInterface {
+        formData: any;
+        smartHomeId: string;
+        deviceCategory: SmartDeviceCategory;
+        deviceType: SmartDeviceType;
+    }
+
+    const registrationMutation = useMutation(
+        (params: registrationMutationInterface) => {
+            const { formData, smartHomeId, deviceCategory, deviceType } = params;
+            setIsLoading(true);
+            return smartDeviceService.registerSmartDevice(formData, smartHomeId, deviceCategory, deviceType)
+        },
+        {
+            onSuccess: (res) => {
+                setIsLoading(false);
                 if (res.status === 200) {
+                    queryClient.invalidateQueries('smartDevicesForHome');
                     onClose();
                 }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+            },
+            onError: (error) => {
+                console.error('Error:', error);
+            },
+        }
+    );
+
+    const handleAmbientSensorSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const formData : any = {...commonFormData, ...additionalFormData}
+        const payload = {formData : formData , smartHomeId : smartHomeId, deviceCategory : SmartDeviceCategory.PKA, deviceType: SmartDeviceType.AMBIENTSENSOR}
+        registrationMutation.mutate(payload);
     };
 
-    return (
+    return (<Box>{isLoading &&
+        <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+            <RotatingLines
+                visible={true}
+                height="96"
+                width="96"
+                color="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                strokeColor={"#FBC40E"}
+                wrapperStyle={{}}
+                wrapperClass=""/>
+        </Box>}
         <Container
             maxWidth="xs"
             sx={{
@@ -97,7 +137,7 @@ const AmbientSensorRegistrationForm : React.FC<AmbientSensorRegistrationFormProp
                 <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
-    );
+    </Box>);
 };
 
 export default AmbientSensorRegistrationForm;

@@ -256,7 +256,7 @@ const SmartDeviceMain = ({smartDeviceId, deviceType}) => {
                 : selectedTab == 2 ? <SmartDeviceReportAvailability deviceId={smartDeviceId}/>
                     : <></>}
         <Dialog open={isOpen} onClose={()=>setIsOpen(false)}>
-            <SmartDeviceShare smartDeviceId={smartDeviceId}/>
+            <SmartDeviceShare smartDeviceId={smartDeviceId} onClose={() => setIsOpen(false)}/>
         </Dialog>
 
     </>

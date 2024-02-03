@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import SmartDeviceRegistrationForm from "../Shared/SmartDeviceRegistrationForm.tsx";
 import {
     Box,
@@ -12,9 +12,11 @@ import CommonSmartDeviceFields from "../../../../models/interfaces/CommonSmartDe
 import InputAdornment from "@mui/material/InputAdornment";
 import SmartDeviceService from "../../../../services/smartDevices/SmartDeviceService.ts";
 import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
-import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
 import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
+import {useMutation, useQueryClient} from "react-query";
+import SmartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import {RotatingLines} from "react-loader-spinner";
 
 interface AirConditionerAdditionalFields {
     PowerPerHour: number;
@@ -29,7 +31,9 @@ interface AirConditionerRegistrationFormProps {
 }
 
 
-const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+const AirConditionerRegistrationForm: React.FC<AirConditionerRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const queryClient = useQueryClient();
+    const [isLoading, setIsLoading] = useState(false);
     const smartDeviceService = new SmartDeviceService();
     const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +77,34 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
         }));
     };
 
-    const handleAirConditionerSubmit = (e: React.FormEvent) => {
+    interface registrationMutationInterface {
+        formData: any;
+        smartHomeId: string;
+        deviceCategory: SmartDeviceCategory;
+        deviceType: SmartDeviceType;
+    }
+
+    const registrationMutation = useMutation(
+        (params: registrationMutationInterface) => {
+            const {formData, smartHomeId, deviceCategory, deviceType} = params;
+            setIsLoading(true);
+            return smartDeviceService.registerSmartDevice(formData, smartHomeId, deviceCategory, deviceType)
+        },
+        {
+            onSuccess: (res) => {
+                setIsLoading(false);
+                if (res.status === 200) {
+                    queryClient.invalidateQueries('smartDevicesForHome');
+                    onClose();
+                }
+            },
+            onError: (error) => {
+                console.error('Error:', error);
+            },
+        }
+    );
+
+    const handleAirConditionerSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (additionalFormData.Modes.length === 0) {
@@ -82,25 +113,38 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
         }
         setError(null);
 
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.AIRCONDITIONER)
-            .then((res) => {
-                if (res.status === 200) {
-                    onClose();
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        const formData: any = {...commonFormData, ...additionalFormData}
+        const payload = {
+            formData: formData,
+            smartHomeId: smartHomeId,
+            deviceCategory: SmartDeviceCategory.PKA,
+            deviceType: SmartDeviceType.AIRCONDITIONER
+        }
+        registrationMutation.mutate(payload);
     };
 
     const modesCheckboxes = [
-        { display: "Cool", value: "0" },
-        { display: "Heat", value: "1" },
-        { display: "Fan", value: "2" },
-        { display: "Auto", value: "3" },
+        {display: "Cool", value: "0"},
+        {display: "Heat", value: "1"},
+        {display: "Fan", value: "2"},
+        {display: "Auto", value: "3"},
     ];
 
-    return (
+
+    return (<Box>{isLoading &&
+        <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+            <RotatingLines
+                visible={true}
+                height="96"
+                width="96"
+                color="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                strokeColor={"#FBC40E"}
+                wrapperStyle={{}}
+                wrapperClass=""/>
+        </Box>}
         <Container
             maxWidth="xs"
             sx={{
@@ -110,8 +154,8 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                 backgroundColor: "white",
                 borderRadius: 3,
                 justifyContent: "start",
-                padding:0,
-                margin:0
+                padding: 0,
+                margin: 0
             }}
         >
             <Box
@@ -125,7 +169,7 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     margin: 2
                 }}
             >
-                <Typography variant="h4" sx={{ textAlign: "left", width: 1 }}>
+                <Typography variant="h4" sx={{textAlign: "left", width: 1}}>
                     Add Air Conditioner
                 </Typography>
 
@@ -178,8 +222,8 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     }}
                 />
 
-                <Box sx={{width:1}}>
-                    <Typography variant="h6" sx={{ textAlign: "left", width: 1 }}>
+                <Box sx={{width: 1}}>
+                    <Typography variant="h6" sx={{textAlign: "left", width: 1}}>
                         Modes:
                     </Typography>
                     {modesCheckboxes.map((option) => (
@@ -196,15 +240,16 @@ const AirConditionerRegistrationForm : React.FC<AirConditionerRegistrationFormPr
                     ))}
                 </Box>
                 {error && (
-                    <Typography variant="body2" color="error" sx={{ textAlign: "left", width: 1, marginBottom: 1 }}>
+                    <Typography variant="body2" color="error" sx={{textAlign: "left", width: 1, marginBottom: 1}}>
                         {error}
                     </Typography>
                 )}
 
-                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
+                <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {
+                }}/>
             </Box>
         </Container>
-    );
-};
+    </Box>);
+}
 
 export default AirConditionerRegistrationForm;
