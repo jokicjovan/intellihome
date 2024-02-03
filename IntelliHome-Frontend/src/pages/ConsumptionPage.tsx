@@ -17,7 +17,7 @@ const ConsumptionPage=()=>{
             }} onClick={() => setSelectedTab(0)} fontSize="25px" fontWeight="500">Smart Homes</Typography>
             <Typography px={2} py={1} sx={{
                 backgroundColor: selectedTab == 1 ? "#FBC40E" : "#D0D2E1",
-                borderRadius: "0px",
+                borderRadius: "0px 12px 12px 0px",
                 ':hover': {backgroundColor: selectedTab == 1 ? "#FBC40E" : "#a4a5af", cursor: "pointer"}
             }} onClick={() => setSelectedTab(1)} fontSize="25px" fontWeight="500">Cities</Typography>
         </Box>

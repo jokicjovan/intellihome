@@ -79,6 +79,32 @@ namespace IntelliHome_Backend.Features.Users
             return Ok(JsonConvert.SerializeObject(new { role,passwordChanged,id }, Newtonsoft.Json.Formatting.Indented));
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<string>> GetUserIdentification()
+        {
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                return BadRequest("Cookie error");
+            }
+            ClaimsIdentity identity = result.Principal.Identity as ClaimsIdentity;
+            String role = identity.FindFirst(ClaimTypes.Role).Value;
+
+            String id = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            Data.Models.Users.User user = await _userService.Get(Guid.Parse(id));
+            if (user.GetType() == typeof(Admin))
+            {
+                Admin admin = (Admin)user;
+                if (admin.IsSuperAdmin)
+                {
+                    role = "superadmin";
+                }
+            }
+            String name = user.FirstName.ToString() + " " + user.LastName.ToString();
+            return Ok(JsonConvert.SerializeObject(new { role,name,user.Image, id }, Newtonsoft.Json.Formatting.Indented));
+        }
+
         [HttpPost]
         public async Task<ActionResult<String>> activateAccount(int code)
         {
