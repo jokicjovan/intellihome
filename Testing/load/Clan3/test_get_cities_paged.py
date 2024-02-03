@@ -1,4 +1,3 @@
-from datetime import datetime
 from locust import HttpUser, task, between
 
 
@@ -7,18 +6,15 @@ class User(HttpUser):
     host = "http://localhost:5283"
 
     def on_start(self):
-        response = self.client.post("/api/User/login", json={"username": "joki", "password": "joki"})
+        response = self.client.post("/api/User/login", json={"username": "joki", "password": "Adminadmin1"})
         if response.status_code != 200:
             self.environment.runner.quit()
         self.client.cookies.update(response.cookies)
 
     @task
-    def get_city_usage(self):
-        city_id = "a6d8769c-d7d1-4ca6-b88c-1d72643d1075"
-        from_date = datetime(2023, 1, 1)
-        to_date = datetime(2023, 12, 31)
+    def get_cities_paged(self):
         response = self.client.get(
-            f"/api/City/GetCityHistoricalData?id={city_id}&from={from_date}&to={to_date}",
+            f"/api/City/GetAllCitiesPaged?pageNumber=1&pageSize=10&search=\"\"",
             headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))},
         )
         if response.status_code != 200:
