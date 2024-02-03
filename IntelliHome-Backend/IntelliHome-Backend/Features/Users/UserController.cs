@@ -152,6 +152,7 @@ namespace IntelliHome_Backend.Features.Users
             Admin admin = new Admin(userDTO.FirstName,userDTO.LastName,userDTO.Email,userDTO.Username,userDTO.Password,true,null,false,false);
             return await _userService.CreateAdmin(admin, userDTO.Image);
         }
+
         [HttpGet("/api/User/signin-google")]
         public IActionResult Login2()
         {

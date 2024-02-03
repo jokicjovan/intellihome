@@ -176,9 +176,9 @@ namespace IntelliHome_Backend.Features.VEU.Services
                 throw new ResourceNotFoundException("Vehicle charging point with provided Id does not exist on charger!");
             }
 
-            if (!vehicleChargingPoint.IsFree) {
-                throw new ResourceNotFoundException("Vehicle charging point is not free!");
-            }
+            // if (!vehicleChargingPoint.IsFree) {
+            //     throw new ResourceNotFoundException("Vehicle charging point is not free!");
+            // }
 
             vehicleChargingPoint.IsFree = false;
             vehicleChargingPoint.ChargeLimit = newVehicleChargingPoint.ChargeLimit;

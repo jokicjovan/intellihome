@@ -109,7 +109,7 @@ namespace IntelliHome_Backend.Features.SPU.Controllers
                 Image = dto.Image != null && dto.Image.Length > 0 ? _imageService.SaveDeviceImage(dto.Image) : null
             };
             vehicleGate = await _vehicleGateService.Create(vehicleGate);
-            _dataChangeListener.HandleDataChange(smartHomeId + " " + username);
+            // _dataChangeListener.HandleDataChange(smartHomeId + " " + username);
             return Ok(vehicleGate);
 
         }

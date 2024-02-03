@@ -15,9 +15,21 @@ namespace IntelliHome_Backend.Features.Shared.Infrastructure
 
         public void RegisterListener(Action<string> callback, string smartHomeId)
         {
+            if (string.IsNullOrEmpty(smartHomeId))
+            {
+                return;
+            }
+
             if (!_listeners.ContainsKey(smartHomeId))
             {
                 _listeners[smartHomeId] = new List<Action<string>>();
+            }
+            else
+            {
+                if (_listeners[smartHomeId].Contains(callback))
+                {
+                    return;
+                }
             }
             _listeners[smartHomeId].Add(callback);
         }

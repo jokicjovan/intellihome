@@ -13,12 +13,12 @@ class User(HttpUser):
 
     @task
     def connect_vehicle_to_charger(self):
-        vehicle_charger_id = "f901e6d3-9fba-4506-a23a-06c91ab97a27"
-        vehicle_charging_point_id = "f901e6d3-9fba-4506-a23a-06c91ab97a27"
+        vehicle_charger_id = "310f5632-dc3a-4d8f-89ba-a6d0ba897478"
+        vehicle_charging_point_id = "84ecfe09-956b-487e-8d1b-4d3060797c34"
         vehicle_data = {
-            "InitialCapacity": "10",
-            "Capacity": "200",
-            "ChargeLimit": "0.7"
+            "initialCapacity": "10",
+            "capacity": "200",
+            "chargeLimit": "0.7"
         }
         response = self.client.put(
             f"/api/VehicleCharger/ConnectToCharger?vehicleChargerId={vehicle_charger_id}&"
