@@ -1,12 +1,13 @@
 import {Box, Button, Container, Dialog, Grid, TablePagination, TextField, Typography} from "@mui/material";
 import {Add} from "@mui/icons-material";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import SmartHomeCard from "../SmartHome/SmartHomeCard.tsx";
 import SmartHomeCreatingMap from "../SmartHome/SmartHomeCreatingMap.tsx";
 import SmartHomeCreatingInfo from "../SmartHome/SmartHomeCreatingInfo.tsx";
 import {useMutation} from "react-query";
 import {environment} from "../../utils/Environment.ts";
+import {RotatingLines} from "react-loader-spinner";
 
 const UserHome=()=>{
     const buttonStyle={backgroundColor:"#FBC40E", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", width:"80px",  height:"30px", fontSize:"20px",fontWeight:"600",margin:"15px",borderRadius:"5px", ':hover':{backgroundColor:"#EDB90D"}, textTransform: "none"}
@@ -24,6 +25,7 @@ const UserHome=()=>{
     const [line2Color, setLine2Color] = React.useState("#DBDDEB")
     const [line3Color, setLine3Color] = React.useState("#DBDDEB")
     const [mapData, setMapData] = React.useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const searchStyle = {
@@ -142,9 +144,10 @@ const UserHome=()=>{
 
     const smartHomeCreationMutation = useMutation({
         mutationFn: (data: FormData) => {
-            console.log(data);
+            setIsLoading(true);
             return axios.post(environment + '/api/SmartHome/CreateSmartHome', data)
                 .then((res) => {
+                    setIsLoading(false);
                     if (res.status !== 200) {
                         alert(res.data.message);
                     } else {
@@ -249,7 +252,22 @@ const UserHome=()=>{
 
 
 
-    return <Box sx={{width:"100%", height:"100%", backgroundColor:"#DBDDEB"}}>
+    return (
+        <Box sx={{width:"100%", height:"100%", backgroundColor:"#DBDDEB"}}>
+            {isLoading &&
+                <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+                    <RotatingLines
+                        visible={true}
+                        height="96"
+                        width="96"
+                        color="grey"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        ariaLabel="rotating-lines-loading"
+                        strokeColor={"#FBC40E"}
+                        wrapperStyle={{}}
+                        wrapperClass=""/>
+                </Box>}
         <Container  maxWidth="xl" sx={{display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -284,6 +302,6 @@ const UserHome=()=>{
         </Dialog>
 
 
-    </Box>
+        </Box>)
 }
 export default UserHome;

@@ -9,6 +9,9 @@ import SmartDeviceType from "../../../../models/enums/SmartDeviceType.ts";
 import smartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
 import PowerPerHourInput from "../Shared/PowerPerHourInput.tsx";
 import DeviceRegistrationButtons from "../Shared/DeviceRegistrationButtons.tsx";
+import {useMutation, useQueryClient} from "react-query";
+import SmartDeviceCategory from "../../../../models/enums/SmartDeviceCategory.ts";
+import {RotatingLines} from "react-loader-spinner";
 
 interface WashingMachineAdditionalFields {
     PowerPerHour: number;
@@ -34,6 +37,8 @@ interface ModeCheckbox{
 
 
 const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormProps> = ({smartHomeId, onClose}) => {
+    const queryClient = useQueryClient();
+    const [isLoading, setIsLoading] = useState(false);
     const smartDeviceService = new SmartDeviceService();
     const [error, setError] = useState<string | null>(null);
 
@@ -69,6 +74,33 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         }));
     };
 
+    interface registrationMutationInterface {
+        formData: any;
+        smartHomeId: string;
+        deviceCategory: SmartDeviceCategory;
+        deviceType: SmartDeviceType;
+    }
+
+    const registrationMutation = useMutation(
+        (params: registrationMutationInterface) => {
+            const { formData, smartHomeId, deviceCategory, deviceType } = params;
+            setIsLoading(true);
+            return smartDeviceService.registerSmartDevice(formData, smartHomeId, deviceCategory, deviceType)
+        },
+        {
+            onSuccess: (res) => {
+                setIsLoading(false);
+                if (res.status === 200) {
+                    queryClient.invalidateQueries('smartDevicesForHome');
+                    onClose();
+                }
+            },
+            onError: (error) => {
+                console.error('Error:', error);
+            },
+        }
+    );
+
     const handleWashingMachineSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -78,15 +110,9 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
         }
         setError(null);
 
-        smartDeviceService.registerSmartDevice({...commonFormData, ...additionalFormData}, smartHomeId, smartDeviceCategory.PKA, SmartDeviceType.WASHINGMACHINE)
-            .then((res) => {
-                if (res.status === 200) {
-                    onClose();
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        const formData : any = {...commonFormData, ...additionalFormData}
+        const payload = {formData : formData , smartHomeId : smartHomeId, deviceCategory : SmartDeviceCategory.PKA, deviceType: SmartDeviceType.WASHINGMACHINE}
+        registrationMutation.mutate(payload);
     };
 
     const [modesCheckboxes , setModesCheckboxes] = useState<ModeCheckbox[]>([]);
@@ -110,7 +136,20 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
             });
     })
 
-    return (
+    return (<Box>{isLoading &&
+        <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+            <RotatingLines
+                visible={true}
+                height="96"
+                width="96"
+                color="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                strokeColor={"#FBC40E"}
+                wrapperStyle={{}}
+                wrapperClass=""/>
+        </Box>}
         <Container
             maxWidth="xs"
             sx={{
@@ -170,11 +209,10 @@ const WashingMachineRegistrationForm : React.FC<WashingMachineRegistrationFormPr
                         {error}
                     </Typography>
                 )}
-
                 <DeviceRegistrationButtons onCancel={onClose} onSubmit={() => {}}/>
             </Box>
         </Container>
-    );
+    </Box>);
 };
 
 export default WashingMachineRegistrationForm;

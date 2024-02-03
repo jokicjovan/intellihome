@@ -180,45 +180,45 @@ BEGIN
         (AmbientSensor3Id, 'AmbientSensor3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\AmbientSensor3.jpg'),
         (AmbientSensor4Id, 'AmbientSensor4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\AmbientSensor4.jpg'),
 
-        (AirConditioner1Id, 'AirConditioner1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\AirConditioner1.jpg'),
-        (AirConditioner2Id, 'AirConditioner2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\AirConditioner2.jpg'),
-        (AirConditioner3Id, 'AirConditioner3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\AirConditioner3.jpg'),
-        (AirConditioner4Id, 'AirConditioner4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\AirConditioner4.jpg'),
+        (AirConditioner1Id, 'AirConditioner1', '0', '1', 'false', 'false', SmartHome1Id, 'static/smartDevices\AirConditioner1.jpg'),
+        (AirConditioner2Id, 'AirConditioner2', '0', '1', 'false', 'false', SmartHome2Id, 'static/smartDevices\AirConditioner2.jpg'),
+        (AirConditioner3Id, 'AirConditioner3', '0', '1', 'false', 'false', SmartHome3Id, 'static/smartDevices\AirConditioner3.jpg'),
+        (AirConditioner4Id, 'AirConditioner4', '0', '1', 'false', 'false', SmartHome4Id, 'static/smartDevices\AirConditioner4.jpg'),
 
-        (WashingMachine1Id, 'WashingMachine1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\WashingMachine1.jpg'),
-        (WashingMachine2Id, 'WashingMachine2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\WashingMachine2.jpg'),
-        (WashingMachine3Id, 'WashingMachine3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\WashingMachine3.jpg'),
-        (WashingMachine4Id, 'WashingMachine4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\WashingMachine4.jpg'),
+        (WashingMachine1Id, 'WashingMachine1', '0', '2', 'false', 'false', SmartHome1Id, 'static/smartDevices\WashingMachine1.jpg'),
+        (WashingMachine2Id, 'WashingMachine2', '0', '2', 'false', 'false', SmartHome2Id, 'static/smartDevices\WashingMachine2.jpg'),
+        (WashingMachine3Id, 'WashingMachine3', '0', '2', 'false', 'false', SmartHome3Id, 'static/smartDevices\WashingMachine3.jpg'),
+        (WashingMachine4Id, 'WashingMachine4', '0', '2', 'false', 'false', SmartHome4Id, 'static/smartDevices\WashingMachine4.jpg'),
 
-        (Lamp1Id, 'Lamp1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\Lamp1.jpg'),
-        (Lamp2Id, 'Lamp2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\Lamp2.jpg'),
-        (Lamp3Id, 'Lamp3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\Lamp3.jpg'),
-        (Lamp4Id, 'Lamp4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\Lamp4.jpg'),
+        (Lamp1Id, 'Lamp1', '1', '3', 'false', 'false', SmartHome1Id, 'static/smartDevices\Lamp1.jpg'),
+        (Lamp2Id, 'Lamp2', '1', '3', 'false', 'false', SmartHome2Id, 'static/smartDevices\Lamp2.jpg'),
+        (Lamp3Id, 'Lamp3', '1', '3', 'false', 'false', SmartHome3Id, 'static/smartDevices\Lamp3.jpg'),
+        (Lamp4Id, 'Lamp4', '1', '3', 'false', 'false', SmartHome4Id, 'static/smartDevices\Lamp4.jpg'),
 
-        (Sprinkler1Id, 'Sprinkler1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\Sprinkler1.jpg'),
-        (Sprinkler2Id, 'Sprinkler2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\Sprinkler2.jpg'),
-        (Sprinkler3Id, 'Sprinkler3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\Sprinkler3.jpg'),
-        (Sprinkler4Id, 'Sprinkler4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\Sprinkler4.jpg'),
+        (Sprinkler1Id, 'Sprinkler1', '1', '5', 'false', 'false', SmartHome1Id, 'static/smartDevices\Sprinkler1.jpg'),
+        (Sprinkler2Id, 'Sprinkler2', '1', '5', 'false', 'false', SmartHome2Id, 'static/smartDevices\Sprinkler2.jpg'),
+        (Sprinkler3Id, 'Sprinkler3', '1', '5', 'false', 'false', SmartHome3Id, 'static/smartDevices\Sprinkler3.jpg'),
+        (Sprinkler4Id, 'Sprinkler4', '1', '5', 'false', 'false', SmartHome4Id, 'static/smartDevices\Sprinkler4.jpg'),
 
-        (VehicleGate1Id, 'VehicleGate1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\VehicleGate1.jpg'),
-        (VehicleGate2Id, 'VehicleGate2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\VehicleGate2.jpg'),
-        (VehicleGate3Id, 'VehicleGate3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\VehicleGate3.jpg'),
-        (VehicleGate4Id, 'VehicleGate4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\VehicleGate4.jpg'),
+        (VehicleGate1Id, 'VehicleGate1', '1', '4', 'false', 'false', SmartHome1Id, 'static/smartDevices\VehicleGate1.jpg'),
+        (VehicleGate2Id, 'VehicleGate2', '1', '4', 'false', 'false', SmartHome2Id, 'static/smartDevices\VehicleGate2.jpg'),
+        (VehicleGate3Id, 'VehicleGate3', '1', '4', 'false', 'false', SmartHome3Id, 'static/smartDevices\VehicleGate3.jpg'),
+        (VehicleGate4Id, 'VehicleGate4', '1', '4', 'false', 'false', SmartHome4Id, 'static/smartDevices\VehicleGate4.jpg'),
 
-        (BatterySystem1Id, 'BatterySystem1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\BatterySystem1.jpg'),
-        (BatterySystem2Id, 'BatterySystem2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\BatterySystem2.jpg'),
-        (BatterySystem3Id, 'BatterySystem3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\BatterySystem3.jpg'),
-        (BatterySystem4Id, 'BatterySystem4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\BatterySystem4.jpg'),
+        (BatterySystem1Id, 'BatterySystem1', '2', '7', 'false', 'false', SmartHome1Id, 'static/smartDevices\BatterySystem1.jpg'),
+        (BatterySystem2Id, 'BatterySystem2', '2', '7', 'false', 'false', SmartHome2Id, 'static/smartDevices\BatterySystem2.jpg'),
+        (BatterySystem3Id, 'BatterySystem3', '2', '7', 'false', 'false', SmartHome3Id, 'static/smartDevices\BatterySystem3.jpg'),
+        (BatterySystem4Id, 'BatterySystem4', '2', '7', 'false', 'false', SmartHome4Id, 'static/smartDevices\BatterySystem4.jpg'),
 
-        (SolarPanelSystem1Id, 'SolarPanelSystem1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\SolarPanelSystem1.jpg'),
-        (SolarPanelSystem2Id, 'SolarPanelSystem2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\SolarPanelSystem2.jpg'),
-        (SolarPanelSystem3Id, 'SolarPanelSystem3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\SolarPanelSystem3.jpg'),
-        (SolarPanelSystem4Id, 'SolarPanelSystem4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\SolarPanelSystem4.jpg'),
+        (SolarPanelSystem1Id, 'SolarPanelSystem1', '2', '6', 'false', 'false', SmartHome1Id, 'static/smartDevices\SolarPanelSystem1.jpg'),
+        (SolarPanelSystem2Id, 'SolarPanelSystem2', '2', '6', 'false', 'false', SmartHome2Id, 'static/smartDevices\SolarPanelSystem2.jpg'),
+        (SolarPanelSystem3Id, 'SolarPanelSystem3', '2', '6', 'false', 'false', SmartHome3Id, 'static/smartDevices\SolarPanelSystem3.jpg'),
+        (SolarPanelSystem4Id, 'SolarPanelSystem4', '2', '6', 'false', 'false', SmartHome4Id, 'static/smartDevices\SolarPanelSystem4.jpg'),
 
-        (VehicleCharger1Id, 'VehicleCharger1', '0', '0', 'false', 'false', SmartHome1Id, 'static/smartDevices\VehicleCharger1.jpg'),
-        (VehicleCharger2Id, 'VehicleCharger2', '0', '0', 'false', 'false', SmartHome2Id, 'static/smartDevices\VehicleCharger2.jpg'),
-        (VehicleCharger3Id, 'VehicleCharger3', '0', '0', 'false', 'false', SmartHome3Id, 'static/smartDevices\VehicleCharger3.jpg'),
-        (VehicleCharger4Id, 'VehicleCharger4', '0', '0', 'false', 'false', SmartHome4Id, 'static/smartDevices\VehicleCharger4.jpg');
+        (VehicleCharger1Id, 'VehicleCharger1', '2', '8', 'false', 'false', SmartHome1Id, 'static/smartDevices\VehicleCharger1.jpg'),
+        (VehicleCharger2Id, 'VehicleCharger2', '2', '8', 'false', 'false', SmartHome2Id, 'static/smartDevices\VehicleCharger2.jpg'),
+        (VehicleCharger3Id, 'VehicleCharger3', '2', '8', 'false', 'false', SmartHome3Id, 'static/smartDevices\VehicleCharger3.jpg'),
+        (VehicleCharger4Id, 'VehicleCharger4', '2', '8', 'false', 'false', SmartHome4Id, 'static/smartDevices\VehicleCharger4.jpg');
         
 
     INSERT INTO "AmbientSensors" ("Id", "Temperature", "Humidity", "PowerPerHour")
@@ -267,10 +267,10 @@ BEGIN
 
     INSERT INTO "Sprinklers" ("Id", "PowerPerHour")
     VALUES
-        (Lamp1Id, '1'),
-        (Lamp2Id, '1'),
-        (Lamp3Id, '1'),
-        (Lamp4Id, '1');
+        (Sprinkler1Id, '1'),
+        (Sprinkler2Id, '1'),
+        (Sprinkler3Id, '1'),
+        (Sprinkler4Id, '1');
 
     INSERT INTO "VehicleGates" ("Id", "IsPublic", "AllowedLicencePlates", "PowerPerHour")
     VALUES
