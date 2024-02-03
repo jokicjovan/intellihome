@@ -95,7 +95,7 @@ const SmartHomeApprovalCard = (props) => {
             {/* Buttons */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt:"30px" }}>
                 <Button onClick={button1Handler} sx={{ marginRight: "20px", background: "white", width: "7vw", height: "5vh", color: "black", border: '1px solid #FBC40E', fontWeight: "500", textTransform: "none", fontSize: "1.4rem" }}>Cancel</Button>
-                <Button onClick={button2Handler} sx={{ background: "#FBC40E", width: "7vw", height: "5vh", fontWeight: "500", textTransform: "none", fontSize: "1.4rem" }}>Submit</Button>
+                <Button onClick={button2Handler} sx={{ background: "#FBC40E", width: "7vw", height: "5vh", fontWeight: "500", textTransform: "none", fontSize: "1.4rem", color: "black" }}>Submit</Button>
             </Box>
         </Box>
     );

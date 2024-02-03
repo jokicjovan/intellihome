@@ -26,9 +26,11 @@ import SolarPanelSystemRegistrationForm from "../SmartDevices/Registration/VEU/S
 import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHomeService.ts";
 import SmartHomeShare from "./SmartHomeShare";
 import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
+import {useQuery, useQueryClient} from "react-query";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
+    const queryClient = useQueryClient();
     const [smartHome, setSmartHome] = useState({
         name: "",
         address: "",
@@ -130,18 +132,17 @@ const SmartHomeMain = ({smartHomeId}) => {
         </>
     }
 
-    useEffect(() => {
-        getSmartDevices()
-    }, [page, rowsPerPage])
-
-    const getSmartDevices = () => {
-        axios.get(environment + `/api/SmartDevice/GetSmartDevicesForHome/${smartHomeId}?PageNumber=${page + 1}&PageSize=${rowsPerPage}`).then(res => {
-            setSmartDevices(res.data.smartDevices);
-            setTotalCount(res.data.totalCount);
-        }).catch(err => {
-            console.log(err)
-        });
-    }
+    const _ = useQuery({
+        queryKey: ['smartDevicesForHome', page, rowsPerPage],
+        queryFn: () => {
+            axios.get(environment + `/api/SmartDevice/GetSmartDevicesForHome/${smartHomeId}?PageNumber=${page + 1}&PageSize=${rowsPerPage}`).then(res => {
+                setSmartDevices(res.data.smartDevices);
+                setTotalCount(res.data.totalCount);
+            }).catch(err => {
+                console.log(err)
+            });
+        },
+    })
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -164,7 +165,6 @@ const SmartHomeMain = ({smartHomeId}) => {
 
     const handleCloseModal = () => {
         setOpenModal(false);
-        getSmartDevices();
     };
 
     const handleOpenModal = (item) => {
@@ -202,7 +202,7 @@ const SmartHomeMain = ({smartHomeId}) => {
             {modalContentItem === 99 &&
 <SmartHomeConsumptionReport smartHomeId={smartHomeId}/>}
             {modalContentItem === 100 &&
-                <SmartHomeShare smartHomeId={smartHomeId}/>
+                <SmartHomeShare smartHomeId={smartHomeId} onClose={handleCloseModal}/>
             }
         </Box>
     );

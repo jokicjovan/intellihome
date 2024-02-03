@@ -1,7 +1,7 @@
 import {Box, Container, Grid, TablePagination, Typography} from "@mui/material";
 import React, {useEffect} from "react";
 import axios from "axios";
-import SmartHomeApprovalCard from "./SmartHomeApprovalCart.tsx";
+import SmartHomeApprovalCard from "./SmartHomeApprovalCard.tsx";
 import {environment} from "../../utils/Environment.ts";
 
 

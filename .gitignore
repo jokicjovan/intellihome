@@ -549,10 +549,10 @@ DeviceSimulator/.idea/*
 Testing/.idea/*
 Mosquitto/data/*
 Redis/data/*
+IntelliHome-Backend/IntelliHome-Backend/static
 IntelliHome-Backend/IntelliHome-Backend/InfluxDBToken.txt
 IntelliHome-Backend/Data/InfluxDBToken.txt
 IntelliHome-Backend/Data/Migrations
-IntelliHome-Backend/IntelliHome-Backend/static
 .idea/*
 venv
 
