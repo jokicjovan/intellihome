@@ -1,5 +1,5 @@
+from datetime import datetime
 from locust import HttpUser, task, between
-
 
 class Test(HttpUser):
     wait_time = between(1, 3)
@@ -12,12 +12,13 @@ class Test(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def toggle_solar_panel_system(self):
-        solar_panel_id = "83d1dd00-7f15-42d3-ab66-60802292d0ad"
-        turn_on = True
+    def get_smarthome_usage(self):
+        smarthome_id = "a6d8769c-d7d1-4ca6-b88c-1d72643d1075"
+        from_date = datetime(2023, 1, 1)  # Replace with the actual from date
+        to_date = datetime(2023, 12, 31)  # Replace with the actual to date
 
-        response = self.client.put(
-            f"/api/SolarPanelSystem/Toggle?id={solar_panel_id}&turnOn={turn_on}",
+        response = self.client.get(
+            f"/api/City/GetUsageHistoricalData?id={smarthome_id}&from={from_date}&to={to_date}",
             headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))},
         )
         if response.status_code != 200:

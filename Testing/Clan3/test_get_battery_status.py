@@ -12,13 +12,10 @@ class Test(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def toggle_solar_panel_system(self):
-        solar_panel_id = "83d1dd00-7f15-42d3-ab66-60802292d0ad"
-        turn_on = True
-
-        response = self.client.put(
-            f"/api/SolarPanelSystem/Toggle?id={solar_panel_id}&turnOn={turn_on}",
-            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))},
-        )
+    def get_battery_system(self):
+        battery_system_id = "ed6823db-34d6-43ba-ad6f-bc8a91ae874f"
+        response = self.client.get(
+            f"/api/BatterySystem/Get?id={battery_system_id}",
+            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))})
         if response.status_code != 200:
             self.environment.runner.quit()
