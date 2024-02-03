@@ -12,11 +12,16 @@ class User(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def get_vehicle_charger_data(self):
-        vehicle_charger_id = "2b8eac46-868b-445e-bb7f-e2e9e2a6e153"
-        response = self.client.get(
-            f"/api/VehicleCharger/Get?id={vehicle_charger_id}",
-            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))}
+    def register_smart_device(self):
+        smart_home_id = "32e8e8fd-354f-4b61-92da-dfaa3f6288f6"
+        vehicle_gate_data = {
+            "AllowedLicencePlates": ["SM023SA", "SM023AS"],
+            "PowerPerHour": 2,
+            "Name": "Gate"
+        }
+        response = self.client.put(
+            f"/api/SPU/CreateVehicleGate/{smart_home_id}",
+            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))}, data=vehicle_gate_data
         )
         if response.status_code != 200:
             self.environment.runner.quit()

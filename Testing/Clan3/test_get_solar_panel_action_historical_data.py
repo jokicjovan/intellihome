@@ -1,9 +1,10 @@
+from datetime import datetime
 from locust import HttpUser, task, between
 
 
-class Test(HttpUser):
+class User(HttpUser):
     wait_time = between(1, 3)
-    host = "http://192.168.1.188:5283"
+    host = "http://localhost:5283"
 
     def on_start(self):
         response = self.client.post("/api/User/login", json={"username": "crni", "password": "crni"})
@@ -12,10 +13,14 @@ class Test(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def get_battery_system(self):
-        battery_system_id = "ed6823db-34d6-43ba-ad6f-bc8a91ae874f"
+    def get_solar_panel_action_historical_data(self):
+        solar_panel_id = "ce456c90-3bb2-42be-bd2a-4d75a6990291"
+        from_date = datetime(2023, 1, 1)
+        to_date = datetime(2023, 12, 31)
+
+        # Simulate retrieving historical action data
         response = self.client.get(
-            f"/api/BatterySystem/Get?id={battery_system_id}",
-            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))})
+            f"/api/SolarPanelSystem/GetActionHistoricalData?id={solar_panel_id}&from={from_date}&to={to_date}",
+        )
         if response.status_code != 200:
             self.environment.runner.quit()

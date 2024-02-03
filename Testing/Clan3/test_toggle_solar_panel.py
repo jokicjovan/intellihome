@@ -1,9 +1,9 @@
 from locust import HttpUser, task, between
 
 
-class Test(HttpUser):
+class User(HttpUser):
     wait_time = between(1, 3)
-    host = "http://192.168.1.188:5283"
+    host = "http://localhost:5283"
 
     def on_start(self):
         response = self.client.post("/api/User/login", json={"username": "crni", "password": "crni"})
@@ -12,11 +12,12 @@ class Test(HttpUser):
         self.client.cookies.update(response.cookies)
 
     @task
-    def get_smart_devices_for_home(self):
-        smart_home_id = "f901e6d3-9fba-4506-a23a-06c91ab97a27"
-        response = self.client.get(
-            f"/api/SmartDevice/GetSmartDevicesForHome/{smart_home_id}?PageNumber=1&PageSize=10",
-            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))}
+    def toggle_solar_panel_system(self):
+        solar_panel_id = "83d1dd00-7f15-42d3-ab66-60802292d0ad"
+        turn_on = True
+        response = self.client.put(
+            f"/api/SolarPanelSystem/Toggle?id={solar_panel_id}&turnOn={turn_on}",
+            headers={"Cookie": "auth=" + str(self.client.cookies.get("auth"))},
         )
         if response.status_code != 200:
             self.environment.runner.quit()
