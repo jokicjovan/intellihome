@@ -138,13 +138,8 @@ namespace IntelliHome_Backend.Features.Home.Services
             List<SmartHome> smartHomes = redisRepository.Get(cacheKey);
             if (smartHomes == null)
             {
-                Console.WriteLine("Data retrieved from database.");
                 smartHomes = await _smartHomeRepository.GetSmartHomesForUserWithNameSearch(user, search);
                 redisRepository.Add(cacheKey, smartHomes);
-            }
-            else
-            {
-                Console.WriteLine("Data retrieved from cache.");
             }
             foreach (var smartHome in smartHomes)
             {
