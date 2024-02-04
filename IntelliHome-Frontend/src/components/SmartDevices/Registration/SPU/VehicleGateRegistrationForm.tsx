@@ -112,6 +112,7 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
                 }
             },
             onError: (error) => {
+                setIsLoading(false);
                 console.error('Error:', error);
             },
         }
@@ -135,15 +136,11 @@ const VehicleGateRegistrationForm : React.FC<VehicleGateRegistrationFormProps> =
         <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
             <RotatingLines
                 visible={true}
-                height="96"
                 width="96"
-                color="grey"
                 strokeWidth="5"
                 animationDuration="0.75"
                 ariaLabel="rotating-lines-loading"
-                strokeColor={"#FBC40E"}
-                wrapperStyle={{}}
-                wrapperClass=""/>
+                strokeColor={"#FBC40E"}/>
         </Box>}
         <Container
             maxWidth="xs"

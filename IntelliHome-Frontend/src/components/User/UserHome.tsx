@@ -61,10 +61,13 @@ const UserHome=()=>{
     };
 
     const getSmartHomes = () => {
+        setIsLoading(true)
         axios.get(environment + `/api/SmartHome/GetSmartHomesForUser?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
+            setIsLoading(false)
             setTotalCount(res.data.totalCount);
             setSmartHomes(res.data.smartHomes);
         }).catch(err => {
+            setIsLoading(false)
             console.log(err)
         });
     }
@@ -258,15 +261,11 @@ const UserHome=()=>{
                 <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
                     <RotatingLines
                         visible={true}
-                        height="96"
                         width="96"
-                        color="grey"
                         strokeWidth="5"
                         animationDuration="0.75"
                         ariaLabel="rotating-lines-loading"
-                        strokeColor={"#FBC40E"}
-                        wrapperStyle={{}}
-                        wrapperClass=""/>
+                        strokeColor={"#FBC40E"}/>
                 </Box>}
         <Container  maxWidth="xl" sx={{display: "flex",
             flexDirection: "row",

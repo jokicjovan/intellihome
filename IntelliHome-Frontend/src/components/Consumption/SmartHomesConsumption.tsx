@@ -4,8 +4,10 @@ import {environment} from "../../utils/Environment.ts";
 import {Box, Container, Dialog, Grid, TablePagination, TextField} from "@mui/material";
 import SmartHomeConsumptionCard from "./SmartHomeConsumptionCard.tsx";
 import SmartHomeConsumptionReport from "./SmartHomeConsumptionReport.tsx";
+import {RotatingLines} from "react-loader-spinner";
 
 const SmartHomesConsumption = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [smartHomes, setSmartHomes]=React.useState([]);
     const [selectedSmartHomeId, setSelectedSmartHomeId]=React.useState("");
     const [page, setPage] = React.useState(0);
@@ -47,11 +49,14 @@ const SmartHomesConsumption = () => {
     };
 
     const getSmartHomes = () => {
+        setIsLoading(true);
         axios.get(environment + `/api/SmartHome/GetAllSmartHomesPaged?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
             setTotalCount(res.data.totalCount);
             setSmartHomes(res.data.smartHomes);
+            setIsLoading(false);
         }).catch(err => {
             console.log(err)
+            setIsLoading(false);
         });
     }
 
@@ -70,6 +75,17 @@ const SmartHomesConsumption = () => {
 
     const renderPanel = () => {
         return <>
+            {isLoading &&
+                <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+                    <RotatingLines
+                        visible={true}
+                        width="96"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        ariaLabel="rotating-lines-loading"
+                        strokeColor={"#FBC40E"}/>
+                </Box>}
+
             {smartHomes.length===0 ? <p>No smart homes to show...</p> : <div>
                 <Grid container sx={{ boxSizing: 'border-box', mt: 1, height: '100%', width: '100%', px: 3 }}>
                     {smartHomes.map((item) => (

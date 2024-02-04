@@ -27,10 +27,12 @@ import SignalRSmartHomeService from "../../services/smartDevices/SignalRSmartHom
 import SmartHomeShare from "./SmartHomeShare";
 import SmartHomeConsumptionReport from "../Consumption/SmartHomeConsumptionReport.tsx";
 import {useQuery, useQueryClient} from "react-query";
+import {RotatingLines} from "react-loader-spinner";
 
 
 const SmartHomeMain = ({smartHomeId}) => {
     const queryClient = useQueryClient();
+    const [isLoading, setIsLoading] = useState(false);
     const [smartHome, setSmartHome] = useState({
         name: "",
         address: "",
@@ -119,10 +121,21 @@ const SmartHomeMain = ({smartHomeId}) => {
 
     const renderPanel = () => {
         return <>
+            {isLoading &&
+                <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+                    <RotatingLines
+                        visible={true}
+                        width="96"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        ariaLabel="rotating-lines-loading"
+                        strokeColor={"#FBC40E"}/>
+                </Box>}
+
             {smartDevices.length === 0 ? <p>No smart devices to show...</p> : <div>
-                <Grid container sx={{boxSizing: 'border-box', mt: 1, height: '100%', width: '100%', px: 3}}>
+                <Grid container sx={{boxSizing: 'border-box', mt: "30px", height: '100%', width: '100%', px: 3}}>
                     {smartDevices.map((item) => (
-                        <Grid item key={item.id} xs={12} sm={6} md={6} lg={6}>
+                        <Grid item key={item.id} xs={12} sm={6} md={6} lg={6} mt={"20px"}>
                             <SmartDeviceCard smartDevice={item}/>
                         </Grid>
                     ))}
@@ -135,11 +148,14 @@ const SmartHomeMain = ({smartHomeId}) => {
     const _ = useQuery({
         queryKey: ['smartDevicesForHome', page, rowsPerPage],
         queryFn: () => {
+            setIsLoading(true);
             axios.get(environment + `/api/SmartDevice/GetSmartDevicesForHome/${smartHomeId}?PageNumber=${page + 1}&PageSize=${rowsPerPage}`).then(res => {
                 setSmartDevices(res.data.smartDevices);
                 setTotalCount(res.data.totalCount);
+                setIsLoading(false);
             }).catch(err => {
                 console.log(err)
+                setIsLoading(false);
             });
         },
     })

@@ -23,7 +23,7 @@ const SmartHomeCard = (props) => {
     }
     const boxStyle = {
         width: "18vw",
-        height: "37vh",
+        height: "30vh",
         backgroundColor: isConditionMet ? "white" : "#D0D0D0",
         borderRadius: "15px",
         textAlign: "center",
@@ -59,7 +59,7 @@ const SmartHomeCard = (props) => {
             <Container disableGutters sx={containerStyle}>
                 <PhotoSizeSelectSmall sx={iconStyle} /><Typography sx={textStyle}>{data.area}m<sup>2</sup></Typography>
             </Container>
-            <Button sx={{ ...buttonStyle, mt: 'auto' }} onClick={handleButtonClick}>View details</Button>
+            <Button sx={{ ...buttonStyle, mt: 3 }} onClick={handleButtonClick}>View details</Button>
         </Box>
     );
 };

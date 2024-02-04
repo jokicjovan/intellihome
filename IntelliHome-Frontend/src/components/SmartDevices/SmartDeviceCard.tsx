@@ -8,7 +8,7 @@ import {environment} from "../../utils/Environment.ts";
 const SmartDeviceCard = (props) => {
 
     const smartDevice = props.smartDevice;
-    const colors = ["#676E79", "#F43F5E", "#2691D9"]
+    const colors = {"PKA":"#676E79", "SPU":"#F43F5E","VEU": "#2691D9"};
     const navigate = useNavigate();
 
     const smartDeviceTypes = [

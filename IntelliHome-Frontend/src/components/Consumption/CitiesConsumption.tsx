@@ -2,11 +2,12 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {environment} from "../../utils/Environment.ts";
 import {Box, Container, Dialog, Grid, TablePagination, TextField} from "@mui/material";
-import SmartHomeConsumptionReport from "./SmartHomeConsumptionReport.tsx";
 import CityConsumptionCard from "./CityConsumptionCard.tsx";
 import CityConsumptionReport from "./CityConsumptionReport.tsx";
+import {RotatingLines} from "react-loader-spinner";
 
 const CitiesConsumption = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [cities, setCities]=React.useState([]);
     const [selectedCityId, setSelectedCityId]=React.useState("");
     const [page, setPage] = React.useState(0);
@@ -48,11 +49,14 @@ const CitiesConsumption = () => {
     };
 
     const getCities = () => {
+        setIsLoading(true);
         axios.get(environment + `/api/City/GetAllCitiesPaged?PageNumber=${page + 1}&PageSize=${rowsPerPage}&Search='${search == "" ? "" : search}'`).then(res => {
             setTotalCount(res.data.totalCount);
             setCities(res.data.cities);
+            setIsLoading(false);
         }).catch(err => {
             console.log(err)
+            setIsLoading(false);
         });
     }
 
@@ -71,6 +75,17 @@ const CitiesConsumption = () => {
 
     const renderPanel = () => {
         return <>
+            {isLoading &&
+                <Box sx={{position:"fixed", top:0, left:0, width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center", zIndex:"9999", backgroundColor:"rgba(0,0,0,0.7)"}}>
+                    <RotatingLines
+                        visible={true}
+                        width="96"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        ariaLabel="rotating-lines-loading"
+                        strokeColor={"#FBC40E"}/>
+                </Box>}
+
             {cities.length===0 ? <p>No cities to show...</p> : <div>
                 <Grid container sx={{ boxSizing: 'border-box', mt: 1, height: '100%', width: '100%', px: 3 }}>
                     {cities.map((item) => (

@@ -19,7 +19,7 @@ const SmartHomeConsumptionCard = ({smartHome, onButtonClick}) => {
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)"
     }
     const boxStyle = {
-        width: "18vw",
+        width: "15vw",
         height: "28vh",
         backgroundColor: "white",
         borderRadius: "15px",
