@@ -67,9 +67,9 @@ class Lamp(SmartDevice):
     async def send_data(self):
         while self.is_on.is_set():
             lumens = generate_lumens()
-            print(
-                f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}, is shining: "
-                f"{self.is_shining}")
+            # print(
+            #     f"Is auto: {self.is_auto}, lumens: {lumens}, brightness limit: {self.brightness_limit}, is shining: "
+            #     f"{self.is_shining}")
             if self.is_auto:
                 self.is_shining = lumens < self.brightness_limit
 
