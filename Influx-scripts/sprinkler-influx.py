@@ -14,26 +14,15 @@ def send_power_influx_data_batch(points):
     write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
     
     write_api.write(bucket=bucket, org=org, record=points)
-
-
-def generate_lumens(current_time):
-    hours = current_time.hour + current_time.minute / 60
-
-    time_diff_noon = abs(12 - hours)
-    if time_diff_noon > 12:
-        time_diff_noon = 24 - time_diff_noon
-
-    lumens = 1000 * (1 - (time_diff_noon / 12)) 
-
-    lumens = max(0, round(lumens, 2)) 
-
-    return lumens
-
+    
 
 def generate_data(id, start_date, end_date):
     current_date = start_date
     points = []
     availability_points = []
+    actions_points = []
+
+    last_isSpraying = False
 
     while current_date <= end_date:
 
@@ -52,28 +41,36 @@ def generate_data(id, start_date, end_date):
             current_date += timedelta(minutes=1)
             continue
 
-
-        if current_date.day % 2 == 0:
-            isAuto = float(1)
+        if current_date.hour < 6 or current_date.hour > 18:
+            isSpraying = True
         else:
-            isAuto = float(0)
+            isSpraying = False
+        
+        if isSpraying != last_isSpraying:
+            last_isSpraying = isSpraying
+            action_point = {
+                "measurement": "sprinklerAction",
+                "tags": {
+                    "deviceId": id,
+                    "actionBy": "System"
+                },
+                "time": current_date,
+                "fields": {
+                    "action": "SPRAYING: " + ("ON" if isSpraying else "OFF")
+                }
+            }
+            actions_points.append(action_point)
 
-        brightnessLimit = 300
-        currentBrightness = generate_lumens(current_date)
-        currentBrightness = float(currentBrightness)
-        isShining = float(1) if brightnessLimit > currentBrightness else float(0)
 
         point = {
-            "measurement": "lamp",
+            "measurement": "sprinkler",
             "tags": {
                 "deviceId": id,
             },
             "time": current_date,
             "fields": {
                 "consumptionPerMinute": 1./60.,
-                "isAuto": isAuto,
-                "isShining": isShining,
-                "currentBrightness": currentBrightness
+                "isSpraying": isSpraying
             }
         }
 
@@ -101,18 +98,24 @@ def generate_data(id, start_date, end_date):
             send_power_influx_data_batch(availability_points)
             availability_points = []
 
+        if len(actions_points) >= BATCH_SIZE:
+            send_power_influx_data_batch(actions_points)
+            actions_points = []
+
         current_date += timedelta(minutes=1)
 
     if points:
         send_power_influx_data_batch(points)
     if availability_points:
         send_power_influx_data_batch(availability_points)
+    if actions_points:
+        send_power_influx_data_batch(actions_points)
 
 
 if __name__ == "__main__":
     start_date = datetime.utcnow() - timedelta(days=90)  
     end_date = datetime.utcnow()
-    lamp_ids = ["7e543f5f-4d2c-46c7-9db1-9f3dc1d5fb91", "228cb0e3-5a3f-4526-8688-7af3e7611c19", "e59de779-3d59-4457-a4e8-317fe9adaa0a", "3c57f7b3-27ed-4720-92f8-c761805c2f7b"]
+    lamp_ids = ["d678e21f-8d43-4fd0-88be-0d7cc7cfc8a5", "09e74ff3-c07c-4d3a-89a0-6eadf8841a36", "f700086d-8002-4108-9dc8-4829470f8813", "cced7f50-9579-4a95-a9ff-30691303fc40"]
     for id in lamp_ids:
-        print(f"Generating data for lamp {id}")
+        print(f"Generating data for sprinkler {id}")
         generate_data(id, start_date, end_date)
