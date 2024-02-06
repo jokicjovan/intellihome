@@ -62,19 +62,25 @@ namespace IntelliHome_Backend.Features.Home.Services
         {
             List<SmartHome> smartHomes = await _smartHomeRepository.GetSmartHomesByCity(id);
             List<SmartHomeUsageDataDTO> cityUsage = new List<SmartHomeUsageDataDTO>();
-            foreach (SmartHome smartHome in smartHomes) {
+
+            foreach (SmartHome smartHome in smartHomes)
+            {
                 cityUsage.AddRange(_smartHomeDataRepository.GetUsageHistoricalData(smartHome.Id, from, to));
             }
-            List<SmartHomeUsageDataDTO> cityUsageAggregated = 
-                cityUsage.GroupBy(e => e.Timestamp)
-                         .Select(group => new SmartHomeUsageDataDTO { 
+
+            List<SmartHomeUsageDataDTO> cityUsageAggregated =
+                cityUsage.GroupBy(e => new DateTime(e.Timestamp.Value.Year, e.Timestamp.Value.Month, e.Timestamp.Value.Day, e.Timestamp.Value.Hour, e.Timestamp.Value.Minute, 0))
+                         .Select(group => new SmartHomeUsageDataDTO
+                         {
                              Timestamp = group.Key,
                              ConsumptionPerMinute = group.Sum(e => e.ConsumptionPerMinute),
-                             ProductionPerMinute = group.Sum(e => e.ConsumptionPerMinute),
-                             GridPerMinute = group.Sum(e => e.ConsumptionPerMinute)
+                             ProductionPerMinute = group.Sum(e => e.ProductionPerMinute),
+                             GridPerMinute = group.Sum(e => e.GridPerMinute)
                          })
                          .OrderBy(e => e.Timestamp).ToList();
+
             return cityUsageAggregated;
         }
+
     }
 }
