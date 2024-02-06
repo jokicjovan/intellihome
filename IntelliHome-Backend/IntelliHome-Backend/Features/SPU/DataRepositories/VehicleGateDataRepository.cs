@@ -31,7 +31,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
 
         public List<ActionDataDTO> GetHistoricalActionData(Guid id, DateTime from, DateTime to)
         {
-            var result = _influxRepository.GetHistoricalData("vehicleGateActions", id, from, to).Result;
+            var result = _influxRepository.GetHistoricalData("vehicleGateAction", id, from, to).Result;
             return result.Select(ConvertToVehicleGateActionData).ToList();
         }
 
@@ -42,7 +42,7 @@ namespace IntelliHome_Backend.Features.SPU.DataRepositories
 
         public void SaveAction(Dictionary<string, object> fields, Dictionary<string, string> tags)
         {
-            _influxRepository.WriteToInfluxAsync("vehicleGateActions", fields, tags);
+            _influxRepository.WriteToInfluxAsync("vehicleGateAction", fields, tags);
         }
 
         private ActionDataDTO ConvertToVehicleGateActionData(FluxTable table)
