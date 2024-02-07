@@ -220,7 +220,7 @@ namespace IntelliHome_Backend.Features.Users
                 identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-            return Redirect(_configuration["Client:Host"] + "/home");
+            return Redirect(_configuration["Client:Url"] + "/home");
         }
         private string GenerateRandomPassword()
         {

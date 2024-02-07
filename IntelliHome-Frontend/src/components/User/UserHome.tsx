@@ -154,7 +154,6 @@ const UserHome=()=>{
                     if (res.status !== 200) {
                         alert(res.data.message);
                     } else {
-                        alert("Smart home created successfully!");
                     }
                     getSmartHomes();
                 })

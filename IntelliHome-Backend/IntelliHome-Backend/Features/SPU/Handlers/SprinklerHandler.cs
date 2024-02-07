@@ -38,6 +38,7 @@ namespace IntelliHome_Backend.Features.SPU.Handlers
                 var sprinklerDataInflux = new Dictionary<string, object>
                 {
                     { "isSpraying", sprinklerData.IsSpraying},
+                    { "consumptionPerMinute", sprinklerData.ConsumptionPerMinute},
                 };
                 var sprinklerDataTags = new Dictionary<string, string>
                 {

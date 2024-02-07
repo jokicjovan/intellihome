@@ -70,7 +70,7 @@ namespace IntelliHome_Backend.Features.Users.Services
 
             var dynamicTemplateData = new
             {
-                url = _configuration["Client:Host"] + "/successfulActivation?code=" + code,
+                url = _configuration["Client:Url"] + "/successfulActivation?code=" + code,
                 user_name = user.FirstName,
                 code = code
                 

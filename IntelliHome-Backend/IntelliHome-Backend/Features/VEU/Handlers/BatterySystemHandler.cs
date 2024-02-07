@@ -1,5 +1,4 @@
 ﻿using IntelliHome_Backend.Features.Shared.Handlers.Interfaces;
-using IntelliHome_Backend.Features.Shared.Services.Interfaces;
 using IntelliHome_Backend.Features.VEU.Handlers.Interfaces;
 using MQTTnet.Client;
 using MQTTnet;
